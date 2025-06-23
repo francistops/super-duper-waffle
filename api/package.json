@@ -1,0 +1,20 @@
+{
+    "name": "ft.ca",
+    "version": "0.0.1",
+    "description": "project 0 aec-dw",
+    "main": "server.js",
+    "type": "module",
+    "scripts": {
+        "start": "node server.js",
+        "dev": "nodemon"
+    },
+    "dependencies": {
+        "express": "^5.1.0",
+        "cors": "^2.8.5",
+        "pg": "^8.16.0",
+        "js-yaml": "^4.1.0"
+    },
+    "devDependencies": {
+        "nodemon": "^3.1.10"
+    }
+}
