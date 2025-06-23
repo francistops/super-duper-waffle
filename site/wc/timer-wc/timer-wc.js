@@ -4,7 +4,6 @@ class TimerWC extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
-    this.render("loading");
   }
 
   connectedCallback() {
@@ -16,17 +15,17 @@ class TimerWC extends HTMLElement {
 
   async checkState() {
     const result = await getTasks();
-    console.log('auth.js', 'checkState', result.errorCode)
+    console.log('auth.js', 'checkState', result)
     if (result.errorCode === 0) {
-      this.render('online');
+      this.render('online', result);
     } else {
-      this.render('offline');
+      this.render('offline', result);
     }
   }
 
 
-  render(state) {
-    console.log('in render')
+  render(state, result) {
+    console.log('in render',result.rows[0])
     let color = "gray";
     if (state === "online") {
       color = "green";
@@ -36,7 +35,7 @@ class TimerWC extends HTMLElement {
 
     this.shadowRoot.innerHTML = `
         <div> 
-          <p style="color:${color};">timer placeholder</p>
+          <p style="color:${color};">${JSON.stringify(result.rows[0].content)}</p>
         </div>
     `;
   }
