@@ -3,7 +3,7 @@
     ne va affectez que ce composant.
  */
 
-p {
+span {
     font-size: 100px;
     font-weight: bold;
     font-style: italic;

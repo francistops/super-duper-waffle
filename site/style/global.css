@@ -1,20 +1,60 @@
-/* the props */
 @import "https://unpkg.com/open-props";
-
-/* optional imports that use the props */
 @import "https://unpkg.com/open-props/normalize.min.css";
 @import "https://unpkg.com/open-props/buttons.min.css";
 
+
 body {
-  margin-inline: 2rem ;
-  background-color: #111;
-  color: white;
+  text-align: center;
 }
 
-html {
-  scroll-behavior: smooth;
+* {
+  max-inline-size: none;
+}
+
+header {
+ margin-block: 2em;
 }
 
 .invisible {
   display: none;
+}
+nav {
+ margin-inline: 2em;
+}
+.flex-nav {
+  display: flex;
+  flex-wrap: wrap;;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1em;
+}
+
+.flex {
+  display: flex;
+  justify-content: center;
+  gap: 1em;
+
+}
+
+timer-wc {
+  background-color: var(--indigo-12);
+  padding: 2em;
+  margin: 3em;
+  border: 3px solid var(--indigo-9);
+  border-radius: 25px;
+}
+
+.sep {
+  display: block;
+  height: 0.2em;
+  background-color: var(--indigo-9);
+  margin: 0.5em 2em;
+}
+
+.title {
+  flex:auto;
+  text-align: start;
+  align-self: flex-end;
+  font-weight: 700;
+  font-size: large;
 }
