@@ -1,10 +1,51 @@
-/**
-    Changez le style pour votre composante. N'ayez pas peur, ce fichier de style
-    ne va affectez que ce composant.
- */
+@import "https://unpkg.com/open-props";
+@import "https://unpkg.com/open-props/normalize.min.css";
+@import "https://unpkg.com/open-props/buttons.min.css";
 
-span {
-    font-size: 100px;
-    font-weight: bold;
-    font-style: italic;
+
+.timer {
+
+  font-size: xx-large;
+  line-height: var(--font-lineheight-1);
+  font-size: var(--font-size-fluid-3);
+  font-weight: var(--font-weight-9);
+  font-family: var(--font-sans);
+  
+  background: var(--gradient-9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  margin: 1em;;
 }
+
+.invisible {
+  display: none;
+}
+
+/* .flex {
+  display: flex;
+  justify-content: center;
+} */
+
+/* timer-wc {
+  margin: 1em;
+  padding: 1em;
+  border: 3px solid hsl(var(--indigo-9-hsl) / 30%);
+  border-radius: 25%;
+  max-width: 400px;
+} */
+
+/* span {
+  font-size: 1.5em;
+  font-weight: bold;
+} */
+
+/* #timerWrapper {
+  padding: 1em;
+  display: flex;
+  border: 2px solid red;
+  border-radius: 8px;
+  max-width: fit-content;
+  min-height: min-content;
+  background-color: brown;
+} */

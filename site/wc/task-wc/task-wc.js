@@ -1,6 +1,6 @@
 import { getTasks } from "../../script/auth.js";
 
-class TimerWC extends HTMLElement {
+class TaskWC extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
@@ -21,18 +21,19 @@ class TimerWC extends HTMLElement {
 
   async connectedCallback() {
     await this.loadContent();
-    this.shadowRoot.getElementById("timer").innerHTML = this.timer();
-    const timerToggle = this.shadowRoot.getElementById("timerToggle");
-    timerToggle.addEventListener("click", (e) => {
-      console.log('timer toggle click')
-      this.timerToggle();
-      const event = new CustomEvent("event-timer-toggle", {
-        bubbles: true,
-        composed: true,
-        detail: { from: "timer toggle!" },
-      });
-      this.dispatchEvent(event);
-    });
+    this.shadowRoot.getElementById("task").innerHTML = this.getTask();
+    const taskWrapper = this.shadowRoot.getElementById("taskWrapper");
+    this.checkState();
+    // timerToggle.addEventListener("click", (e) => {
+    //   console.log('timer toggle click')
+    //   this.timerToggle();
+    //   const event = new CustomEvent("event-timer-toggle", {
+    //     bubbles: true,
+    //     composed: true,
+    //     detail: { from: "timer toggle!" },
+    //   });
+    //   this.dispatchEvent(event);
+    // });
 
     // setInterval(() => {
     //   this.checkState();
@@ -61,7 +62,7 @@ class TimerWC extends HTMLElement {
   }
 
   timerToggle() {
-
+    return true;
   }
 
   render(state, result) {
@@ -73,14 +74,14 @@ class TimerWC extends HTMLElement {
       color = "red";
     }
 
-    // this.shadowRoot.innerHTML = `
-    //     <div>
-    //       <p style="color:${color};">
-    //       ${JSON.stringify(result.rows[0].content)}
-    //       </p>
-    //     </div>
-    //`;
+    this.shadowRoot.innerHTML = `
+        <div>
+          <p style="color:${color};">
+          ${JSON.stringify(result.rows[0].content)}
+          </p>
+        </div>
+    `;
   }
 }
 
-customElements.define("timer-wc", TimerWC);
+customElements.define("task-wc", TaskWC);
