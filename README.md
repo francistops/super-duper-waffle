@@ -1,6 +1,8 @@
 # super-duper-waffle
 project 0 AEC DW 
 
+# **LE DOMAIN A CHANGER POUR FT.CA OUBLIE PAS D'AJOUTER DANS TON HOST FILE**
+
 timer-wc diplay a big timer that take half the page
 timer feature: start stop set time reset
 other half is the task-wc todo list
