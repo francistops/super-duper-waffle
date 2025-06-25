@@ -8,6 +8,6 @@ KEY_FILE="$CERT_DIR/server.key"
 mkdir -p $CERT_DIR
 echo "Generating self-signed certificate..."
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-    -keyout "$KEY_FILE" -out "$CERT_FILE" -subj "/CN=amelieroussin"
+    -keyout "$KEY_FILE" -out "$CERT_FILE" -subj "/CN=ft"
 echo "Self-signed certificate generated."
 

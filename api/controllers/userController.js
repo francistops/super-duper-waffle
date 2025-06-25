@@ -53,16 +53,16 @@ export async function getUserById(req, res) {
   res.formatView(result);
 }
 
-export async function registerUser(req, res) {
-  //console.log("---in userController subscribe---");
+export async function subscribeUser(req, res) {
+  console.log("---in userController subscribeUser---");
 
   let result = UNKNOWN_ERROR;
   const newUser = req.body;
-  //console.log(newUser);
+  console.log(newUser);
 
   try {
     const createdUser = await insertUser(newUser);
-    // console.log('after model', createdUser);
+    console.log('after model', createdUser);
     result = {
       message: "Success",
       errorCode: 0,
@@ -80,7 +80,7 @@ export async function registerUser(req, res) {
 
 export async function loginUser(req, res) {
   console.log("---in userController login---");
-  // console.log("body: ", req.body);
+  console.log("body: ", req.body);
   let result = UNKNOWN_ERROR;
   const { email: userEmail, passHash: userPassHash } = req.body;
 
@@ -88,8 +88,11 @@ export async function loginUser(req, res) {
     const checkUser = await isUserValid(userEmail, userPassHash);
     if (checkUser) {
         const loggedUser = await fetchDetailsByEmail(userEmail);
-        const userToken = await assignToken(loggedUser.userUuid);
+        const userToken = await assignToken(loggedUser.id);
 
+        const logginBtn = document.querySelector("#loginBtn");
+        logginBtn.classList.remove("hidden");
+        
         result = {
           message: "Successfull login",
           errorCode: 0,
@@ -111,12 +114,12 @@ export async function loginUser(req, res) {
 }
 
 export async function logoutUser(req, res) {
-  // console.log('--- in logout ctrl---');
+  console.log('--- in logout ctrl---');
   let result = UNKNOWN_ERROR;
 
   try {
     const logoutConfirmation = await logoutByToken(req.selectedToken);
-    // console.log(logoutConfirmation);
+    console.log(logoutConfirmation);
     if (logoutConfirmation) {
       result = {
         message: "Success",
@@ -130,7 +133,7 @@ export async function logoutUser(req, res) {
     }
 
   } catch (error) {
-    // console.error("DB error", error);
+    console.error("DB error", error);
     result.message = `Database error ${error}`;
     result.errorCode = 1001;
     res.status(500);

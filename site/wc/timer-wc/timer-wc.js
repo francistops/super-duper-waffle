@@ -8,8 +8,8 @@ class TimerWC extends HTMLElement {
 
   async loadContent() {
     const [html, css] = await Promise.all([
-      fetch("/wc/template/template.html").then((res) => res.text()),
-      fetch("/wc/template/template.css").then((res) => res.text()),
+      fetch("/wc/timer-wc/timer-wc.html").then((res) => res.text()),
+      fetch("/wc/timer-wc/timer-wc.css").then((res) => res.text()),
     ]);
     const style = document.createElement("style");
     style.textContent = css;
