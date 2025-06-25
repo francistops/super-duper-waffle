@@ -18,33 +18,6 @@ function displayAuthLogin() {
   });
 
   authLogin.addEventListener("go-back-to-main-from-form", (e) => {
-    // const from = event.detail?.from;
-    // console.log("ready-cancel: ", event.detail.from);
-    // console.log("detail:", event.detail.from);
-    // console.log("event ", event);
-
-  // if (from === 'login') {
-  //     const loginComp = document.querySelector('auth-login');
-  //     if (loginComp) {
-  //         const shadow = loginComp.shadowRoot;
-  //         shadow.querySelector('#email')?.value = '';
-  //         shadow.querySelector('#password')?.value = '';
-  //         loginComp.remove();
-  //     }
-  // }
-
-  // if (from === 'subscribe') {
-  //     const subsComp = document.querySelector('auth-subs');
-  //     if (subsComp) {
-  //         const shadow = subsComp.shadowRoot;
-  //         shadow.querySelector('#inpEmail')?.value = '';
-  //         shadow.querySelector('#inpPassword')?.value = '';
-  //         shadow.querySelector('#inpConfirmPassword')?.value = '';
-  //         shadow.querySelector('#inpFirstName')?.value = '';
-  //         shadow.querySelector('#inpLastName')?.value = '';
-  //         subsComp.remove();
-  //     }
-  // }
     wcDiv.innerHTML = "";
     displayMain();
   });
@@ -78,10 +51,8 @@ function displaySettings() {
 }
 
 function displayProfil() {
-  const wcDiv = document.getElementById("wcWrapper");
-  wcDiv.innerHTML = "";
-  const profilWC = document.createElement("profil-wc");
-  wcDiv.appendChild(profilWC);
+  document.getElementById("wcWrapper").innerHTML = "";
+  wcDiv.appendChild(document.createElement("profil-wc"));
 }
 
 function mainEventListeners() {
