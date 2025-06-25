@@ -12,7 +12,7 @@ function hash(passHash) {
 //debug
 export async function fetchAllUsers() {
   const selectSql = `SELECT * FROM "users", "tokens"`;
-  const queryResult = await query(selectSql);
+  const queryResult = await pool.query(selectSql);
   return queryResult.rows;
 }
 
@@ -21,7 +21,7 @@ export async function fetchUserById(id) {
                         FROM "users"
                         WHERE "userUuid" = $1`;
   const parameters = [id];
-  const queryResult = await query(selectSql, parameters);
+  const queryResult = await pool.query(selectSql, parameters);
 
   if (queryResult.rowCount > 1) {
     throw new Error(`Too many users retrieve for id ${id}.`);
@@ -32,25 +32,25 @@ export async function fetchUserById(id) {
 
 export async function insertUser(user) {
   // console.log('user: ',user)
-  const insertSql = `INSERT INTO users ("email", "passHash", "firstName", "lastName") 
+  const insertSql = `INSERT INTO users ("email", "passhash", "firstName", "lastName") 
                       VALUES ($1, $2, $3, $4)
                       returning *;`;
   const parameters = [
     user.email,
-    user.passHash,
+    user.passhash,
     user.firstName,
     user.lastName,
   ];
-  const queryResult = await query(insertSql, parameters);
+  const queryResult = await pool.query(insertSql, parameters);
   hasAffectedOne(null, "inserted", queryResult);
   
   return queryResult.rows[0];
 }
 
-export async function isUserValid(email, passHash) {
-  const sql = `SELECT "email" "passHash" FROM "users" WHERE "email"=$1 AND "passHash"=$2;`;
-  const param = [email, passHash];
-  const queryResult = await query(sql, param);
+export async function isUserValid(email, passhash) {
+  const sql = `SELECT "email", "passhash" FROM "users" WHERE "email"=$1 AND "passhash"=$2;`;
+  const param = [email, passhash];
+  const queryResult = await pool.query(sql, param);
   if (queryResult.rowCount != 1) {
     throw new Error(`401: failed to authorize`);
   }
@@ -62,10 +62,13 @@ export async function fetchDetailsByEmail(email) {
                       FROM "users"
                       WHERE email = $1`;
   const parameters = [email];
-  const queryResult = await query(selectSql, parameters);
+  const queryResult = await pool.query(selectSql, parameters);
+  if (queryResult.rowCount === 0) {
+    throw new Error(`User not found with email ${email}`);
+  }
 
   if (queryResult.rowCount > 1) {
-    throw new Error(`Error 500: Too many users retrieve for id ${id}.`);
+    throw new Error(`Error 500: Too many users retrieve for email ${email}.`);
   }
 
   return queryResult.rows[0];
@@ -75,9 +78,9 @@ export async function logoutByToken(token) {
   // console.log('--- in logout model ---');
    const sqlUpdatedToken = `UPDATE "tokens" 
                         SET "expires" = NOW() 
-                        WHERE "tokenUuid" = $1
+                        WHERE "token" = $1
                         RETURNING *;`;
 
-  const updateResult = await query(sqlUpdatedToken, [token]);
+  const updateResult = await pool.query(sqlUpdatedToken, [token]);
   return (updateResult.rowCount == 1) ?  true : false
 }

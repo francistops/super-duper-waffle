@@ -14,6 +14,8 @@ CREATE DATABASE timewaitfornoonedb;
 
 CREATE TABLE "users" (
     "id" uuid DEFAULT gen_random_uuid(),
+    "firstname" VARCHAR(100) NOT NULL,
+    "lastname" VARCHAR(100) NOT NULL,
     "email" VARCHAR(255) NOT NULL,
     "passhash" CHAR(64) NOT NULL,
     PRIMARY KEY ("id")
@@ -43,19 +45,29 @@ CREATE TABLE "projects" (
     PRIMARY KEY ("id")
 );
 
-
+CREATE TABLE "shared_tasks" (
+  "id" uuid DEFAULT gen_random_uuid(),
+  "task_id" uuid NOT NULL REFERENCES "tasks"("id") ON DELETE CASCADE,
+  "assigned_by" uuid NOT NULL REFERENCES "users"("id") ON DELETE CASCADE,
+  "assigned_to" uuid NOT NULL REFERENCES "users"("id") ON DELETE CASCADE,
+  "assigned_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  "status" VARCHAR(20) DEFAULT 'pending', -- possible: pending, accepted, refused
+  PRIMARY KEY ("id"),
+  CONSTRAINT unique_assignment UNIQUE ("task_id", "assigned_to")
+);
 
 CREATE UNIQUE INDEX uidx_users_email ON "users"("email");
 
-INSERT INTO "users" ("email", "passhash") VALUES
-('f', 'f'),
-('fh', ENCODE (SHA256('fh'), 'hex')),
-('u', 'u'),
-('uh', ENCODE (SHA256('uh'), 'hex')),
-('a', 'a'),
-('ah', ENCODE (SHA256('ah'), 'hex'));
+INSERT INTO "users" ("email", "passhash", "firstname", "lastname") VALUES
+('f', 'f', 'François', 'Fier'),
+('g', 'g', 'Fanny', 'Huet'),
+('u@example.com', ENCODE(SHA256('u'), 'hex'), 'Ugo', 'Urbain'),
+('uh@example.com', ENCODE(SHA256('uh'), 'hex'), 'Ursule', 'Henri'),
+('a@example.com', ENCODE(SHA256('a'), 'hex'), 'Alex', 'Aubin'),
+('ah@example.com', ENCODE(SHA256('ah'), 'hex'), 'Anaïs', 'Houde');
+
 
 INSERT INTO "tasks" ("userid", "content") VALUES
-( (SELECT "id" FROM "users" WHERE "email" = 'f'), 'hike mount thamaire. first task'),
-( (SELECT "id" FROM "users" WHERE "email" = 'u'), 'buy some melons. second task'),
-( (SELECT "id" FROM "users" WHERE "email" = 'ah'), 'be a nice boi. third task');
+( (SELECT "id" FROM "users" WHERE "email" = 'f@example.com'), 'hike mount thamaire. first task'),
+( (SELECT "id" FROM "users" WHERE "email" = 'u@example.com'), 'buy some melons. second task'),
+( (SELECT "id" FROM "users" WHERE "email" = 'ah@example.com'), 'be a nice boi. third task');
