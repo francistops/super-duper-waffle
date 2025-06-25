@@ -1,62 +1,56 @@
+//! my brain: we use it in almost all the function so why not make it scope to the file instead.
+const wcDiv = document.getElementById("wcWrapper");
+
+// --- helper fn ---
+// wcTag: string
+function displayNewWC(wcName) {
+  wcDiv.innerHTML = "";
+  return wcDiv.appendChild(document.createElement(wcName))
+}
+
+// ma solution pour le cancel mutiple. must pass an object eg: an element or WC not just a string
+function cancel_button(element) {
+  element.addEventListener("cancel-event", (e) => {
+    displayMain();
+  });
+}
+
+// --- page visual ---
+// landing page
 function displayMain() {
-  const wcDiv = document.getElementById("wcWrapper");
   wcDiv.innerHTML = "";
   wcDiv.appendChild(document.createElement("timer-wc"));
   wcDiv.appendChild(document.createElement("task-wc"));
   wcDiv.appendChild(document.createElement("pomodoro-timer"));
 }
 
-function displayAuthLogin() {
-  const wcDiv = document.getElementById("wcWrapper");
-  wcDiv.innerHTML = "";
-  const authLogin = document.createElement("auth-login");
+//wip but should be working, i use it to test way to generalize our event listenner
+function displayAuthLogin(wcName = "auth-login", eName = "user-logged-in") {
+  const wc = displayNewWC(wcName);
+  cancel_button(wc);
 
-  authLogin.addEventListener("user-logged-in", (e) => {
+  wc.addEventListener(eName, (e) => {
     const user = e.detail.user;
     localStorage.setItem("user", JSON.stringify(user));
-    wcDiv.innerHTML = "";
+    // wcDiv.innerHTML = ""; display main clear the page no need to clear it
     displayMain();
   });
-
-  authLogin.addEventListener("go-back-to-main-from-form", (e) => {
-    wcDiv.innerHTML = "";
-    displayMain();
-  });
-  wcDiv.appendChild(authLogin);
+  // wcDiv.appendChild(authLogin); appended by displayNewWC not sure if that is too early => reply to me: it is not. tested working.
 }
 
-function displayAuthSubs() {
-  const wcDiv = document.getElementById("wcWrapper");
-  wcDiv.innerHTML = "";
-  const authSubs = document.createElement("auth-subs");
-
-  authSubs.addEventListener("go-back-to-main-from-form", (e) => {
-    wcDiv.innerHTML = "";
-    displayMain();
-  });
-
-
-  wcDiv.appendChild(authSubs);
+function displayAccountRegistration() {
+  cancel_button(displayNewWC('auth-subs'))
 }
 
 function displaySettings() {
-  const wcDiv = document.getElementById("wcWrapper");
-  wcDiv.innerHTML = "";
-  const settingWC = document.createElement("setting-wc");
-
-  settingWC.addEventListener("go-back-to-main-from-form", (e) => {
-    wcDiv.innerHTML = "";
-    displayMain();
-  });
-
-  wcDiv.appendChild(settingWC);
+  cancel_button(displayNewWC('setting-wc'));
 }
 
 function displayProfil() {
-  document.getElementById("wcWrapper").innerHTML = "";
-  wcDiv.appendChild(document.createElement("profil-wc"));
+  displayNewWC('profil-wc');
 }
 
+//!!! super wonderful
 function mainEventListeners() {
   const loginBtn = document.getElementById("goToLoginButton");
   const subscribeBtn = document.getElementById("goToSubscribeButton");
@@ -70,7 +64,7 @@ function mainEventListeners() {
   });
 
   subscribeBtn.addEventListener("click", (e) => {
-    displayAuthSubs();
+    displayAccountRegistration();
     console.log("Subscribe button clicked");
   });
 

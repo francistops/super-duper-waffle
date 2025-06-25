@@ -42,7 +42,7 @@ CREATE TABLE "projects" (
     "taskid" uuid NOT NULL REFERENCES "tasks"("id"),
     "status" VARCHAR(20) DEFAULT 'pending', -- possible: pending, accepted, refused
     PRIMARY KEY ("id")
-    CONSTRAINT unique_assignment UNIQUE ("task_id")
+    -- errpr with db CONSTRAINT unique_assignment UNIQUE ("task_id")
 );
 
 CREATE UNIQUE INDEX uidx_users_email ON "users"("email");

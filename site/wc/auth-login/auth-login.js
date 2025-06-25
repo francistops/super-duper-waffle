@@ -25,14 +25,7 @@ class authLogin extends HTMLElement {
   async connectedCallback() {
     await this.loadContent();
 
-    const cancelButton = this.shadowRoot.getElementById('cancelButton');
-    cancelButton.addEventListener('click', (e) => {
-      this.dispatchEvent(new CustomEvent('go-back-to-main-from-form', {
-        bubbles: true,
-        composed: true,
-        detail: { from: "login" }
-      }));
-    });
+
 
     const form = this.shadowRoot.getElementById('login-post');
     const submitInp = this.shadowRoot.getElementById('loginButton');
@@ -57,6 +50,15 @@ class authLogin extends HTMLElement {
         detail: { user }
       });
       this.dispatchEvent(event);
+    });
+
+        const cancelButton = this.shadowRoot.getElementById('cancelButton');
+    cancelButton.addEventListener('click', (e) => {
+      this.dispatchEvent(new CustomEvent('cancel-event', {
+        bubbles: true,
+        composed: true,
+        detail: { from: "login" }
+      }));
     });
   }
 }

@@ -28,7 +28,7 @@ class settingWC extends HTMLElement {
       ["cancelButton", "cancelButton2"].forEach((id) => {
         const btn = this.shadowRoot.getElementById(id);
         btn.addEventListener("click", () => {
-          this.dispatchEvent(new CustomEvent("go-back-to-main-from-form", {
+          this.dispatchEvent(new CustomEvent("cancel-event", {
             bubbles: true,
             composed: true,
             detail: { from: "settings" }

@@ -60,8 +60,8 @@ class authSubs extends HTMLElement {
         //   }
         // });
 
-        const form = this.shadowRoot.getElementById('subscribeForm');
-        const submitInp = this.shadowRoot.getElementById('subscribeButton');
+        const form = this.shadowRoot.getElementById('registerForm');
+        const submitInp = this.shadowRoot.getElementById('registerButton');
         const { parseFormToObject } = await import("/script/utilform.js");
   
         form.addEventListener('submit', (e) => {
@@ -73,7 +73,7 @@ class authSubs extends HTMLElement {
   
           console.log('in auth-subs WC user: ', user)
           
-          user["passHash"] = user.password;
+          user["passhash"] = user.password;
           
           console.log(user)
           
@@ -88,14 +88,11 @@ class authSubs extends HTMLElement {
         const cancelButton = this.shadowRoot.getElementById('cancelButton');
 
         cancelButton.addEventListener('click', (e) => {
-            const event = new CustomEvent('go-back-to-main-from-form', {
+            const event = new CustomEvent('cancel-event', {
               bubbles: true,
               composed: true,
-              detail: {
-                from: 'subscribe'
-              }
+              detail: { from: 'register' }
             });
-
             this.dispatchEvent(event);
         });
     }  
