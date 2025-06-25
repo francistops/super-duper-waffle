@@ -9,6 +9,7 @@ function displayNewWC(wcName) {
 }
 
 // ma solution pour le cancel mutiple. must pass an object eg: an element or WC not just a string
+// le e va renvoyer ou tu veux aller donc on pour fair un if ou switch dans genre de handler pour diriger ou on veux aller. pour le moment seulement displayMain est dispo
 function cancel_button(element) {
   element.addEventListener("cancel-event", (e) => {
     displayMain();
@@ -22,6 +23,12 @@ function displayMain() {
   wcDiv.appendChild(document.createElement("timer-wc"));
   wcDiv.appendChild(document.createElement("task-wc"));
   wcDiv.appendChild(document.createElement("pomodoro-timer"));
+
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user) {
+    const logoutBtn = document.getElementById("loggoutButton");
+    logoutBtn.classList.remove("hidden");
+  }
 }
 
 //wip but should be working, i use it to test way to generalize our event listenner
@@ -49,6 +56,8 @@ function displaySettings() {
 function displayProfil() {
   displayNewWC('profil-wc');
 }
+
+
 
 //!!! super wonderful
 function mainEventListeners() {

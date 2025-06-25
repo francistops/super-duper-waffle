@@ -89,24 +89,23 @@ export async function loginUser(req, res) {
     if (checkUser) {
         const loggedUser = await fetchDetailsByEmail(userEmail);
         const userToken = await assignToken(loggedUser.id);
-
-        const logginBtn = document.querySelector("#loginBtn");
-        logginBtn.classList.remove("hidden");
-        
         result = {
           message: "Successfull login",
           errorCode: 0,
-          user: loggedUser,
+          // user: loggedUser,
           token: userToken
         };
     } else {
-      throw new Error(`401 invalid email`);
-    }
+      // we only want to catch and throw errors from the backend here hence an user invalid auth is not handled here
+      // tho we return result that will the frontend it failed
+      result = {
+          message: "Invalid credentials",
+          errorCode: 401,
+        };
+        res.status(401);
+      }
   } catch (error) {
-    console.error("Authorization Denied", error);
-    result.message = `${error}`;
-    result.errorCode = 409;
-    res.status(500);
+    catchMsg('user login from backend', 'backend', error, 1069, res, 500, result);
   }
 
   console.log("result: ", result);

@@ -78,7 +78,7 @@ export async function register(user) {
 
   const subscribeResponse = await apiCall("user/register", "POST", false, user);
 
-  
+
   //! todo: display code must be must be app.js
   if (subscribeResponse.errorCode == 0) {
     result = true;
@@ -96,12 +96,14 @@ export async function login(user) {
 
   let result = false;
 
-  const loginResult = await apiCall("user/login", "POST", false, user);
+  const data = await apiCall("user/login", "POST", false, user);
 
-  if (loginResult.errorCode == 0) {
+  if (data.errorCode == 0) {
     result = true;
-    localStorage.setItem("user", JSON.stringify(loginResult.token));
-    document.dispatchEvent(new CustomEvent("auth-loggedin", {}));
+    localStorage.setItem("user", JSON.stringify(data.token));
+    document.dispatchEvent(new CustomEvent("auth-loggedin", {
+      detail: `User logged in successfully got token: ${data.token}`,
+    }));
   }
 
   return result;

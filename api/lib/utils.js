@@ -1,6 +1,6 @@
 export function catchMsg(name, place, errorObj, errorToClient, res, errorHttp, result) {
         // server error
-        console.error(`Error fetching ${name}: ${errorObj.message}`);
+        console.error(`Error at ${name}: ${errorObj.message}`);
 
         // client visible error
         result.message = `${place} ${errorObj}`;

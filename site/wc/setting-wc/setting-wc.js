@@ -25,6 +25,8 @@ class settingWC extends HTMLElement {
     async connectedCallback() {
       await this.loadContent();
 
+      
+
       ["cancelButton", "cancelButton2"].forEach((id) => {
         const btn = this.shadowRoot.getElementById(id);
         btn.addEventListener("click", () => {
@@ -35,6 +37,13 @@ class settingWC extends HTMLElement {
           }));
         });
       });
+
+    }
+
+    cancel_button(id) {
+      this.shadowRoot.getElementById(id).addEventListener('click', (e) => {
+        this.dispatchEvent(new CustomEvent('cancel-event'))
+      })
 
     }
   }

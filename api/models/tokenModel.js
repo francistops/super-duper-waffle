@@ -22,17 +22,22 @@ export async function assignToken(userId) {
                       WHERE "userid" = $1
                       AND "expires" > NOW()`;
   const checkResult = await pool.query(checkSql, [userId]);
-  console.log("in assignToken  ", checkResult)
-  if (checkResult.rowCount > 0) {
-    throw new Error(`User already logged in`);
-  }
+  // commented for debug purpose
+  // if (checkResult.rowCount > 0) {
+  //   throw new Error(`User already logged in`);
+  // }
+  const debugSql = `UPDATE "tokens" 
+                        SET "token" = gen_random_uuid(),
+                            "expires" = NOW() + INTERVAL '30 days'
+                        WHERE "userid" = $1
+                        returning *;`;
 
-  const sql = `INSERT into "tokens" ("userid") 
-                values ($1)
-                returning *;`;
-  const param = [userId];
-  const queryResult = await pool.query(sql, param);
-  return queryResult.rows[0];  
+  //commmented for debug purpose
+  // const sql = `INSERT into "tokens" ("userid") 
+  //               values ($1)
+  //               returning *;`;
+  const queryResult = await pool.query(debugSql, [userId]);
+  return queryResult.rows[0].token;  
 }
 
 export async function fetchByToken(token) {
