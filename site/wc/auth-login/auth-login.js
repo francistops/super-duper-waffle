@@ -7,9 +7,6 @@ class authLogin extends HTMLElement {
   }
 
   async loadContent() {
-      /**
-       * Renommez vos fichiers selon votre composant à vous
-       */
     const [html, css] = await Promise.all([
       fetch('/wc/auth-login/auth-login.html').then(res => res.text()),
       fetch('/wc/auth-login/auth-login.css').then(res => res.text())

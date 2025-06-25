@@ -1,4 +1,4 @@
-import { subscribe } from "../../script/auth.js";
+import { register } from "../../script/auth.js";
 
 class authSubs extends HTMLElement {
     constructor() {
@@ -77,7 +77,7 @@ class authSubs extends HTMLElement {
           
           console.log(user)
           
-          const success = await subscribe(user);
+          const success = await register(user);
 
   
           if (!success) {

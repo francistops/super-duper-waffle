@@ -15,10 +15,6 @@ export async function getTasks() {
   }
 }
 
-// recevoir le token and le storer in the client
-console.log("in auth.js");
-let currentUser = null;
-
 async function hashPassword(password) {
   let hashHex = "";
   try {
@@ -75,18 +71,20 @@ export function isIdentified() {
   return getConnectedUser() !== null;
 }
 
-export async function subscribe(user) {
+export async function register(user) {
   let result = false;
   
-  console.log('in auth.js subscribe', user)
+  console.log('in auth.js register', user)
 
-  const subscribeResponse = await apiCall("user/subscribe", "POST", false, user);
+  const subscribeResponse = await apiCall("user/register", "POST", false, user);
 
+  
+  //! todo: display code must be must be app.js
   if (subscribeResponse.errorCode == 0) {
     result = true;
-    alert("subscribe success");
+    alert("registration success");
   } else {
-    alert("subscribe fail");
+    alert("registration fail");
     console.error("unhandle error in auth.js subscribeJson");
   }
 
@@ -118,14 +116,6 @@ export async function logout() {
   if (logoutJson.errorCode == 0) {
     result = logoutJson.revoked;
     localStorage.clear();
-
-    // todo understand this better
-    // const event = new CustomEvent("auth-logedout", {});
-    // this.dispatchEvent(event);
-
-    // document.querySelector(".articles").style.visibility = "hidden";
-    // document.querySelector(".account").style.visibility = "hidden";
   }
-
   return result;
 }

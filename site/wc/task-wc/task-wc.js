@@ -21,30 +21,13 @@ class TaskWC extends HTMLElement {
 
   async connectedCallback() {
     await this.loadContent();
-    this.shadowRoot.getElementById("task").innerHTML = this.getTask();
+    this.shadowRoot.getElementById("task").innerHTML = getTasks();
     const taskWrapper = this.shadowRoot.getElementById("taskWrapper");
     this.checkState();
-    // timerToggle.addEventListener("click", (e) => {
-    //   console.log('timer toggle click')
-    //   this.timerToggle();
-    //   const event = new CustomEvent("event-timer-toggle", {
-    //     bubbles: true,
-    //     composed: true,
-    //     detail: { from: "timer toggle!" },
-    //   });
-    //   this.dispatchEvent(event);
-    // });
-
-    // setInterval(() => {
-    //   this.checkState();
-    // }, interval = 1000);
-
-
   }
 
   disconnectedCallback() {
-    console.log("Timer-wc disconnected");
-    clearInterval(this.checkStateInterval);
+    console.log("disconnected");
   }
 
   async checkState() {
@@ -55,14 +38,6 @@ class TaskWC extends HTMLElement {
     } else {
       this.render("offline", result);
     }
-  }
-
-  timer() {
-    return new Date().getTime()
-  }
-
-  timerToggle() {
-    return true;
   }
 
   render(state, result) {
