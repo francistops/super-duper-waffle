@@ -58,3 +58,11 @@ timer-wc {
   font-weight: 700;
   font-size: large;
 }
+
+.hidden {
+  display: none;
+}
+
+.red {
+  color: red;
+}

@@ -10,7 +10,7 @@ CREATE DATABASE timewaitfornoonedb;
 -- ! find a way to salt with a var
 -- DECLARE "SALT" CONSTANT CHAR NOT NULL DEFAULT 'monGrainDeCummin';
 
--- ! find a way to store liked wallpaper in user profile
+-- ! find a way to store liked tasks in user profile
 
 CREATE TABLE "users" (
     "id" uuid DEFAULT gen_random_uuid(),
@@ -40,20 +40,20 @@ CREATE TABLE "projects" (
     "id" uuid DEFAULT gen_random_uuid(),
     "name" VARCHAR(255) NOT NULL,
     "taskid" uuid NOT NULL REFERENCES "tasks"("id"),
+    "status" VARCHAR(20) DEFAULT 'pending', -- possible: pending, accepted, refused
     PRIMARY KEY ("id")
+    CONSTRAINT unique_assignment UNIQUE ("task_id")
 );
-
-
 
 CREATE UNIQUE INDEX uidx_users_email ON "users"("email");
 
 INSERT INTO "users" ("email", "passhash") VALUES
 ('f', 'f'),
-('fh', ENCODE (SHA256('fh'), 'hex')),
-('u', 'u'),
-('uh', ENCODE (SHA256('uh'), 'hex')),
-('a', 'a'),
-('ah', ENCODE (SHA256('ah'), 'hex'));
+('u', ENCODE(SHA256('u'), 'hex')),
+('uh', ENCODE(SHA256('uh'), 'hex')),
+('a', ENCODE(SHA256('a'), 'hex')),
+('ah', ENCODE(SHA256('ah'), 'hex'));
+
 
 INSERT INTO "tasks" ("userid", "content") VALUES
 ( (SELECT "id" FROM "users" WHERE "email" = 'f'), 'hike mount thamaire. first task'),

@@ -9,8 +9,10 @@
   <script type="module" src="/wc/timer-wc/timer-wc.js"></script>
   <script type="module" src="/wc/timer-wc/pomodoro-timer.js"></script>
   <script type="module" src="/wc/task-wc/task-wc.js"></script>
-  <!-- <script type="module" src="/wc/login-wc/login-wc.js"></script> -->
-  <!-- <script type="module" src="/wc/setting-wc/setting-wc.js"></script> -->
+  <script type="module" src="/wc/profil-wc/profil-wc.js"></script>
+  <script type="module" src="/wc/auth-login/auth-login.js"></script>
+  <script type="module" src="/wc/auth-subs/auth-subs.js"></script>
+  <script type="module" src="/wc/setting-wc/setting-wc.js"></script>
 
   <script defer src="/script/app.js"></script>
 </head>
@@ -21,13 +23,14 @@
   </header>
   <nav class="flex-nav">
     <span class="title">Time is precious</span>
-    <!-- boutton qui appel ou met le modal login-wc pas de hash ou autre shit keep it simple stupid -->
      <!-- future place pour setting and report if time allow -->
-      <button>register</button>
-      <button>login</button>
-      <button>settings</button>
-      <button>profil</button>
+      <button id="goToSubscribeButton">Subscribe</button>
+      <button id="goToLoginButton">Login</button>
+      <button id="goToSettingsButton">Settings</button>
+      <button id="goToProfilButton">Profil</button>
+      <button id="loggoutButton" class="">Logout</button>
   </nav>
+
   <div class="sep"></div>
 
   <main>
