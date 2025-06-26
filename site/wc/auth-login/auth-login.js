@@ -1,4 +1,5 @@
 import { login } from "../../script/auth.js";
+import { hashPassword } from "../../script/auth.js";
 
 class authLogin extends HTMLElement {
   constructor() {
@@ -35,29 +36,35 @@ class authLogin extends HTMLElement {
       e.preventDefault();
 
       const user = parseFormToObject(form);
+
       console.log('in auth-login WC user: ', user);
+       if (!user.email || !user.password) {
+            alert("Please fill in all fields.");
+            return;
+          } else {
+            user["passhash"] =  await hashPassword(user.password)
+            delete user.password;
+            const success = await login(user);
+            if (!success) {
+              console.error("login failed", success);
+              // alert("login a échouée. Vérifiez vos informations.");
+            } else {
+              this.dispatchEvent(new CustomEvent('user-logged-in', {
+                bubbles: true,
+                composed: true,
+                detail: { status: "success" }
+              }));
+              alert("login réussie. Vous etes maintenant connecter.");
+            }
+          }
+        });
 
-      const success = await login(user);
-
-      if (!success) {
-        alert("Connexion échouée. Vérifiez vos informations.");
-        return;
-      }
-
-      const event = new CustomEvent('user-logged-in', {
-        bubbles: true,
-        composed: true,
-        detail: { user }
-      });
-      this.dispatchEvent(event);
-    });
-
-        const cancelButton = this.shadowRoot.getElementById('cancelButton');
+    const cancelButton = this.shadowRoot.getElementById('cancelButton');
     cancelButton.addEventListener('click', (e) => {
       this.dispatchEvent(new CustomEvent('cancel-event', {
         bubbles: true,
         composed: true,
-        detail: { from: "login" }
+        detail: { from: "login", to: "home" }
       }));
     });
   }

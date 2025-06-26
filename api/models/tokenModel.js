@@ -14,29 +14,30 @@ export async function isTokenValid(token) {
   return queryResult.rows[0].tokenUuid;
 }
 
-export async function assignToken(userId) {
-  // todo separate in 2
-  const checkSql = `
-                    SELECT * 
-                      FROM "tokens"
-                      WHERE "userid" = $1
-                      AND "expires" > NOW()`;
-  const checkResult = await pool.query(checkSql, [userId]);
-  // commented for debug purpose
-  // if (checkResult.rowCount > 0) {
-  //   throw new Error(`User already logged in`);
-  // }
-  const debugSql = `UPDATE "tokens" 
+
+export async function isTokenExist(userid) {
+  const sql = `SELECT * 
+                FROM "tokens"
+                WHERE "userid" = $1
+                AND "expires" > NOW();`;
+  const queryResult = await pool.query(sql, [userid]);
+  console.log('isTokenExist queryResult: ', queryResult.rows[0]);
+  if (queryResult.rowCount > 0) {
+    return {status: true, token: queryResult.rows[0].token, expires: queryResult.rows[0].expires};
+  }
+  return {status: false};
+}
+export async function assignToken(userid) {
+  console.log('--- in assignToken model ---');
+  console.log('userid: ', userid);
+  const sql = `UPDATE "tokens" 
                         SET "token" = gen_random_uuid(),
                             "expires" = NOW() + INTERVAL '30 days'
                         WHERE "userid" = $1
-                        returning *;`;
-
-  //commmented for debug purpose
-  // const sql = `INSERT into "tokens" ("userid") 
-  //               values ($1)
-  //               returning *;`;
-  const queryResult = await pool.query(debugSql, [userId]);
+                        returning *;
+                      `;
+  const queryResult = await pool.query(sql, [userid]);
+  console.log('assigntoken queryResult: ', queryResult);
   return queryResult.rows[0].token;  
 }
 

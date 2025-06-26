@@ -1,6 +1,12 @@
 //! my brain: we use it in almost all the function so why not make it scope to the file instead.
 const wcDiv = document.getElementById("wcWrapper");
 
+const loginBtn = document.getElementById("goToLoginButton");
+const subscribeBtn = document.getElementById("goToSubscribeButton");
+const settingsBtn = document.getElementById("goToSettingsButton");
+const profilBtn = document.getElementById("goToProfilButton");
+const logoutBtn = document.getElementById("loggoutButton");
+
 // --- helper fn ---
 // wcTag: string
 function displayNewWC(wcName) {
@@ -24,11 +30,23 @@ function displayMain() {
   wcDiv.appendChild(document.createElement("task-wc"));
   wcDiv.appendChild(document.createElement("pomodoro-timer"));
 
+  // check if user is logged in and display the right buttons
+  // todo improve check
   const user = JSON.parse(localStorage.getItem("user"));
   if (user) {
     const logoutBtn = document.getElementById("loggoutButton");
     logoutBtn.classList.remove("hidden");
-  }
+    loginBtn.classList.add("hidden");
+    subscribeBtn.classList.add("hidden");
+    settingsBtn.classList.remove("hidden");
+    profilBtn.classList.remove("hidden");
+  } else {
+    const logoutBtn = document.getElementById("loggoutButton");
+    logoutBtn.classList.add("hidden");
+    loginBtn.classList.remove("hidden");
+    subscribeBtn.classList.remove("hidden");
+    settingsBtn.classList.add("hidden");
+    profilBtn.classList.add("hidden");}
 }
 
 //wip but should be working, i use it to test way to generalize our event listenner
@@ -38,7 +56,6 @@ function displayAuthLogin(wcName = "auth-login", eName = "user-logged-in") {
 
   wc.addEventListener(eName, (e) => {
     const user = e.detail.user;
-    localStorage.setItem("user", JSON.stringify(user));
     // wcDiv.innerHTML = ""; display main clear the page no need to clear it
     displayMain();
   });
@@ -61,11 +78,7 @@ function displayProfil() {
 
 //!!! super wonderful
 function mainEventListeners() {
-  const loginBtn = document.getElementById("goToLoginButton");
-  const subscribeBtn = document.getElementById("goToSubscribeButton");
-  const settingsBtn = document.getElementById("goToSettingsButton");
-  const profilBtn = document.getElementById("goToProfilButton");
-  const logoutBtn = document.getElementById("loggoutButton");
+
 
   loginBtn.addEventListener("click", (e) => {
     displayAuthLogin();

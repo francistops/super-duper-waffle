@@ -6,10 +6,12 @@ import {
     getUserById,
     registerUser,
     loginUser,
-    logoutUser
+    logoutUser,
+    getAllTokens
 } from '../controllers/userController.js';
 
 router.get('/'/*, validateToken*/, getAllUsers);
+router.get('/token'/*, validateToken*/, getAllTokens);
 router.get('/:id', getUserById);
 
 router.post('/register', registerUser);

@@ -20,7 +20,8 @@ CREATE TABLE "users" (
 );
 
 CREATE TABLE "tokens" (
-    "token" uuid DEFAULT gen_random_uuid(),
+    "id" uuid DEFAULT gen_random_uuid(),
+    "token" uuid NULL,
     "expires" TIMESTAMP DEFAULT (Now() + INTERVAL '30 days'),
     "userid" uuid NOT NULL REFERENCES "users"("id"),
     PRIMARY KEY ("token")
@@ -49,13 +50,18 @@ CREATE UNIQUE INDEX uidx_users_email ON "users"("email");
 
 INSERT INTO "users" ("email", "passhash") VALUES
 ('f', 'f'),
-('u', ENCODE(SHA256('u'), 'hex')),
-('uh', ENCODE(SHA256('uh'), 'hex')),
-('a', ENCODE(SHA256('a'), 'hex')),
-('ah', ENCODE(SHA256('ah'), 'hex'));
+('u', 'u'),
+('uh', ENCODE(SHA256('monGrainDeCumminuh'), 'hex')),
+('a', 'a'),
+('ah', ENCODE(SHA256('monGrainDeCumminah'), 'hex'));
 
 
 INSERT INTO "tasks" ("userid", "content") VALUES
 ( (SELECT "id" FROM "users" WHERE "email" = 'f'), 'hike mount thamaire. first task'),
 ( (SELECT "id" FROM "users" WHERE "email" = 'u'), 'buy some melons. second task'),
 ( (SELECT "id" FROM "users" WHERE "email" = 'ah'), 'be a nice boi. third task');
+
+INSERT INTO "tokens" ("userid", "token") VALUES
+( (SELECT "id" FROM "users" WHERE "email" = 'f'), '56fc94e0-9ef7-4817-be01-93bed582ba67'),
+( (SELECT "id" FROM "users" WHERE "email" = 'u'), '56fc94e0-9ef7-4817-be01-93bed582ba68');
+

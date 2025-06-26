@@ -15,7 +15,7 @@ export async function getTasks() {
   }
 }
 
-async function hashPassword(password) {
+ export async function hashPassword(password) {
   let hashHex = "";
   try {
     const encoder = new TextEncoder();
@@ -73,19 +73,17 @@ export function isIdentified() {
 
 export async function register(user) {
   let result = false;
-  
-  console.log('in auth.js register', user)
-
-  const subscribeResponse = await apiCall("user/register", "POST", false, user);
-
-
+  // console.log('in auth.js register', user.email)
+  const data = await apiCall("user/register", "POST", false, user);
   //! todo: display code must be must be app.js
-  if (subscribeResponse.errorCode == 0) {
+  if (data.errorCode == 0) {
     result = true;
-    alert("registration success");
+    // alert("registration success");
+    console.log("registration success", data);
   } else {
-    alert("registration fail");
-    console.error("unhandle error in auth.js subscribeJson");
+    result = false;
+    // alert("registration fail");
+    console.error("unhandle error in auth.js subscribeJson", data);
   }
 
   return result;
@@ -97,13 +95,17 @@ export async function login(user) {
   let result = false;
 
   const data = await apiCall("user/login", "POST", false, user);
-
-  if (data.errorCode == 0) {
+  // console.log("data from apiCall in auth.js login", data);
+  if (data) {
     result = true;
     localStorage.setItem("user", JSON.stringify(data.token));
     document.dispatchEvent(new CustomEvent("auth-loggedin", {
+      bubbles: true,
+      composed: true,
       detail: `User logged in successfully got token: ${data.token}`,
     }));
+  } else {
+    console.error("unhandle error in auth.js login", data);
   }
 
   return result;
