@@ -21,10 +21,10 @@ CREATE TABLE "users" (
 
 CREATE TABLE "tokens" (
     "id" uuid DEFAULT gen_random_uuid(),
-    "token" uuid NULL,
+    "token" uuid DEFAULT NULL,
     "expires" TIMESTAMP DEFAULT (Now() + INTERVAL '30 days'),
     "userid" uuid NOT NULL REFERENCES "users"("id"),
-    PRIMARY KEY ("token")
+    PRIMARY KEY ("id")
 );
 CREATE TABLE "tasks" (
     "id" uuid DEFAULT gen_random_uuid(),
@@ -37,14 +37,14 @@ CREATE TABLE "tasks" (
     PRIMARY KEY ("id")
 );
 
-CREATE TABLE "projects" (
-    "id" uuid DEFAULT gen_random_uuid(),
-    "name" VARCHAR(255) NOT NULL,
-    "taskid" uuid NOT NULL REFERENCES "tasks"("id"),
-    "status" VARCHAR(20) DEFAULT 'pending', -- possible: pending, accepted, refused
-    PRIMARY KEY ("id")
+-- CREATE TABLE "projects" (
+--     "id" uuid DEFAULT gen_random_uuid(),
+--     "name" VARCHAR(255) NOT NULL,
+--     "taskid" uuid NOT NULL REFERENCES "tasks"("id"),
+--     "status" VARCHAR(20) DEFAULT 'pending',
+--     PRIMARY KEY ("id")
     -- errpr with db CONSTRAINT unique_assignment UNIQUE ("task_id")
-);
+-- );
 
 CREATE UNIQUE INDEX uidx_users_email ON "users"("email");
 
@@ -61,7 +61,7 @@ INSERT INTO "tasks" ("userid", "content") VALUES
 ( (SELECT "id" FROM "users" WHERE "email" = 'u'), 'buy some melons. second task'),
 ( (SELECT "id" FROM "users" WHERE "email" = 'ah'), 'be a nice boi. third task');
 
-INSERT INTO "tokens" ("userid", "token") VALUES
-( (SELECT "id" FROM "users" WHERE "email" = 'f'), '56fc94e0-9ef7-4817-be01-93bed582ba67'),
-( (SELECT "id" FROM "users" WHERE "email" = 'u'), '56fc94e0-9ef7-4817-be01-93bed582ba68');
+-- INSERT INTO "tokens" ("userid", "token") VALUES
+-- ( (SELECT "id" FROM "users" WHERE "email" = 'f'), '56fc94e0-9ef7-4817-be01-93bed582ba67'),
+-- ( (SELECT "id" FROM "users" WHERE "email" = 'u'), '56fc94e0-9ef7-4817-be01-93bed582ba68');
 

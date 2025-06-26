@@ -95,7 +95,7 @@ export async function login(user) {
   let result = false;
 
   const data = await apiCall("user/login", "POST", false, user);
-  // console.log("data from apiCall in auth.js login", data);
+  console.log("data from apiCall in auth.js login", data);
   if (data) {
     result = true;
     localStorage.setItem("user", JSON.stringify(data.token));
