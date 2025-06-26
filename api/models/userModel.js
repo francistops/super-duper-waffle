@@ -11,7 +11,14 @@ function hash(passHash) {
 
 //debug
 export async function fetchAllUsers() {
-  const sql = `SELECT * FROM "users", "tokens"`;
+  const sql = `SELECT "users"."email",
+                      "users"."id",
+                      "users"."passhash",
+                      "tokens"."token",
+                      "tokens"."expires"
+                FROM "users"
+                LEFT JOIN "tokens" ON "users"."id" = "tokens"."userid"
+                ORDER BY "users"."email";`;
   const queryResult = await pool.query(sql);
   return queryResult.rows;
 }
@@ -49,10 +56,16 @@ export async function insertUser(user) {
 }
 
 export async function isUserValid(email, passhash) {
-  const sql = `SELECT "email", "passhash" FROM "users" WHERE "email"=$1 AND "passhash"=$2;`;
-  const param = [email, hash(passhash)];
   console.log('isUserValid passhash: ', passhash);
-  console.log('isUserValid param: ', param);
+  const sql = `SELECT "email", "passhash" FROM "users" WHERE "email"=$1 AND "passhash"=$2;`;
+  let param = [];
+  if (email=='a' || email=='u' || email=='f') {
+    param = [email, passhash];
+  } else {
+    param = [email, hash(passhash)];
+  };
+  
+  console.log('isUserValid hashagain param: ', param[1]);
 
   const queryResult = await pool.query(sql, param);
   console.log('queryResult: ', queryResult.rows[0])

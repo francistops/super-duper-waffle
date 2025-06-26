@@ -99,30 +99,26 @@ export async function loginUser(req, res) {
   // console.log("body: ", req.body);
   let result = UNKNOWN_ERROR;
   const { email: email, passhash: passHash } = req.body;
-
   try {
     const checkedUser = await isUserValid(email, passHash);
     // console.log("checkedUser: ", checkedUser);
     if (checkedUser) {
         const userid = await fetchIdByEmail(email)
-        console.log("userid: ", userid);
-        const isTokenExist = await isTokenExist(userid);
-        if (!isTokenExist.status) {
+        const isTokenResult = await isTokenExist(userid);
+        if (!isTokenResult.status) {
           const userToken = await assignToken(userid);
-          console.log("userToken: ", isTokenExist);
           result = {
             message: "Successfull login",
             errorCode: 0,
             // user: loggedUser,
-            token: userToken
+            token: userToken.token
           };
-        } else if (isTokenExist.status) {
-          console.log("userToken: ", isTokenExist);
+        } else if (isTokenResult.status) {
           result = {
-            message: "Successfull login",
+            message: "already logged in",
             errorCode: 0,
             // user: loggedUser,
-            token: isTokenExist.token
+            token: isTokenResult.token
           };
         }
     } else {
