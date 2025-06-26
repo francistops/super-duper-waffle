@@ -56,19 +56,12 @@ export async function insertUser(user) {
 }
 
 export async function isUserValid(email, passhash) {
-  console.log('isUserValid passhash: ', passhash);
+  console.log('isUserValid email: ', email);
   const sql = `SELECT "email", "passhash" FROM "users" WHERE "email"=$1 AND "passhash"=$2;`;
-  let param = [];
-  if (email=='a' || email=='u' || email=='f') {
-    param = [email, passhash];
-  } else {
-    param = [email, hash(passhash)];
-  };
-  
-  console.log('isUserValid hashagain param: ', param[1]);
-
+  const param = [email, hash(passhash)];
+  // console.log('isUserValid hashagain param: ', param[1]);
   const queryResult = await pool.query(sql, param);
-  console.log('queryResult: ', queryResult.rows[0])
+  console.log('queryResult: ', queryResult.rows)
   if (queryResult.rowCount != 1) {
     throw new Error(`401: failed to authorize`);
   }

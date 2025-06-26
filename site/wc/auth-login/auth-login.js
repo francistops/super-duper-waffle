@@ -49,12 +49,13 @@ class authLogin extends HTMLElement {
               console.error("login failed", success);
               // alert("login a échouée. Vérifiez vos informations.");
             } else {
+              console.log("login success", success);
               this.dispatchEvent(new CustomEvent('user-logged-in', {
                 bubbles: true,
                 composed: true,
                 detail: { status: "success" }
               }));
-              alert("login réussie. Vous etes maintenant connecter.");
+              // alert("login réussie. Vous etes maintenant connecter.");
             }
           }
         });
