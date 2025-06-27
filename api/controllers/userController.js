@@ -74,7 +74,7 @@ export async function getUserById(req, res) {
 }
 
 export async function registerUser(req, res) {
-  console.log("---in userController subscribeUser---");
+  console.log("---in userController registerUser---");
   let result = UNKNOWN_ERROR;
   const newUser = req.body;
   // console.log(newUser);

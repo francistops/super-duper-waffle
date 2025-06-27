@@ -1,7 +1,7 @@
 import { login } from "../../script/auth.js";
 import { hashPassword } from "../../script/auth.js";
 
-class authLogin extends HTMLElement {
+class loginForm extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
@@ -9,8 +9,8 @@ class authLogin extends HTMLElement {
 
   async loadContent() {
     const [html, css] = await Promise.all([
-      fetch('/wc/auth-login/auth-login.html').then(res => res.text()),
-      fetch('/wc/auth-login/auth-login.css').then(res => res.text())
+      fetch('/wc/login-form/login-form.html').then(res => res.text()),
+      fetch('/wc/login-form/login-form.css').then(res => res.text())
     ]);
 
     const style = document.createElement('style');
@@ -37,7 +37,7 @@ class authLogin extends HTMLElement {
 
       const user = parseFormToObject(form);
 
-      console.log('in auth-login WC user: ', user);
+      console.log('in login-form WC user: ', user);
        if (!user.email || !user.password) {
             alert("Please fill in all fields.");
             return;
@@ -70,5 +70,5 @@ class authLogin extends HTMLElement {
     });
   }
 }
-  
-customElements.define('auth-login', authLogin);
+
+customElements.define('login-form', loginForm);

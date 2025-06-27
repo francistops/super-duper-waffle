@@ -55,7 +55,6 @@ INSERT INTO "users" ("email", "passhash") VALUES
 ('a', 'a'),
 ('ah', ENCODE(SHA256('monGrainDeCumminah'), 'hex'));
 
-
 INSERT INTO "tasks" ("userid", "content") VALUES
 ( (SELECT "id" FROM "users" WHERE "email" = 'f'), 'hike mount thamaire. first task'),
 ( (SELECT "id" FROM "users" WHERE "email" = 'u'), 'buy some melons. second task'),
