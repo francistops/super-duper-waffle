@@ -1,6 +1,6 @@
 import { hashPassword, register } from "../../script/auth.js";
 
-class authSubs extends HTMLElement {
+class registerForm extends HTMLElement {
 	constructor() {
 		super();
 		this.attachShadow({ mode: "open" });
@@ -8,8 +8,8 @@ class authSubs extends HTMLElement {
 
 	async loadContent() {
 		const [html, css] = await Promise.all([
-			fetch("/wc/auth-subs/auth-subs.html").then((res) => res.text()),
-			fetch("/wc/auth-subs/auth-subs.css").then((res) => res.text()),
+			fetch("/wc/register-form/register-form.html").then((res) => res.text()),
+			fetch("/wc/register-form/register-form.css").then((res) => res.text()),
 		]);
 
 		const style = document.createElement("style");
@@ -48,7 +48,7 @@ class authSubs extends HTMLElement {
 				user["passhash"] = await hashPassword(user.password);
 				delete user.password;
 				delete user.confirmPassword;
-				// console.log('in auth-subs WC user: ', user)
+				// console.log('in register-form WC user: ', user)
 				const result = await register(user);
 				if (!result) {
 					alert("Inscription échouée. Vérifiez vos informations.");
@@ -78,4 +78,4 @@ class authSubs extends HTMLElement {
 	}
 }
 
-customElements.define("auth-subs", authSubs);
+customElements.define("register-form", registerForm);

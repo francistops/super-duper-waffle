@@ -25,6 +25,7 @@ export async function getTasks() {
     hashHex = hashArray
       .map((byte) => byte.toString(16).padStart(2, "0"))
       .join("");
+    console.log("hashHex", hashHex);
   } catch (error) {
     console.log(`error: ${error}`);
   }
@@ -40,7 +41,6 @@ async function apiCall(resource, method, auth, body = {}) {
     "Content-type": "application/json",
     Accept: "application/json",
   };
-
   const apiReq = {
     method: method,
     headers: headers,
@@ -50,24 +50,27 @@ async function apiCall(resource, method, auth, body = {}) {
 
   if (auth) {
     if (isIdentified()) {
+      console.log("getConnectedUser", getConnectedUser());
       headers["Authorization"] = `Bearer ${getConnectedUser().tokenUuid}`;
     } else throw new Error("Empty token while required...");
   }
 
-  const Response = await fetch(apiUrl, apiReq);
+  const response = await fetch(apiUrl, apiReq);
 
-  if (Response.ok) {
-    result = await Response.json();
+  if (response.ok) {
+    result = await response.json();
   }
 
   return result;
 }
 
 export function getConnectedUser() {
+  console.log("in auth.js getConnectedUser");
   return JSON.parse(localStorage.getItem("user"));
 }
 
 export function isIdentified() {
+  console.log("in auth.js isIdentified");
   return getConnectedUser() !== null;
 }
 
@@ -83,7 +86,7 @@ export async function register(user) {
   } else {
     result = false;
     // alert("registration fail");
-    console.error("unhandle error in auth.js subscribeJson", data);
+    console.error("unhandle error in auth.js registerJson", data);
   }
 
   return result;

@@ -2,7 +2,7 @@
 const wcDiv = document.getElementById("wcWrapper");
 
 const loginBtn = document.getElementById("goToLoginButton");
-const subscribeBtn = document.getElementById("goToSubscribeButton");
+const registerBtn = document.getElementById("goToRegisterButton");
 const settingsBtn = document.getElementById("goToSettingsButton");
 const profilBtn = document.getElementById("goToProfilButton");
 const logoutBtn = document.getElementById("loggoutButton");
@@ -37,20 +37,21 @@ function displayMain() {
     const logoutBtn = document.getElementById("loggoutButton");
     logoutBtn.classList.remove("hidden");
     loginBtn.classList.add("hidden");
-    subscribeBtn.classList.add("hidden");
+    registerBtn.classList.add("hidden");
     settingsBtn.classList.remove("hidden");
     profilBtn.classList.remove("hidden");
   } else {
     const logoutBtn = document.getElementById("loggoutButton");
     logoutBtn.classList.add("hidden");
     loginBtn.classList.remove("hidden");
-    subscribeBtn.classList.remove("hidden");
+    registerBtn.classList.remove("hidden");
     settingsBtn.classList.add("hidden");
-    profilBtn.classList.add("hidden");}
+    profilBtn.classList.add("hidden");
+  }
 }
 
 //wip but should be working, i use it to test way to generalize our event listenner
-function displayAuthLogin(wcName = "auth-login", eName = "user-logged-in") {
+function displayLoginForm(wcName = "login-form", eName = "user-logged-in") {
   const wc = displayNewWC(wcName);
   cancel_button(wc);
 
@@ -59,11 +60,11 @@ function displayAuthLogin(wcName = "auth-login", eName = "user-logged-in") {
     // wcDiv.innerHTML = ""; display main clear the page no need to clear it
     displayMain();
   });
-  // wcDiv.appendChild(authLogin); appended by displayNewWC not sure if that is too early => reply to me: it is not. tested working.
+  // wcDiv.appendChild(loginForm); appended by displayNewWC not sure if that is too early => reply to me: it is not. tested working.
 }
 
 function displayAccountRegistration() {
-  cancel_button(displayNewWC('auth-subs'))
+  cancel_button(displayNewWC('register-form'))
 }
 
 function displaySettings() {
@@ -81,13 +82,13 @@ function mainEventListeners() {
 
 
   loginBtn.addEventListener("click", (e) => {
-    displayAuthLogin();
+    displayLoginForm();
     console.log("Login button clicked");
   });
 
-  subscribeBtn.addEventListener("click", (e) => {
+  registerBtn.addEventListener("click", (e) => {
     displayAccountRegistration();
-    console.log("Subscribe button clicked");
+    console.log("Register button clicked");
   });
 
   settingsBtn.addEventListener("click", (e) => {
