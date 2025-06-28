@@ -3,7 +3,6 @@ const wcDiv = document.getElementById("wcWrapper");
 
 const loginBtn = document.getElementById("goToLoginButton");
 const registerBtn = document.getElementById("goToRegisterButton");
-const settingsBtn = document.getElementById("goToSettingsButton");
 const profilBtn = document.getElementById("goToProfilButton");
 const logoutBtn = document.getElementById("loggoutButton");
 
@@ -38,14 +37,12 @@ function displayMain() {
     logoutBtn.classList.remove("hidden");
     loginBtn.classList.add("hidden");
     registerBtn.classList.add("hidden");
-    settingsBtn.classList.remove("hidden");
     profilBtn.classList.remove("hidden");
   } else {
     const logoutBtn = document.getElementById("loggoutButton");
     logoutBtn.classList.add("hidden");
     loginBtn.classList.remove("hidden");
     registerBtn.classList.remove("hidden");
-    settingsBtn.classList.add("hidden");
     profilBtn.classList.add("hidden");
   }
 }
@@ -72,10 +69,19 @@ function displaySettings() {
 }
 
 function displayProfil() {
-  displayNewWC('profil-wc');
+  const wc = displayNewWC('profil-wc');
+
+  wc.addEventListener("go-to-settings", () => {
+    displaySettings();
+    console.log("Go to settings from profil");
+  });
+
+  wc.addEventListener("delete-account", () => {
+    deleteAccount(); // À faire
+    console.log("Account deleted");
+    displayMain();
+  });
 }
-
-
 
 //!!! super wonderful :D
 function mainEventListeners() {
@@ -89,11 +95,6 @@ function mainEventListeners() {
   registerBtn.addEventListener("click", (e) => {
     displayAccountRegistration();
     console.log("Register button clicked");
-  });
-
-  settingsBtn.addEventListener("click", (e) => {
-    displaySettings();
-    console.log("Settings button clicked");
   });
 
   profilBtn.addEventListener("click", (e) => {
