@@ -1,14 +1,23 @@
 <div id="registerBox">
   <form id="registerForm" method="post">
     <fieldset>
-      <legend>register an account</legend>
+      <legend>Créer mon compte</legend>
+
+      <div>
+        <label for="search">Je suis:</label>
+        <select id="search" name="search">
+            <option value="all">-</option>
+            <option value="hairdresser">Coiffeuse</option>
+            <option value="client">Client</option>
+        </select>
+      </div>
 
       <input type="email" name="email" id="inpEmail" placeholder="Email">
       <input type="password" name="password" id="inpPassword" placeholder="Password">
       <input type="password" name="confirmPassword" id="inpConfirmPassword" placeholder="Confirm Password">
 
-      <button type="submit" value="Register" id="registerButton">register</button>
-      <button type="button" value="Cancel" id="cancelButton">Cancel</button>
+      <button type="submit" value="Register" id="registerButton">Créer mon compte</button>
+      <button type="button" value="Cancel" id="cancelButton">Annuler</button>
     </fieldset>
   </form>
 </div>
