@@ -14,6 +14,7 @@ export async function fetchAllUsers() {
   const sql = `SELECT "users"."email",
                       "users"."id",
                       "users"."passhash",
+                      "users"."role",
                       "tokens"."token",
                       "tokens"."expires"
                 FROM "users"
@@ -43,12 +44,13 @@ export async function fetchUserById(id) {
 }
 
 export async function insertUser(user) {
-  const insertSql = `INSERT INTO users ("email", "passhash") 
-                      VALUES ($1, $2)
+  const insertSql = `INSERT INTO users ("email", "passhash", "role") 
+                      VALUES ($1, $2, $3)
                       returning *;`;
   const param = [
     user.email,
     hash(user.passhash),
+    user.role
   ];
   const queryResult = await pool.query(insertSql, param);
   console.log(queryResult.rows[0]);
