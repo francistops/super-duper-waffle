@@ -40,6 +40,26 @@ class profilWC extends HTMLElement {
         }));
         console.log("Delete account button clicked");
       });
+      
+			const select = this.shadowRoot.getElementById("search");
+
+      try {
+        console.log("Loading hairdressers...");
+        const res = await fetch("https://api.ft.ca/user");
+        const data = await res.json();
+        console.log("Hairdressers loaded:", data.users);
+
+        const hairdressers = data.users.filter(u => u.role === "hairdresser");
+
+        for (const user of hairdressers) {
+        const option = document.createElement("option");
+        option.value = user.email;
+        option.textContent = user.email; // ou `${user.firstName} ${user.lastName}` si dispo
+        select.appendChild(option);
+        }
+      } catch (err) {
+        console.error("Erreur lors du chargement des coiffeuses :", err);
+      }
     }
   }
 

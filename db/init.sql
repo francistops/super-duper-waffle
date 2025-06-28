@@ -16,6 +16,7 @@ CREATE TABLE "users" (
     "id" uuid DEFAULT gen_random_uuid(),
     "email" VARCHAR(255) NOT NULL,
     "passhash" CHAR(64) NOT NULL,
+    "role" VARCHAR(20) DEFAULT 'client',
     PRIMARY KEY ("id")
 );
 
@@ -26,6 +27,7 @@ CREATE TABLE "tokens" (
     "userid" uuid NOT NULL REFERENCES "users"("id"),
     PRIMARY KEY ("id")
 );
+
 CREATE TABLE "tasks" (
     "id" uuid DEFAULT gen_random_uuid(),
     "content" TEXT NOT NULL,
@@ -48,12 +50,12 @@ CREATE TABLE "tasks" (
 
 CREATE UNIQUE INDEX uidx_users_email ON "users"("email");
 
-INSERT INTO "users" ("email", "passhash") VALUES
-('f', 'f'),
-('u', 'u'),
-('uh', ENCODE(SHA256('monGrainDeCumminuh'), 'hex')),
-('a', 'a'),
-('ah', ENCODE(SHA256('monGrainDeCumminah'), 'hex'));
+INSERT INTO "users" ("email", "passhash", "role") VALUES
+('f', 'f', 'client'),
+('u', 'u', 'client'),
+('uh', ENCODE(SHA256('monGrainDeCumminuh'), 'hex'), 'hairdresser'),
+('a', 'a', 'client'),
+('ah', ENCODE(SHA256('monGrainDeCumminah'), 'hex'), 'hairdresser');
 
 INSERT INTO "tasks" ("userid", "content") VALUES
 ( (SELECT "id" FROM "users" WHERE "email" = 'f'), 'hike mount thamaire. first task'),
