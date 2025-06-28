@@ -1,20 +1,22 @@
-/**
- * Changez ce code pour répondre à votre besoins
- */
+import { globalStyles } from '../global/style.js';
+
 class TemplateWebComponent extends HTMLElement {
     constructor() {
       super();
-      this.attachShadow({ mode: 'open' });
+      const shadow = this.attachShadow({ mode: 'open' });
 
-      /**
-       * Initialiser vos propriétés nécesaire
-       */
+      // Create and append global styles, but you can ovewrite it by creating a css file in the current folder and liking it
+      const globalStyle = document.createElement('style');
+      globalStyle.textContent = globalStyles;
+      shadow.appendChild(globalStyle);
+
+      //put some properties that you use thru the wc logic  ex:
+      //this.breakDuration = 5 * 60;
+      //
+      //this.render();
     }
 
     async loadContent() {
-        /**
-         * Renommez vos fichiers selon votre composant à vous
-         */
       const [html, css] = await Promise.all([
         fetch('/wc/template/template.html').then(res => res.text()),
         fetch('/wc/template/template.css').then(res => res.text())
@@ -32,20 +34,12 @@ class TemplateWebComponent extends HTMLElement {
   
     async connectedCallback() {
       await this.loadContent();
-  
-      /**
-       * Ajoutez votre logique nécessaire
-       */
-    }
 
-    /**
-     * Vous aurez peut-être besoins d'ajouter des élément supplémentaires ici
-     */
-  
+    }
+    
+    disconnectedCallback() {}
+
   }
   
-  /**
-   * Changez le nom de manière adéquate
-   */
   customElements.define('template', TemplateWebComponent);
   
