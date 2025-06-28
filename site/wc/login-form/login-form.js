@@ -1,10 +1,16 @@
+import { globalStyles } from '../global/style.js';
 import { login } from "../../script/auth.js";
 import { hashPassword } from "../../script/auth.js";
+
 
 class loginForm extends HTMLElement {
   constructor() {
     super();
-    this.attachShadow({ mode: 'open' });
+    const shadow = this.attachShadow({ mode: 'open' });
+
+      const globalStyle = document.createElement('style');
+      globalStyle.textContent = globalStyles;
+      shadow.appendChild(globalStyle);
   }
 
   async loadContent() {

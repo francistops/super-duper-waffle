@@ -1,50 +1,53 @@
-// import { login } from "../../script/auth.js";
+import { globalStyles } from "../global/style.js";
 
 class settingWC extends HTMLElement {
-    constructor() {
-      super();
-      this.attachShadow({ mode: 'open' });
-    }
+	constructor() {
+		super();
+		const shadow = this.attachShadow({ mode: "open" });
 
-    async loadContent() {
-      const [html, css] = await Promise.all([
-        fetch('/wc/setting-wc/setting-wc.html').then(res => res.text()),
-        fetch('/wc/setting-wc/setting-wc.css').then(res => res.text())
-      ]);
-  
-      const style = document.createElement('style');
-      style.textContent = css;
-  
-      const template = document.createElement('template');
-      template.innerHTML = html;
-  
-      this.shadowRoot.appendChild(style);
-      this.shadowRoot.appendChild(template.content.cloneNode(true));
-    }
-  
-    async connectedCallback() {
-      await this.loadContent();
+		// Create and append global styles, but you can ovewrite it by creating a css file in the current folder and liking it
+		const globalStyle = document.createElement("style");
+		globalStyle.textContent = globalStyles;
+		shadow.appendChild(globalStyle);
+	}
 
-      
+	async loadContent() {
+		const [html, css] = await Promise.all([
+			fetch("/wc/setting-wc/setting-wc.html").then((res) => res.text()),
+			fetch("/wc/setting-wc/setting-wc.css").then((res) => res.text()),
+		]);
 
-      ["cancelButton", "cancelButton2"].forEach((id) => {
-        const btn = this.shadowRoot.getElementById(id);
-        btn.addEventListener("click", () => {
-          this.dispatchEvent(new CustomEvent("cancel-event", {
-            bubbles: true,
-            composed: true,
-            detail: { from: "settings" }
-          }));
-        });
-      });
+		const style = document.createElement("style");
+		style.textContent = css;
 
-    }
+		const template = document.createElement("template");
+		template.innerHTML = html;
 
-    cancel_button(id) {
-      this.shadowRoot.getElementById(id).addEventListener('click', (e) => {
-        this.dispatchEvent(new CustomEvent('cancel-event'))
-      })
+		this.shadowRoot.appendChild(style);
+		this.shadowRoot.appendChild(template.content.cloneNode(true));
+	}
 
-    }
-  }
-  customElements.define('setting-wc', settingWC);
+	async connectedCallback() {
+		await this.loadContent();
+
+		["cancelButton", "cancelButton2"].forEach((id) => {
+			const btn = this.shadowRoot.getElementById(id);
+			btn.addEventListener("click", () => {
+				this.dispatchEvent(
+					new CustomEvent("cancel-event", {
+						bubbles: true,
+						composed: true,
+						detail: { from: "settings" },
+					})
+				);
+			});
+		});
+	}
+
+	cancel_button(id) {
+		this.shadowRoot.getElementById(id).addEventListener("click", (e) => {
+			this.dispatchEvent(new CustomEvent("cancel-event"));
+		});
+	}
+}
+customElements.define("setting-wc", settingWC);

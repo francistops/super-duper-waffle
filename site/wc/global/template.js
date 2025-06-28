@@ -1,45 +1,37 @@
-import { globalStyles } from '../global/style.js';
+import { globalStyles } from "../global/style.js";
 
 class TemplateWebComponent extends HTMLElement {
-    constructor() {
-      super();
-      const shadow = this.attachShadow({ mode: 'open' });
+	constructor() {
+		super();
+		const shadow = this.attachShadow({ mode: "open" });
 
-      // Create and append global styles, but you can ovewrite it by creating a css file in the current folder and liking it
-      const globalStyle = document.createElement('style');
-      globalStyle.textContent = globalStyles;
-      shadow.appendChild(globalStyle);
+		// Create and append global styles, but you can ovewrite it by creating a css file in the current folder and liking it
+		const globalStyle = document.createElement("style");
+		globalStyle.textContent = globalStyles;
+		shadow.appendChild(globalStyle);
+	}
 
-      //put some properties that you use thru the wc logic  ex:
-      //this.breakDuration = 5 * 60;
-      //
-      //this.render();
-    }
+	async loadContent() {
+		const [html, css] = await Promise.all([
+			fetch("/wc/template/template.html").then((res) => res.text()),
+			fetch("/wc/template/template.css").then((res) => res.text()),
+		]);
 
-    async loadContent() {
-      const [html, css] = await Promise.all([
-        fetch('/wc/template/template.html').then(res => res.text()),
-        fetch('/wc/template/template.css').then(res => res.text())
-      ]);
-  
-      const style = document.createElement('style');
-      style.textContent = css;
-  
-      const template = document.createElement('template');
-      template.innerHTML = html;
-  
-      this.shadowRoot.appendChild(style);
-      this.shadowRoot.appendChild(template.content.cloneNode(true));
-    }
-  
-    async connectedCallback() {
-      await this.loadContent();
+		const style = document.createElement("style");
+		style.textContent = css;
 
-    }
-    
-    disconnectedCallback() {}
+		const template = document.createElement("template");
+		template.innerHTML = html;
 
-  }
-  
-  customElements.define('template', TemplateWebComponent);
-  
+		this.shadowRoot.appendChild(style);
+		this.shadowRoot.appendChild(template.content.cloneNode(true));
+	}
+
+	async connectedCallback() {
+		await this.loadContent();
+	}
+
+	disconnectedCallback() {}
+}
+
+customElements.define("template", TemplateWebComponent);
