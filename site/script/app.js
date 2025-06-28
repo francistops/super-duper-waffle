@@ -60,8 +60,14 @@ function displayLoginForm(wcName = "login-form", eName = "user-logged-in") {
   // wcDiv.appendChild(loginForm); appended by displayNewWC not sure if that is too early => reply to me: it is not. tested working.
 }
 
-function displayAccountRegistration() {
-  cancel_button(displayNewWC('register-form'))
+function displayAccountRegistration(wcName = "register-form", eName = "registered") {
+    const wc = displayNewWC(wcName);
+    cancel_button(wc);
+
+    wc.addEventListener(eName, (e) => {
+      console.log("User registered successfully");
+      displayLoginForm();
+    });
 }
 
 function displaySettings() {
