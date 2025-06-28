@@ -1,7 +1,14 @@
+import { globalStyles } from '../global/style.js';
+
 class profilWC extends HTMLElement {
     constructor() {
       super();
-      this.attachShadow({ mode: 'open' });
+      const shadow = this.attachShadow({ mode: 'open' });
+      
+      // Create and append global styles, but you can ovewrite it by creating a css file in the current folder and liking it
+      const globalStyle = document.createElement('style');
+      globalStyle.textContent = globalStyles;
+      shadow.appendChild(globalStyle);
     }
 
     async loadContent() {

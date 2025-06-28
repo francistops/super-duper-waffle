@@ -8,9 +8,7 @@ export const globalStyles = `
 @import "https://unpkg.com/open-props/buttons.min.css";
 
 :host {
-    font-family: system-ui, sans-serif;
-    color: #333;
-    background-color: red;
+
 }
 
 *, *::before, *::after {
