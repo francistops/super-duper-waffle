@@ -1,10 +1,10 @@
-export function catchMsg(name, place, errorObj, errorToClient, res, errorHttp, result) {
+export function catchMsg(name, errorHttp = 500, errorObj = error, res = res, result = result) {
         // server error
         console.error(`Error at ${name}: ${errorObj.message}`);
 
         // client visible error
-        result.message = `${place} ${errorObj}`;
-        result.errorCode = errorToClient;
+        result.message = `Error at ${name} ${errorObj}`;
+        result.errorCode = errorHttp;
         res.status(errorHttp);
 }
 

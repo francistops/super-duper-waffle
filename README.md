@@ -123,8 +123,8 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 #### `AppointmentController`
 
 * **DEBUG** `GET /appointments` : Liste des rendez-vous.
-* 
-* **TOKEN** `POST /appointments/client` : Création de rendez-vous par un client.
+
+* **TOKEN** `POST /appointments/create` : Création de rendez-vous par un client.
 * **TOKEN** (**Coiffeur**) `GET /appointments/client/:id` : Liste des rendez-vous d’un client.
 * **PUBLIC** `GET /appointments/hairdresser/:id` : Liste des rendez-vous pour un coiffeur.
 * **TOKEN** (**Coiffeur**) `PUT /appointments/:id/status` : Mise à jour du statut d’un rendez-vous.
