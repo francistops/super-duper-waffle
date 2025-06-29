@@ -16,7 +16,7 @@ CREATE TABLE "users" (
     "id" uuid DEFAULT gen_random_uuid(),
     "email" VARCHAR(255) NOT NULL,
     "passhash" CHAR(64) NOT NULL,
-    "role" VARCHAR(20) DEFAULT 'client',
+    "role" VARCHAR(20) CHECK ("role" IN ('client', 'hairdresser')) NOT NULL,
     PRIMARY KEY ("id")
 );
 
@@ -28,25 +28,49 @@ CREATE TABLE "tokens" (
     PRIMARY KEY ("id")
 );
 
-CREATE TABLE "tasks" (
+CREATE TABLE "appointments" (
     "id" uuid DEFAULT gen_random_uuid(),
-    "content" TEXT NOT NULL,
-    "created" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    "deadline"TIMESTAMP DEFAULT (Now() + INTERVAL '1 days') NULL,
-    "isdone" CHAR(1) DEFAULT 0,
-    "assignee" uuid NULL,
-    "userid" uuid NOT NULL REFERENCES "users"("id"),
+    "client_id" uuid NOT NULL REFERENCES "users"("id"),
+    "hairdresser_id" uuid NOT NULL REFERENCES "users"("id"),
+    "service_id" uuid NOT NULL REFERENCES "services"("id"),
+    "date" TIMESTAMP NOT NULL,
+    "status" VARCHAR(20) DEFAULT 'pending',
     PRIMARY KEY ("id")
 );
 
--- CREATE TABLE "projects" (
+CREATE TABLE "feedback" (
+    "id" uuid DEFAULT gen_random_uuid(),
+    "hairdresser_id" uuid NOT NULL REFERENCES "users"("id"),
+    "client_id" uuid NOT NULL REFERENCES "users"("id"),
+    "rating" INTEGER CHECK ("rating" BETWEEN 1 AND 5) NOT NULL,
+    "comment" TEXT,
+    PRIMARY KEY ("id")
+);
+-- CREATE TABLE "tasks" (
 --     "id" uuid DEFAULT gen_random_uuid(),
---     "name" VARCHAR(255) NOT NULL,
---     "taskid" uuid NOT NULL REFERENCES "tasks"("id"),
---     "status" VARCHAR(20) DEFAULT 'pending',
+--     "content" TEXT NOT NULL,
+--     "created" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     "deadline"TIMESTAMP DEFAULT (Now() + INTERVAL '1 days') NULL,
+--     "isdone" CHAR(1) DEFAULT 0,
+--     "assignee" uuid NULL,
+--     "userid" uuid NOT NULL REFERENCES "users"("id"),
 --     PRIMARY KEY ("id")
-    -- errpr with db CONSTRAINT unique_assignment UNIQUE ("task_id")
 -- );
+
+CREATE TABLE "services" (
+    "id" uuid DEFAULT gen_random_uuid(),
+    "name" VARCHAR(255) NOT NULL,
+    "duration" INTEGER NOT NULL,
+    "price" DECIMAL(10, 2) NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "products" (
+    "id" uuid DEFAULT gen_random_uuid(),
+    "name" VARCHAR(255) NOT NULL,
+    "price" DECIMAL(10, 2) NOT NULL,
+    PRIMARY KEY ("id")
+);
 
 CREATE UNIQUE INDEX uidx_users_email ON "users"("email");
 
@@ -57,12 +81,29 @@ INSERT INTO "users" ("email", "passhash", "role") VALUES
 ('a', 'a', 'client'),
 ('ah', ENCODE(SHA256('monGrainDeCumminah'), 'hex'), 'hairdresser');
 
-INSERT INTO "tasks" ("userid", "content") VALUES
-( (SELECT "id" FROM "users" WHERE "email" = 'f'), 'hike mount thamaire. first task'),
-( (SELECT "id" FROM "users" WHERE "email" = 'u'), 'buy some melons. second task'),
-( (SELECT "id" FROM "users" WHERE "email" = 'ah'), 'be a nice boi. third task');
+-- INSERT INTO "tasks" ("userid", "content") VALUES
+-- ( (SELECT "id" FROM "users" WHERE "email" = 'f'), 'hike mount thamaire. first task'),
+-- ( (SELECT "id" FROM "users" WHERE "email" = 'u'), 'buy some melons. second task'),
+-- ( (SELECT "id" FROM "users" WHERE "email" = 'ah'), 'be a nice boi. third task');
 
 -- INSERT INTO "tokens" ("userid", "token") VALUES
 -- ( (SELECT "id" FROM "users" WHERE "email" = 'f'), '56fc94e0-9ef7-4817-be01-93bed582ba67'),
 -- ( (SELECT "id" FROM "users" WHERE "email" = 'u'), '56fc94e0-9ef7-4817-be01-93bed582ba68');
 
+INSERT INTO "services" ("name", "description", "price") VALUES
+('Coupe de cheveux', 'Coupe de cheveux classique', 20.00),
+('Coloration', 'Coloration complète', 50.00),
+('Brushing', 'Brushing rapide', 15.00);
+
+INSERT INTO "products" ("name", "description", "price") VALUES
+('Shampoing', 'Shampoing hydratant', 10.00),
+('Après-shampoing', 'Après-shampoing nourrissant', 12.00),
+('Masque capillaire', 'Masque capillaire réparateur', 25.00);
+
+INSERT INTO "appointments" ("client_id", "hairdresser_id", "service_id", "date", "status") VALUES
+((SELECT "id" FROM "users" WHERE "email" = 'f'), (SELECT "id" FROM "users" WHERE "email" = 'uh'), (SELECT "id" FROM "services" WHERE "name" = 'Coupe de cheveux'), '2023-10-01 10:00:00', 'pending'),
+((SELECT "id" FROM "users" WHERE "email" = 'u'), (SELECT "id" FROM "users" WHERE "email" = 'ah'), (SELECT "id" FROM "services" WHERE "name" = 'Coloration'), '2023-10-02 11:00:00', 'confirmed');
+
+INSERT INTO "feedback" ("hairdresser_id", "client_id", "rating", "comment") VALUES
+((SELECT "id" FROM "users" WHERE "email" = 'uh'), (SELECT "id" FROM "users" WHERE "email" = 'f'), 5, 'Excellent service, very satisfied!'),
+((SELECT "id" FROM "users" WHERE "email" = 'ah'), (SELECT "id" FROM "users" WHERE "email" = 'u'), 4, 'Good job, but could be faster.');

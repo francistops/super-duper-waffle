@@ -12,18 +12,9 @@ class settingWC extends HTMLElement {
 	}
 
 	async loadContent() {
-		const [html, css] = await Promise.all([
-			fetch("/wc/setting-wc/setting-wc.html").then((res) => res.text()),
-			fetch("/wc/setting-wc/setting-wc.css").then((res) => res.text()),
-		]);
-
-		const style = document.createElement("style");
-		style.textContent = css;
-
-		const template = document.createElement("template");
+		const html = await fetch('/wc/setting-wc/setting-wc.html').then(res => res.text())
+		const template = document.createElement('template');
 		template.innerHTML = html;
-
-		this.shadowRoot.appendChild(style);
 		this.shadowRoot.appendChild(template.content.cloneNode(true));
 	}
 

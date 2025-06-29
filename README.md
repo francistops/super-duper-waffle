@@ -51,7 +51,7 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 
 * `id` (SERIAL PRIMARY KEY)
 * `email` (VARCHAR UNIQUE)
-* `password_hash` (TEXT)
+* `passhash` (TEXT)
 * `role` (VARCHAR) — "client" ou "coiffeur"
 
 #### `tokens`
@@ -59,7 +59,7 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 * `id` (SERIAL PRIMARY KEY)
 * `token` (VARCHAR UNIQUE)
 * `expires` (TIMESTAMP)
-* `user_id` (INTEGER, FK → users.id)
+* `userid` (INTEGER, FK → users.id)
 
 #### `appointments`
 
@@ -123,6 +123,7 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 #### `AppointmentController`
 
 * **DEBUG** `GET /appointments` : Liste des rendez-vous.
+* 
 * **TOKEN** `POST /appointments/client` : Création de rendez-vous par un client.
 * **TOKEN** (**Coiffeur**) `GET /appointments/client/:id` : Liste des rendez-vous d’un client.
 * **PUBLIC** `GET /appointments/hairdresser/:id` : Liste des rendez-vous pour un coiffeur.
@@ -155,9 +156,13 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 
 * `login-form.js` : Formulaire de connexion.
 * `register-form.js` : Création de compte.
+* `profil-wc.js` : Selon coiffeur ou client connecté, donner un avis, ajouter un service, ajouter un produit, ajouter un rendez-vous.
 * `appointment-list.js` : Visualisation des rendez-vous (liste ou calendrier).
 * `service-list.js` : Affichage et gestion des services selon le rôle.
 * `product-list.js` : Affichage et gestion des produits selon le rôle.
+* `feedback-wc.js` : Affichage des avis.
+
+
 
 ## 8. Tests Unitaires (TBD)
 
