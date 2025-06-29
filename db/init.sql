@@ -10,7 +10,20 @@ CREATE DATABASE timewaitfornoonedb;
 -- ! find a way to salt with a var
 -- DECLARE "SALT" CONSTANT CHAR NOT NULL DEFAULT 'monGrainDeCummin';
 
--- ! find a way to store liked tasks in user profile
+CREATE TABLE "services" (
+    "id" uuid DEFAULT gen_random_uuid(),
+    "name" VARCHAR(255) NOT NULL,
+    "duration" INTEGER NOT NULL,
+    "price" DECIMAL(10, 2) NOT NULL,
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "products" (
+    "id" uuid DEFAULT gen_random_uuid(),
+    "name" VARCHAR(255) NOT NULL,
+    "price" DECIMAL(10, 2) NOT NULL,
+    PRIMARY KEY ("id")
+);
 
 CREATE TABLE "users" (
     "id" uuid DEFAULT gen_random_uuid(),
@@ -46,31 +59,6 @@ CREATE TABLE "feedback" (
     "comment" TEXT,
     PRIMARY KEY ("id")
 );
--- CREATE TABLE "tasks" (
---     "id" uuid DEFAULT gen_random_uuid(),
---     "content" TEXT NOT NULL,
---     "created" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
---     "deadline"TIMESTAMP DEFAULT (Now() + INTERVAL '1 days') NULL,
---     "isdone" CHAR(1) DEFAULT 0,
---     "assignee" uuid NULL,
---     "userid" uuid NOT NULL REFERENCES "users"("id"),
---     PRIMARY KEY ("id")
--- );
-
-CREATE TABLE "services" (
-    "id" uuid DEFAULT gen_random_uuid(),
-    "name" VARCHAR(255) NOT NULL,
-    "duration" INTEGER NOT NULL,
-    "price" DECIMAL(10, 2) NOT NULL,
-    PRIMARY KEY ("id")
-);
-
-CREATE TABLE "products" (
-    "id" uuid DEFAULT gen_random_uuid(),
-    "name" VARCHAR(255) NOT NULL,
-    "price" DECIMAL(10, 2) NOT NULL,
-    PRIMARY KEY ("id")
-);
 
 CREATE UNIQUE INDEX uidx_users_email ON "users"("email");
 
@@ -90,15 +78,15 @@ INSERT INTO "users" ("email", "passhash", "role") VALUES
 -- ( (SELECT "id" FROM "users" WHERE "email" = 'f'), '56fc94e0-9ef7-4817-be01-93bed582ba67'),
 -- ( (SELECT "id" FROM "users" WHERE "email" = 'u'), '56fc94e0-9ef7-4817-be01-93bed582ba68');
 
-INSERT INTO "services" ("name", "description", "price") VALUES
-('Coupe de cheveux', 'Coupe de cheveux classique', 20.00),
-('Coloration', 'Coloration complète', 50.00),
-('Brushing', 'Brushing rapide', 15.00);
+INSERT INTO "services" ("name", "duration", "price") VALUES
+('Coupe de cheveux', 10, 20.00),
+('Coloration', 30, 50.00),
+('Brushing', 50, 15.00);
 
-INSERT INTO "products" ("name", "description", "price") VALUES
-('Shampoing', 'Shampoing hydratant', 10.00),
-('Après-shampoing', 'Après-shampoing nourrissant', 12.00),
-('Masque capillaire', 'Masque capillaire réparateur', 25.00);
+INSERT INTO "products" ("name", "price") VALUES
+('Shampoing', 10.00),
+('Après-shampoing', 12.00),
+('Masque capillaire', 25.00);
 
 INSERT INTO "appointments" ("client_id", "hairdresser_id", "service_id", "date", "status") VALUES
 ((SELECT "id" FROM "users" WHERE "email" = 'f'), (SELECT "id" FROM "users" WHERE "email" = 'uh'), (SELECT "id" FROM "services" WHERE "name" = 'Coupe de cheveux'), '2023-10-01 10:00:00', 'pending'),

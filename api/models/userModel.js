@@ -76,9 +76,7 @@ export async function logoutByToken(token) {
 
 export async function fetchByRole(role) {
   const query = `SELECT * FROM "users" WHERE "role" = $1`;
-  const values = [role];
-
-  const result = await pool.query(query, values);
+  const result = await pool.query(query, [role]);
   return result.rows;
 }
 

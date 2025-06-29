@@ -119,8 +119,8 @@ export async function logoutUser(req, res) {
 
 export async function getUsersByRole(req, res) {
 	let result = UNKNOWN_ERROR;
-	const { role } = req.params;
-
+	
+	const { role: role } = req.params;
 	try {
 		const users = await fetchByRole(role);
 		if (users) {
@@ -136,10 +136,7 @@ export async function getUsersByRole(req, res) {
 			};
 		}
 	} catch (error) {
-		console.error("Erreur dans getUsersByRole", error);
-		result.message = "Database error";
-		result.errorCode = 1001;
-		res.status(500);
+		catchMsg(`user getUsersByRole ${req.params} ${req.selectedToken}`);
 	}
 
 	res.formatView(result);
