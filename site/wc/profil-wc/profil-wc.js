@@ -43,7 +43,7 @@ class profilWC extends HTMLElement {
 
       try {
         console.log("Loading hairdressers...");
-        const res = await fetch("https://api.ft.ca/user"); // déplacer dans auth.js
+        const res = await fetch("https://api.ft.ca/users"); // déplacer dans auth.js
         const data = await res.json();
         console.log("Hairdressers loaded:", data.users);
 
