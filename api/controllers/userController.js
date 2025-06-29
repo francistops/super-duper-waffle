@@ -1,10 +1,11 @@
 import {
 	fetchUserById,
+	fetchByRole,
 	insertUser,
 	isUserValid,
 	fetchIdByEmail,
 	logoutByToken,
-	fetchByRole 
+	deleteUser,
 } from "../models/userModel.js";
 import { assignToken, isTokenExist } from "../models/tokenModel.js";
 import { catchMsg } from "../lib/utils.js";
@@ -14,24 +15,49 @@ const UNKNOWN_ERROR = {
 	errorCode: 9999,
 };
 
+// todo change param for req.body
 export async function getUserById(req, res) {
 	let result = UNKNOWN_ERROR;
 	const { id } = req.params;
-
 	try {
 		const user = await fetchUserById(id);
-
 		result = {
 			message: "Success",
 			errorCode: 0,
 			user: user,
 		};
 	} catch (error) {
-		catchMsg(`user getUserById ${id}`);
+		catchMsg(`user getUserById ${id}`, error, res, result);
+	}
+	res.formatView(result);
+}
+
+// todo change param for req.body
+export async function getUsersByRole(req, res) {
+	let result = UNKNOWN_ERROR;
+
+	const { role: role } = req.params;
+	try {
+		const users = await fetchByRole(role);
+		if (users) {
+			result = {
+				message: "Users retrieved successfully",
+				errorCode: 0,
+				users: users,
+			};
+		} else {
+			result = {
+				message: "Failed to retrieve users",
+				errorCode: 1,
+			};
+		}
+	} catch (error) {
+		catchMsg(`user getUsersByRole ${req.params}`, error, res, result);
 	}
 
 	res.formatView(result);
 }
+
 
 export async function registerUser(req, res) {
 	let result = UNKNOWN_ERROR;
@@ -42,15 +68,15 @@ export async function registerUser(req, res) {
 			result = {
 				message: "Success",
 				errorCode: 0,
-			}
+			};
 		} else {
 			result = {
 				message: "fail",
 				errorCode: 1,
-			}
+			};
 		}
 	} catch (error) {
-		catchMsg(`user registerUser ${req.body}`);
+		catchMsg(`user registerUser ${req.body}`, error, res, result);
 	}
 	res.formatView(result);
 }
@@ -70,7 +96,7 @@ export async function loginUser(req, res) {
 					message: "Successfull login",
 					errorCode: 0,
 					// user: loggedUser,
-					token: userToken.token,
+					token: userToken,
 				};
 			} else if (isTokenResult.status) {
 				result = {
@@ -90,7 +116,7 @@ export async function loginUser(req, res) {
 			res.status(401);
 		}
 	} catch (error) {
-		catchMsg(`user loginUser ${req.body}`);
+		catchMsg(`user loginUser ${req.body}`, error, res, result);
 	}
 
 	res.formatView(result);
@@ -112,56 +138,32 @@ export async function logoutUser(req, res) {
 			};
 		}
 	} catch (error) {
-		catchMsg(`user logoutUser ${req.selectedToken}`);
+		catchMsg(`user logoutUser ${req.selectedToken}`, error, res, result);
 	}
 	res.formatView(result);
 }
 
-export async function getUsersByRole(req, res) {
+// todo user can only delete himself like remove user by token
+export async function removeUser(req, res) {
 	let result = UNKNOWN_ERROR;
-	
-	const { role: role } = req.params;
+	const { id } = req.body;
+
 	try {
-		const users = await fetchByRole(role);
-		if (users) {
+		const success = await deleteUser(id);
+		if (success) {
 			result = {
-				message: "Users retrieved successfully",
+				message: `User ${id} deleted successfully`,
 				errorCode: 0,
-				users: users,
 			};
 		} else {
 			result = {
-				message: "Failed to retrieve users",
+				message: `Failed to delete user ${id}`,
 				errorCode: 1,
 			};
 		}
 	} catch (error) {
-		catchMsg(`user getUsersByRole ${req.params} ${req.selectedToken}`);
+		catchMsg(`user deleteUser ${id}`, error, res, result);
 	}
 
 	res.formatView(result);
 }
-
-// export async function deleteUser(req, res) {
-// 	let result = UNKNOWN_ERROR;
-// 	const { id } = req.params;
-
-// 	try {
-// 		const success = await deleteUserById(id);
-// 		if (success) {
-// 			result = {
-// 				message: "User deleted successfully",
-// 				errorCode: 0,
-// 			};
-// 		} else {
-// 			result = {
-// 				message: "Failed to delete user",
-// 				errorCode: 1,
-// 			};
-// 		}
-// 	} catch (error) {
-// 		catchMsg(`user deleteUser ${id}`);
-// 	}
-
-// 	res.formatView(result);
-// }

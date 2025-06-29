@@ -1,9 +1,8 @@
 import pool from "../db/pool.js";
 
 export async function isTokenValid(token) {
-	console.log(token)
 	//bypass for debug purpose
-	return true
+	return token
 	
 	const sql = `SELECT "expires", "token"
                 FROM "tokens"
@@ -17,31 +16,26 @@ export async function isTokenValid(token) {
 	return true;
 }
 
-export async function isTokenExist(userid) {
-	const sql = `SELECT * 
-                FROM "tokens"
-                WHERE "userid" = $1
-                AND "expires" > NOW();`;
-	const queryResult = await pool.query(sql, [userid]);
-	console.log("isTokenExist queryResult: ", queryResult.rows);
+export async function isTokenExist(id) {
+	const sql = `SELECT "token" 
+                	FROM "tokens"
+                	WHERE "userid" = $1
+                	AND "expires" > NOW();`;
+	const queryResult = await pool.query(sql, [id]);
 	if (queryResult.rowCount > 0) {
 		return {
 			status: true,
-			token: queryResult.rows[0].token,
-			expires: queryResult.rows[0].expires,
+			token: queryResult.rows[0],
 		};
 	}
 	return { status: false };
 }
 export async function assignToken(userid) {
-	console.log("--- in assignToken model ---");
-	console.log("userid: ", userid);
 	const sql = `INSERT INTO "tokens" ("userid", "token", "expires")
-                VALUES ($1, gen_random_uuid(), NOW() + INTERVAL '30 days')
-                RETURNING *;`;
+                	VALUES ($1, gen_random_uuid(), NOW() + INTERVAL '30 days')
+                	RETURNING *;`;
 	const queryResult = await pool.query(sql, [userid]);
-	// console.log("assigntoken queryResult: ", queryResult.rows);
-	return queryResult.rows[0];
+	return queryResult.rows[0].token;
 }
 
 export async function fetchByToken(token) {
