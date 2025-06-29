@@ -73,3 +73,12 @@ export async function logoutByToken(token) {
   const updateResult = await pool.query(sqlUpdatedToken, [token]);
   return (updateResult.rowCount == 1) ?  true : false
 }
+
+export async function fetchByRole(role) {
+  const query = `SELECT * FROM "users" WHERE "role" = $1`;
+  const values = [role];
+
+  const result = await pool.query(query, values);
+  return result.rows;
+}
+

@@ -127,6 +127,38 @@ export async function logout() {
   return result;
 }
 
+export async function deleteAccount() {
+  console.log("in auth.js deleteAccount");
+  let result = false;
+
+  const data = await apiCall("users/delete", "DELETE", true);
+  if (data.errorCode == 0) {
+    result = true;
+    console.log("deleteAccount success", data);
+  } else {
+    console.error("unhandle error in auth.js deleteAccount", data);
+  }
+
+  return result;
+}
+
+export async function getUsersByRole(role) {
+  console.log("in auth.js getUsersByRole");
+
+  let result = false;
+  const data = await apiCall(`user/role/${role}`, "GET", true);
+  
+  if (data.errorCode === 0) {
+    result = data.users;
+    console.log("getUsersByRole success", result);
+  } else {
+    console.error("unhandle error in auth.js getUsersByRole", data);
+  }
+
+  return result;
+}
+
+
 export async function addNextService(service) {
   console.log("in auth.js addNextService", service);
   let result = false;
