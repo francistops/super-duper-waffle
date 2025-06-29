@@ -19,7 +19,7 @@ class mainWC extends HTMLElement {
     template.innerHTML = html;
     this.shadowRoot.appendChild(template.content.cloneNode(true));
   }
-
+ 
   async connectedCallback() {
     await this.loadContent();
     this.dispatchEvent(new CustomEvent("load-complete"));
