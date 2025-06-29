@@ -12,12 +12,14 @@ class registerForm extends HTMLElement {
 		shadow.appendChild(globalStyle);
 	}
 
-  async loadContent() {
-    const html = await fetch('/wc/register-form/register-form.html').then(res => res.text())
-    const template = document.createElement('template');
-    template.innerHTML = html;
-    this.shadowRoot.appendChild(template.content.cloneNode(true));
-  }
+	async loadContent() {
+		const html = await fetch("/wc/register-form/register-form.html").then(
+			(res) => res.text()
+		);
+		const template = document.createElement("template");
+		template.innerHTML = html;
+		this.shadowRoot.appendChild(template.content.cloneNode(true));
+	}
 
 	async connectedCallback() {
 		await this.loadContent();
@@ -45,7 +47,7 @@ class registerForm extends HTMLElement {
 				user["passhash"] = await hashPassword(user.password);
 				delete user.password;
 				delete user.confirmPassword;
-				// console.log('in register-form WC user: ', user)
+				console.log("in register-form WC user: ", user);
 				const result = await register(user);
 				if (!result) {
 					alert("Inscription échouée. Vérifiez vos informations.");

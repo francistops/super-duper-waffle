@@ -84,7 +84,6 @@ export async function fetchByRole(role) {
 	const result = await pool.query(query, [role]);
 	return result.rows;
 }
-
 //todo check if user and token match
 //todo cannot delete due to db structure
 export async function deleteUser(id) {

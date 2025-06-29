@@ -29,7 +29,7 @@ CREATE TABLE "users" (
     "id" uuid DEFAULT gen_random_uuid(),
     "email" VARCHAR(255) NOT NULL,
     "passhash" CHAR(64) NOT NULL,
-    "role" VARCHAR(20) CHECK ("role" IN ('client', 'hairdresser')) NOT NULL,
+    "role" VARCHAR(20) DEFAULT 'client' CHECK ("role" IN ('client', 'hairdresser')) NOT NULL,
     PRIMARY KEY ("id")
 );
 
