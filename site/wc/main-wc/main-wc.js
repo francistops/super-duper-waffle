@@ -32,7 +32,7 @@ class mainWC extends HTMLElement {
 		row.innerHTML = `
       <td>-</td>
       <td>${service.name}</td>
-      <td>${service.description}</td>
+      <td>${service.duration}</td>
       <td>${service.price.toFixed(2)} €</td>
     `;
 		servicesTable.appendChild(row);
@@ -44,7 +44,6 @@ class mainWC extends HTMLElement {
 		row.innerHTML = `
       <td>-</td>
       <td>${product.name}</td>
-      <td>${product.description}</td>
       <td>${product.price.toFixed(2)} €</td>
     `;
 		productsTable.appendChild(row);
@@ -54,10 +53,10 @@ class mainWC extends HTMLElement {
 		const feedbackTable = this.shadowRoot.querySelector(".feedback tbody");
 		const row = document.createElement("tr");
 		row.innerHTML = `
-      <td>${feedback.coiffeur}</td>
+      <td>${feedback.hairdresser}</td>
       <td>${feedback.client}</td>
-      <td>${feedback.note}</td>
-      <td>${feedback.commentaire}</td>
+      <td>${feedback.rating}</td>
+      <td>${feedback.comment}</td>
     `;
 		feedbackTable.appendChild(row);
 	}
@@ -68,9 +67,8 @@ class mainWC extends HTMLElement {
 		const row = document.createElement("tr");
 		row.innerHTML = `
       <td>-</td>
-      <td>${appointment.coiffeur}</td>
+      <td>${appointment.hairdresser}</td>
       <td>${appointment.date}</td>
-      <td>${appointment.duree}</td>
       <td>${appointment.service}</td>
     `;
 		appointmentTable.appendChild(row);
