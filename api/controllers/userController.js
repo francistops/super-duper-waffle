@@ -4,7 +4,7 @@ import {
 	isUserValid,
 	fetchIdByEmail,
 	logoutByToken,
-	fetchByRole 
+	fetchByRole,
 } from "../models/userModel.js";
 import { assignToken, isTokenExist } from "../models/tokenModel.js";
 import { catchMsg } from "../lib/utils.js";
@@ -42,12 +42,12 @@ export async function registerUser(req, res) {
 			result = {
 				message: "Success",
 				errorCode: 0,
-			}
+			};
 		} else {
 			result = {
 				message: "fail",
 				errorCode: 1,
-			}
+			};
 		}
 	} catch (error) {
 		catchMsg(`user registerUser ${req.body}`);
@@ -119,7 +119,7 @@ export async function logoutUser(req, res) {
 
 export async function getUsersByRole(req, res) {
 	let result = UNKNOWN_ERROR;
-	
+
 	const { role: role } = req.params;
 	try {
 		const users = await fetchByRole(role);
