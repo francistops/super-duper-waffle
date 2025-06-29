@@ -141,14 +141,22 @@ export async function getUsersByRole(role) {
 
 // ------ APPOINTMENTS ------
 
-export async function getAppointments(role) {
-	let result = false;
-	const data = await apiCall(`users/role/${role}`, "GET", true);
+export async function getAppointments() {
+	let result = [];
 
-	if (data.errorCode === 0) {
-		result = data.users;
-	} else {
-		console.error("unhandle error in auth.js getUsersByRole", data.errorCode);
+	try {
+		const data = await apiCall(`appointments/`, "GET", false);
+
+		if (data.errorCode === 0) {
+			result = data.appointments;
+		} else {
+			console.error(
+				"unhandle error in auth.js getAppointmentsByRole",
+				data.errorCode
+			);
+		}
+	} catch (error) {
+		console.error("Erreur réseau getFeedbacks:", error);
 	}
 
 	return result;
