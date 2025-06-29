@@ -77,7 +77,7 @@ export function isIdentified() {
 export async function register(user) {
   let result = false;
   // console.log('in auth.js register', user.email)
-  const data = await apiCall("user/register", "POST", false, user);
+  const data = await apiCall("users/register", "POST", false, user);
   //! todo: display code must be must be app.js
   if (data.errorCode == 0) {
     result = true;
@@ -97,7 +97,7 @@ export async function login(user) {
 
   let result = false;
 
-  const data = await apiCall("user/login", "POST", false, user);
+  const data = await apiCall("users/login", "POST", false, user);
   console.log("data from apiCall in auth.js login", data);
   if (data) {
     result = true;
@@ -118,7 +118,7 @@ export async function logout() {
   console.log("in auth.js logout");
   let result = false;
 
-  const logoutJson = await apiCall("user/logout", "POST", true);
+  const logoutJson = await apiCall("users/logout", "POST", true);
 
   if (logoutJson.errorCode == 0) {
     result = logoutJson.revoked;
@@ -131,7 +131,7 @@ export async function addNextService(service) {
   console.log("in auth.js addNextService", service);
   let result = false;
 
-  const data = await apiCall("task/service/add", "POST", true, service);
+  const data = await apiCall("service/add", "POST", true, service);
   if (data.errorCode == 0) {
     result = true;
     console.log("addNextService success", data);
