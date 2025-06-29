@@ -9,27 +9,6 @@ function hash(passHash) {
     .digest("hex");
 }
 
-//debug
-export async function fetchAllUsers() {
-  const sql = `SELECT "users"."email",
-                      "users"."id",
-                      "users"."passhash",
-                      "users"."role",
-                      "tokens"."token",
-                      "tokens"."expires"
-                FROM "users"
-                LEFT JOIN "tokens" ON "users"."id" = "tokens"."userid"
-                ORDER BY "users"."email";`;
-  const queryResult = await pool.query(sql);
-  return queryResult.rows;
-}
-
-export async function fetchAllTokens() {
-  const sql = `SELECT * FROM "tokens"`;
-  const queryResult = await pool.query(sql);
-  return queryResult.rows;
-}
-
 export async function fetchUserById(id) {
   const sql = `SELECT * 
                         FROM "users"
@@ -53,19 +32,18 @@ export async function insertUser(user) {
     user.role
   ];
   const queryResult = await pool.query(insertSql, param);
-  console.log(queryResult.rows[0]);
-  return queryResult.rows[0];
+  if (queryResult.rowCount != 1) {
+    throw new Error(`501: failed too many users: ${param}`);
+  }
+  return true;
 }
 
 export async function isUserValid(email, passhash) {
-  console.log('isUserValid email: ', email);
   const sql = `SELECT "email", "passhash" FROM "users" WHERE "email"=$1 AND "passhash"=$2;`;
   const param = [email, hash(passhash)];
-  // console.log('isUserValid hashagain param: ', param[1]);
   const queryResult = await pool.query(sql, param);
-  console.log('queryResult: ', queryResult.rows)
   if (queryResult.rowCount != 1) {
-    throw new Error(`401: failed to authorize`);
+    throw new Error(`501: failed to authorize on db: ${param}`);
   }
   return true;
 }
@@ -77,17 +55,16 @@ export async function fetchIdByEmail(email) {
   const parameters = [email];
   const queryResult = await pool.query(selectSql, parameters);
   if (queryResult.rowCount === 0) {
-    throw new Error(`User not found with email ${email}`);
+    throw new Error(`504: User not found with email ${email}`);
   }
   if (queryResult.rowCount > 1) {
     throw new Error(`Error 500: Too many users retrieve for email ${email}.`);
   }
-  console.log('fetchDetailsByEmail queryResult: ', queryResult.rows[0].id);
+
   return queryResult.rows[0].id;
 }
 
 export async function logoutByToken(token) {
-  // console.log('--- in logout model ---');
    const sqlUpdatedToken = `UPDATE "tokens" 
                         SET "expires" = NOW() 
                         WHERE "token" = $1
