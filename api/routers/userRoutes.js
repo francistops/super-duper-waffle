@@ -9,7 +9,7 @@ import {
     logoutUser
 } from '../controllers/userController.js';
 
-router.get('/role/:role', /*validateToken,*/ getUsersByRole);
+router.get('/role/:role', validateToken, getUsersByRole);
 router.get('/:id', /*validateToken,*/ getUserById);
 
 router.post('/register', registerUser);

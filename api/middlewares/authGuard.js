@@ -3,7 +3,6 @@ import { isTokenValid } from '../models/tokenModel.js';
 
 export async function validateToken(req, res, next) {
   const header = req.headers.authorization || '';
-
   const [scheme, token] = header.split(' ');
   if (scheme !== 'Bearer' || !token) {
     return res
@@ -12,7 +11,6 @@ export async function validateToken(req, res, next) {
   }
 
   try {
-    console.log(token)
     const tokenRow = await isTokenValid(token);
     if (!tokenRow) {
       return res
