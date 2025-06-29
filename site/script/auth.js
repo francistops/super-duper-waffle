@@ -126,3 +126,18 @@ export async function logout() {
   }
   return result;
 }
+
+export async function addNextService(service) {
+  console.log("in auth.js addNextService", service);
+  let result = false;
+
+  const data = await apiCall("task/service/add", "POST", true, service);
+  if (data.errorCode == 0) {
+    result = true;
+    console.log("addNextService success", data);
+  } else {
+    console.error("unhandle error in auth.js addNextService", data);
+  }
+
+  return result;
+}

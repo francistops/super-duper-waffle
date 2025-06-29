@@ -14,18 +14,9 @@ class loginForm extends HTMLElement {
   }
 
   async loadContent() {
-    const [html, css] = await Promise.all([
-      fetch('/wc/login-form/login-form.html').then(res => res.text()),
-      fetch('/wc/login-form/login-form.css').then(res => res.text())
-    ]);
-
-    const style = document.createElement('style');
-    style.textContent = css;
-
+    const html = await fetch('/wc/login-form/login-form.html').then(res => res.text())
     const template = document.createElement('template');
     template.innerHTML = html;
-
-    this.shadowRoot.appendChild(style);
     this.shadowRoot.appendChild(template.content.cloneNode(true));
   }
 
@@ -61,7 +52,7 @@ class loginForm extends HTMLElement {
                 composed: true,
                 detail: { status: "success" }
               }));
-              // alert("login réussie. Vous etes maintenant connecter.");
+              // alert("login réussie. Vous êtes maintenant connectés.");
             }
           }
         });

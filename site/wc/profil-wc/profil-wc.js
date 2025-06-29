@@ -11,21 +11,12 @@ class profilWC extends HTMLElement {
       shadow.appendChild(globalStyle);
     }
 
-    async loadContent() {
-      const [html, css] = await Promise.all([
-        fetch('/wc/profil-wc/profil-wc.html').then(res => res.text()),
-        fetch('/wc/profil-wc/profil-wc.css').then(res => res.text())
-      ]);
-  
-      const style = document.createElement('style');
-      style.textContent = css;
-  
-      const template = document.createElement('template');
-      template.innerHTML = html;
-  
-      this.shadowRoot.appendChild(style);
-      this.shadowRoot.appendChild(template.content.cloneNode(true));
-    }
+  async loadContent() {
+    const html = await fetch('/wc/profil-wc/profil-wc.html').then(res => res.text())
+    const template = document.createElement('template');
+    template.innerHTML = html;
+    this.shadowRoot.appendChild(template.content.cloneNode(true));
+  }
   
     async connectedCallback() {
       await this.loadContent();
@@ -52,7 +43,7 @@ class profilWC extends HTMLElement {
 
       try {
         console.log("Loading hairdressers...");
-        const res = await fetch("https://api.ft.ca/user");
+        const res = await fetch("https://api.ft.ca/user"); // déplacer dans auth.js
         const data = await res.json();
         console.log("Hairdressers loaded:", data.users);
 
