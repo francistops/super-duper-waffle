@@ -1,47 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Tam Hair</title>
+		<link rel="stylesheet" href="/style/global.css" />
 
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>Tam Hair</title>
-  <link rel="stylesheet" href="/style/global.css">
+		<script type="module" src="/wc/profil-wc/profil-wc.js"></script>
+		<script type="module" src="/wc/handling-post/handling-post.js"></script>
+		<script type="module" src="/wc/main-wc/main-wc.js"></script>
+		<script type="module" src="/wc/login-form/login-form.js"></script>
+		<script type="module" src="/wc/register-form/register-form.js"></script>
+		<script type="module" src="/wc/setting-wc/setting-wc.js"></script>
 
-  <script type="module" src="/wc/profil-wc/profil-wc.js"></script>
-  <script type="module" src="/wc/handling-post/handling-post.js"></script>
-  <script type="module" src="/wc/main-wc/main-wc.js"></script>
-  <script type="module" src="/wc/login-form/login-form.js"></script>
-  <script type="module" src="/wc/register-form/register-form.js"></script>
-  <script type="module" src="/wc/setting-wc/setting-wc.js"></script>
+		<script defer src="/script/app.js"></script>
+	</head>
 
-  <script defer src="/script/app.js"></script>
-</head>
+	<body>
+		<header>
+			<h1>Chez Tam Hair</h1>
+		</header>
+		<nav class="flex-nav">
+			<span class="title">Salon de coiffure</span>
+			<!-- future place pour setting and report if time allow -->
+			<button id="goToRegisterButton">Register</button>
+			<button id="goToLoginButton">Login</button>
+			<button id="goToProfilButton">Profil</button>
+			<button id="loggoutButton">Logout</button>
+		</nav>
 
-<body>
-  <header>
-    <h1>Chez Tam Hair</h1>
-  </header>
-  <nav class="flex-nav">
-    <span class="title">Salon de coiffure</span>
-     <!-- future place pour setting and report if time allow -->
-      <button id="goToRegisterButton">Register</button>
-      <button id="goToLoginButton">Login</button>
-      <button id="goToProfilButton">Profil</button>
-      <button id="loggoutButton">Logout</button>
-  </nav>
+		<div class="sep"></div>
 
-  <div class="sep"></div>
-
-  <main>
-    <div id="wcWrapper" class="flex">
-    
-
-    </div>
-
-  </main>
-  <aside class="ads"></aside>
-  <footer>
-    <p>design with affection by pikachu</p>
-  </footer>
-</body>
-
+		<main>
+			<div id="wcWrapper" class="flex"></div>
+		</main>
+		<aside class="ads"></aside>
+		<footer>
+			<p>design with affection by pikachu</p>
+		</footer>
+	</body>
 </html>

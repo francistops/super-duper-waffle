@@ -69,15 +69,6 @@ INSERT INTO "users" ("email", "passhash", "role") VALUES
 ('a', 'a', 'client'),
 ('ah', ENCODE(SHA256('monGrainDeCumminah'), 'hex'), 'hairdresser');
 
--- INSERT INTO "tasks" ("userid", "content") VALUES
--- ( (SELECT "id" FROM "users" WHERE "email" = 'f'), 'hike mount thamaire. first task'),
--- ( (SELECT "id" FROM "users" WHERE "email" = 'u'), 'buy some melons. second task'),
--- ( (SELECT "id" FROM "users" WHERE "email" = 'ah'), 'be a nice boi. third task');
-
--- INSERT INTO "tokens" ("userid", "token") VALUES
--- ( (SELECT "id" FROM "users" WHERE "email" = 'f'), '56fc94e0-9ef7-4817-be01-93bed582ba67'),
--- ( (SELECT "id" FROM "users" WHERE "email" = 'u'), '56fc94e0-9ef7-4817-be01-93bed582ba68');
-
 INSERT INTO "services" ("name", "duration", "price") VALUES
 ('Coupe de cheveux', 10, 20.00),
 ('Coloration', 30, 50.00),

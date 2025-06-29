@@ -3,63 +3,62 @@
 @import "https://unpkg.com/open-props/buttons.min.css";
 
 .hidden {
-  display: none;
+	display: none;
 }
 
 body {
-  text-align: center;
+	text-align: center;
 }
 
 * {
-  max-inline-size: none;
+	max-inline-size: none;
 }
 
 header {
- margin-block: 2em;
+	margin-block: 2em;
 }
 
 nav {
- margin-inline: 2em;
+	margin-inline: 2em;
 }
 .flex-nav {
-  display: flex;
-  flex-wrap: wrap;;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 1em;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	align-items: center;
+	gap: 1em;
 }
 
 .flex {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 1em;
-
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 1em;
 }
 
 timer-wc {
-  background-color: var(--indigo-12);
-  padding: 2em;
-  margin: 3em;
-  border: 3px solid var(--indigo-9);
-  border-radius: 25px;
+	background-color: var(--indigo-12);
+	padding: 2em;
+	margin: 3em;
+	border: 3px solid var(--indigo-9);
+	border-radius: 25px;
 }
 
 .sep {
-  display: block;
-  height: 0.2em;
-  background-color: var(--indigo-9);
-  margin: 0.5em 2em;
+	display: block;
+	height: 0.2em;
+	background-color: var(--indigo-9);
+	margin: 0.5em 2em;
 }
 
 .title {
-  flex:auto;
-  text-align: start;
-  align-self: flex-end;
-  font-weight: 700;
-  font-size: large;
+	flex: auto;
+	text-align: start;
+	align-self: flex-end;
+	font-weight: 700;
+	font-size: large;
 }
 
 .red {
-  color: red;
+	color: red;
 }
