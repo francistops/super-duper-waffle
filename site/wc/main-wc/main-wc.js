@@ -2,7 +2,6 @@ import { globalStyles } from '../global/style.js';
 // import { login } from "../../script/auth.js";
 // import { hashPassword } from "../../script/auth.js";
 
-
 class mainWC extends HTMLElement {
   constructor() {
     super();

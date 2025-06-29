@@ -25,9 +25,9 @@ function cancel_button(element) {
 // landing page
 function displayMain() {
   wcDiv.innerHTML = "";
-  wcDiv.appendChild(document.createElement("timer-wc"));
-  wcDiv.appendChild(document.createElement("task-wc"));
-  wcDiv.appendChild(document.createElement("pomodoro-timer"));
+  // wcDiv.appendChild(document.createElement("timer-wc"));
+  // wcDiv.appendChild(document.createElement("task-wc"));
+  // wcDiv.appendChild(document.createElement("pomodoro-timer"));
 
   // check if user is logged in and display the right buttons
   // todo improve check
