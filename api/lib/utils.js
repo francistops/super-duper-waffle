@@ -1,4 +1,4 @@
-export function catchMsg(name, errorHttp = 500, errorObj = error, res = res, result = result) {
+export function catchMsg(name, errorObj = error, res = res, result = result, errorHttp = 500) {
         // server error
         console.error(`Error at ${name}: ${errorObj.message}`);
 
