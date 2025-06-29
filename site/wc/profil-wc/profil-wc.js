@@ -1,4 +1,5 @@
 import { globalStyles } from '../global/style.js';
+import { getUsersByRole } from "../../script/auth.js";
 
 class profilWC extends HTMLElement {
     constructor() {
@@ -38,27 +39,25 @@ class profilWC extends HTMLElement {
         }));
         console.log("Delete account button clicked");
       });
+
+      const select = this.shadowRoot.getElementById("search");
+      if (!select) {
+        console.warn("Élément #search introuvable dans le shadowRoot");
+        return;
+      }
       
-			const select = this.shadowRoot.getElementById("search");
-
-      try {
-        console.log("Loading hairdressers...");
-        const res = await fetch("https://api.ft.ca/users"); // déplacer dans auth.js
-        const data = await res.json();
-        console.log("Hairdressers loaded:", data.users);
-
-        const hairdressers = data.users.filter(u => u.role === "hairdresser");
-
+      const hairdressers = await getUsersByRole("hairdresser");
+      if (hairdressers) {
         for (const user of hairdressers) {
-        const option = document.createElement("option");
-        option.value = user.email;
-        option.textContent = user.email; // ou `${user.firstName} ${user.lastName}` si dispo
-        select.appendChild(option);
+          const opt = document.createElement("option");
+          opt.value = user.email;
+          opt.textContent = user.email;
+          select.appendChild(opt);
         }
-      } catch (err) {
-        console.error("Erreur lors du chargement des coiffeuses :", err);
+      } else {
+        console.warn("Aucun utilisateur avec le rôle hairdresser trouvé.");
       }
     }
-  }
+}
 
-  customElements.define('profil-wc', profilWC);
+customElements.define('profil-wc', profilWC);

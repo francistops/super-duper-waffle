@@ -3,7 +3,8 @@ import {
 	insertUser,
 	isUserValid,
 	fetchIdByEmail,
-	logoutByToken
+	logoutByToken,
+	fetchByRole 
 } from "../models/userModel.js";
 import { assignToken, isTokenExist } from "../models/tokenModel.js";
 import { catchMsg } from "../lib/utils.js";
@@ -115,3 +116,55 @@ export async function logoutUser(req, res) {
 	}
 	res.formatView(result);
 }
+
+export async function getUsersByRole(req, res) {
+	let result = UNKNOWN_ERROR;
+	const { role } = req.params;
+
+	try {
+		const users = await fetchByRole(role);
+		if (users) {
+			result = {
+				message: "Users retrieved successfully",
+				errorCode: 0,
+				users: users,
+			};
+		} else {
+			result = {
+				message: "Failed to retrieve users",
+				errorCode: 1,
+			};
+		}
+	} catch (error) {
+		console.error("Erreur dans getUsersByRole", error);
+		result.message = "Database error";
+		result.errorCode = 1001;
+		res.status(500);
+	}
+
+	res.formatView(result);
+}
+
+// export async function deleteUser(req, res) {
+// 	let result = UNKNOWN_ERROR;
+// 	const { id } = req.params;
+
+// 	try {
+// 		const success = await deleteUserById(id);
+// 		if (success) {
+// 			result = {
+// 				message: "User deleted successfully",
+// 				errorCode: 0,
+// 			};
+// 		} else {
+// 			result = {
+// 				message: "Failed to delete user",
+// 				errorCode: 1,
+// 			};
+// 		}
+// 	} catch (error) {
+// 		catchMsg(`user deleteUser ${id}`);
+// 	}
+
+// 	res.formatView(result);
+// }
