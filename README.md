@@ -163,6 +163,7 @@ Dans le cadre du projet 0, nous proposons de d√©velopper **une application web √
 - `profil-wc.js` : Bouton modifier profil et supprimer compte.
 - `services-wc.js` : Affichage des services.
 - `feedbacks-wc.js` : Affichage des avis.
+- `handling-feedback.js` : Ajouter un avis.
 
 ## 8. Tests Unitaires (TBD)
 
