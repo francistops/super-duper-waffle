@@ -24,7 +24,7 @@ import serviceRoute from './routers/serviceRoutes.js';
 app.use('/services', serviceRoute);
 
 import feedbackRoute from './routers/feedbackRoutes.js';
-app.use('/feedback', feedbackRoute);
+app.use('/feedbacks', feedbackRoute);
 
 import debugRoute from './routers/debugRoutes.js';
 app.use('/debug', debugRoute);
