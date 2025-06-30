@@ -80,7 +80,7 @@ Dans le cadre du projet 0, nous proposons de d√©velopper **une application web √
 
 ### Table Cassandra
 
-#### `client_feedback`
+#### `feedbacks`
 
 - `appointment_id` (TEXT, PRIMARY KEY)
 - `client_id` (TEXT)

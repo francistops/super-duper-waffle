@@ -1,10 +1,11 @@
 import { globalStyles } from "../global/style.js";
-// import { getFeedbacks } from "../../script/auth.js";
+import { getAppointments } from "../../script/auth.js";
+import { formatDate } from "../../script/app.js";
 
 // import { login } from "../../script/auth.js";
 // import { hashPassword } from "../../script/auth.js";
 
-class feedbacksWC extends HTMLElement {
+class appointmentsPhysio extends HTMLElement {
 	constructor() {
 		super();
 		const shadow = this.attachShadow({ mode: "open" });
@@ -15,9 +16,9 @@ class feedbacksWC extends HTMLElement {
 	}
 
 	async loadContent() {
-		const html = await fetch("/wc/feedbacks-wc/feedbacks-wc.html").then((res) =>
-			res.text()
-		);
+		const html = await fetch(
+			"/wc/appointments-physio/appointments-physio.html"
+		).then((res) => res.text());
 		const template = document.createElement("template");
 		template.innerHTML = html;
 		this.shadowRoot.appendChild(template.content.cloneNode(true));
@@ -26,20 +27,22 @@ class feedbacksWC extends HTMLElement {
 	async connectedCallback() {
 		await this.loadContent();
 		this.dispatchEvent(new CustomEvent("load-complete"));
-		// const feedbacks = await getFeedbacks();
-		// feedbacks.forEach((a) => this.addNextFeedback(a));
+		const appointments = await getAppointments();
+		appointments.forEach((a) => this.addNextAppointment(a));
 	}
 
-	addNextFeedback(feedback) {
-		const feedbackTable = this.shadowRoot.querySelector(".feedback tbody");
+	addNextAppointment(appointment) {
+		const appointmentTable =
+			this.shadowRoot.querySelector(".appointment tbody");
 		const row = document.createElement("tr");
 		row.innerHTML = `
-      <td>${feedback.physio_id}</td>
-      <td>${feedback.client_id}</td>
-      <td>${feedback.rating}</td>
-      <td>${feedback.comment}</td>
+		<td>-</td>
+	  	<td>${formatDate(appointment.date)}</td>
+     	<td>${appointment.physio_id}</td>
+		<td>${appointment.service_id}</td>
     `;
-		feedbackTable.appendChild(row);
+		appointmentTable.appendChild(row);
 	}
 }
-customElements.define("feedbacks-wc", feedbacksWC);
+
+customElements.define("appointments-physio", appointmentsPhysio);

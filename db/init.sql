@@ -52,6 +52,15 @@ CREATE TABLE "availabilities" (
     PRIMARY KEY ("id")
 );
 
+CREATE TABLE "feedbacks" (
+	"id" uuid DEFAULT gen_random_uuid(),
+	"appointment_id" uuid NOT NULL REFERENCES "appointments"("id"),
+	"client_id" uuid NOT NULL REFERENCES "clients"("id"),
+	"comment" TEXT NOT NULL,
+	"date" TIMESTAMP NOT NULL,
+	PRIMARY KEY ("id")
+);
+
 CREATE UNIQUE INDEX uidx_users_email ON "users"("email");
 
 INSERT INTO "users" ("email", "passhash", "role") VALUES

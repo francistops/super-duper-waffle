@@ -5,7 +5,7 @@ import { formatDate } from "../../script/app.js";
 // import { login } from "../../script/auth.js";
 // import { hashPassword } from "../../script/auth.js";
 
-class appointmentsWC extends HTMLElement {
+class appointmentsClient extends HTMLElement {
 	constructor() {
 		super();
 		const shadow = this.attachShadow({ mode: "open" });
@@ -16,9 +16,9 @@ class appointmentsWC extends HTMLElement {
 	}
 
 	async loadContent() {
-		const html = await fetch("/wc/appointments-wc/appointments-wc.html").then(
-			(res) => res.text()
-		);
+		const html = await fetch(
+			"/wc/appointments-client/appointments-client.html"
+		).then((res) => res.text());
 		const template = document.createElement("template");
 		template.innerHTML = html;
 		this.shadowRoot.appendChild(template.content.cloneNode(true));
@@ -38,11 +38,11 @@ class appointmentsWC extends HTMLElement {
 		row.innerHTML = `
 		<td>-</td>
 	  	<td>${formatDate(appointment.date)}</td>
-     	<td>${appointment.hairdresser_id}</td>
+     	<td>${appointment.client_id}</td>
 		<td>${appointment.service_id}</td>
     `;
 		appointmentTable.appendChild(row);
 	}
 }
 
-customElements.define("appointments-wc", appointmentsWC);
+customElements.define("appointments-client", appointmentsClient);
