@@ -27,8 +27,11 @@ app.use("/services", serviceRoute);
 import feedbackRoute from "./routers/feedbackRoutes.js";
 app.use("/feedback", feedbackRoute);
 
-import debugRoute from "./routers/debugRoutes.js";
-app.use("/debug", debugRoute);
+import feedbackRoute from './routers/feedbackRoutes.js';
+app.use('/feedbacks', feedbackRoute);
+
+import debugRoute from './routers/debugRoutes.js';
+app.use('/debug', debugRoute);
 
 // just messing arround
 // api.ft.ca/api?apikey= xyz123

@@ -17,7 +17,6 @@ const UNKNOWN_ERROR = {
 
 export async function getAppointments(req, res) {
 	let result = UNKNOWN_ERROR;
-
 	try {
 		const appointments = await fetchAppointments();
 		result = {
@@ -32,29 +31,26 @@ export async function getAppointments(req, res) {
 }
 
 export async function getAppointmentsById(req, res) {
-	return "getAppointmentsByClientId niy";
 	let result = UNKNOWN_ERROR;
 	const id = req.body;
-	//todo change if role is not client
 	try {
-		const appointments = await fetchAppointmentById(id);
+		const appointment = await fetchAppointmentById(id);
 		result = {
 			message: "Success",
 			errorCode: 0,
-			appointments: appointments,
+			appointment: appointment,
 		};
 	} catch (error) {
-		catchMsg(`appointment getAppointmentsByClientId ${req.body}`);
+		catchMsg(`appointment getAppointmentsByClientId ${req.body}`, error, res, result);
 	}
-
 	res.formatView(result);
 }
 
 export async function putAppointmentStatus(req, res) {
-	return "updateAppointmentStatus niy";
 	let result = UNKNOWN_ERROR;
+	const id = req.body;
 	try {
-		const appointment = await updateAppointmentStatus();
+		const appointment = await updateAppointmentStatus(id);
 		result = {
 			message: "Success",
 			errorCode: 0,
@@ -63,7 +59,6 @@ export async function putAppointmentStatus(req, res) {
 	} catch (error) {
 		catchMsg(`appointment putAppointmentStatus ${req.body}`);
 	}
-
 	res.formatView(result);
 }
 
@@ -86,13 +81,11 @@ export async function getNextAppointments(req, res) {
 }
 
 export async function addAppointment(req, res) {
-	return "addAppointment nyi";
 	let result = UNKNOWN_ERROR;
-	const data = req.body;
-	console.log(data);
-
+	const newAppointment = req.body;
 	try {
-		const appointment = await insertAppointments(data);
+		const appointment = await insertAppointments(newAppointment);
+
 
 		result = {
 			message: "Success",
@@ -102,18 +95,14 @@ export async function addAppointment(req, res) {
 	} catch (error) {
 		catchMsg(`appointment addAppointment ${req.body}`);
 	}
-
 	res.formatView(result);
 }
 
 export async function editAppointment(req, res) {
-	return "editAppointment nyi";
 	let result = UNKNOWN_ERROR;
-	const data = req.body;
-	console.log(data);
-
+	const id = req.body;
 	try {
-		const appointment = await updateAppointments(data);
+		const appointment = await updateAppointments(id);
 
 		result = {
 			message: "Success",
@@ -123,19 +112,14 @@ export async function editAppointment(req, res) {
 	} catch (error) {
 		catchMsg(`appointment updateAppointment ${req.body}`);
 	}
-
 	res.formatView(result);
 }
 
 export async function removeAppointment(req, res) {
-	return "removeAppointment nyi";
 	let result = UNKNOWN_ERROR;
-	const data = req.body;
-	console.log(data);
-
+	const id = req.body;
 	try {
-		const appointment = await deleteAppointments(data);
-
+		const appointment = await deleteAppointments(id);
 		result = {
 			message: "Success",
 			errorCode: 0,
@@ -144,6 +128,5 @@ export async function removeAppointment(req, res) {
 	} catch (error) {
 		catchMsg(`appointment deleteAppointments ${req.body}`);
 	}
-
 	res.formatView(result);
 }
