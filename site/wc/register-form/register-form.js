@@ -53,16 +53,6 @@ class registerForm extends HTMLElement {
 					alert("Inscription échouée. Vérifiez vos informations.");
 				} else {
 					alert("Inscription réussie. Vous pouvez maintenant vous connecter.");
-
-					if (user.role === "hairdresser") {
-						this.dispatchEvent(
-							new CustomEvent("user-is-hairdresser", {
-								bubbles: true,
-								composed: true,
-								detail: { user },
-							})
-						);
-					}
 				}
 			}
 

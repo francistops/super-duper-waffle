@@ -1,0 +1,15 @@
+<!-- 
+- Faire apparaître un input type="date"
+- Quand on clique sur un lundi , ça envoie ses 35 disponibilités disponibles pour la semaine
+- Obligé de cliquer sur un lundi 
+-->
+<form class="handling-availabilities-physio">
+	<input
+		type="date"
+		id="inpDate"
+		name="date"
+		value="${new
+	Date().toISOString().split('T')[0]}"
+	/>
+	<button id="inpAddAvailabilities">Ajouter des disponibilités</button>
+</form>

@@ -62,3 +62,14 @@ timer-wc {
 .red {
 	color: red;
 }
+
+.services-wc {
+	text-align: center;
+	max-width: 70ch;
+	margin-inline: auto;
+}
+
+.services-wc h2,
+.services-wc p {
+	margin-bottom: 1em;
+}

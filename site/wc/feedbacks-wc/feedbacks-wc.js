@@ -1,8 +1,5 @@
 import { globalStyles } from "../global/style.js";
-// import { getFeedbacks } from "../../script/auth.js";
-
-// import { login } from "../../script/auth.js";
-// import { hashPassword } from "../../script/auth.js";
+import { getFeedbacks } from "../../script/auth.js";
 
 class feedbacksWC extends HTMLElement {
 	constructor() {
@@ -26,16 +23,16 @@ class feedbacksWC extends HTMLElement {
 	async connectedCallback() {
 		await this.loadContent();
 		this.dispatchEvent(new CustomEvent("load-complete"));
-		// const feedbacks = await getFeedbacks();
-		// feedbacks.forEach((a) => this.addNextFeedback(a));
+		const feedbacks = await getFeedbacks();
+		feedbacks.forEach((a) => this.addNextFeedback(a));
 	}
 
 	addNextFeedback(feedback) {
 		const feedbackTable = this.shadowRoot.querySelector(".feedback tbody");
 		const row = document.createElement("tr");
 		row.innerHTML = `
-      <td>${feedback.hairdresser}</td>
-      <td>${feedback.client}</td>
+      <td>${feedback.physio_id}</td>
+      <td>${feedback.client_id}</td>
       <td>${feedback.rating}</td>
       <td>${feedback.comment}</td>
     `;

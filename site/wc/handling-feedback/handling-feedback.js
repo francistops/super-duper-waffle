@@ -1,10 +1,7 @@
 import { globalStyles } from "../global/style.js";
-// import { getProducts } from "../../script/auth.js";
+import { getFeedbacks } from "../../script/auth.js";
 
-// import { login } from "../../script/auth.js";
-// import { hashPassword } from "../../script/auth.js";
-
-class productsWC extends HTMLElement {
+class handlingFeedback extends HTMLElement {
 	constructor() {
 		super();
 		const shadow = this.attachShadow({ mode: "open" });
@@ -15,9 +12,9 @@ class productsWC extends HTMLElement {
 	}
 
 	async loadContent() {
-		const html = await fetch("/wc/products-wc/products-wc.html").then((res) =>
-			res.text()
-		);
+		const html = await fetch(
+			"/wc/handling-feedback/handling-feedback.html"
+		).then((res) => res.text());
 		const template = document.createElement("template");
 		template.innerHTML = html;
 		this.shadowRoot.appendChild(template.content.cloneNode(true));
@@ -26,20 +23,21 @@ class productsWC extends HTMLElement {
 	async connectedCallback() {
 		await this.loadContent();
 		this.dispatchEvent(new CustomEvent("load-complete"));
-		// const products = await getProducts();
-		// products.forEach((a) => this.addNextProduct(a));
+		const feedbacks = await getFeedbacks();
+		feedbacks.forEach((a) => this.addNextFeedback(a));
 	}
 
-	addNextProduct(product) {
-		const productsTable = this.shadowRoot.querySelector(".products tbody");
+	addNextFeedback(feedback) {
+		const feedbacksTable = this.shadowRoot.querySelector(".feedbacks tbody");
 		const row = document.createElement("tr");
 		row.innerHTML = `
       <td>-</td>
-      <td>${product.name}</td>
-      <td>${product.price.toFixed(2)} €</td>
+      <td>${feedback.name}</td>
+      <td>${feedback.duration}</td>
+      <td>${feedback.price.toFixed(2)} €</td>
     `;
-		productsTable.appendChild(row);
+		feedbacksTable.appendChild(row);
 	}
 }
 
-customElements.define("products-wc", productsWC);
+customElements.define("handling-feedback", handlingFeedback);
