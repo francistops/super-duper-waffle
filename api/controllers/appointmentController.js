@@ -27,6 +27,7 @@ export async function getAppointments(req, res) {
 	} catch (error) {
 		catchMsg(`appointment getAppointments`, error, res, result);
 	}
+	console.log("in getAppointments controller" + result);
 	res.formatView(result);
 }
 
@@ -41,7 +42,12 @@ export async function getAppointmentsById(req, res) {
 			appointment: appointment,
 		};
 	} catch (error) {
-		catchMsg(`appointment getAppointmentsByClientId ${req.body}`, error, res, result);
+		catchMsg(
+			`appointment getAppointmentsByClientId ${req.body}`,
+			error,
+			res,
+			result
+		);
 	}
 	res.formatView(result);
 }
@@ -85,7 +91,6 @@ export async function addAppointment(req, res) {
 	const newAppointment = req.body;
 	try {
 		const appointment = await insertAppointments(newAppointment);
-
 
 		result = {
 			message: "Success",

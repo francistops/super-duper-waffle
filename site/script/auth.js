@@ -41,6 +41,11 @@ async function apiCall(resource, method, auth, body = {}) {
 
 	if (response.ok) {
 		result = await response.json();
+	} else {
+		result = {
+			errorCode: response.status,
+			message: response.statusText,
+		};
 	}
 
 	return result;
@@ -115,12 +120,14 @@ export async function deleteAccount() {
 	console.log("in auth.js deleteAccount");
 	let result = false;
 
-	const data = await apiCall("users/delete", "DELETE", true);
-	if (data.errorCode == 0) {
-		result = true;
-		console.log("deleteAccount success", data);
+	const deleteAccountJson = await apiCall("users/delete", "DELETE", true);
+	if (deleteAccountJson.errorCode == 0) {
+		result = deleteAccountJson.revoked;
+		localStorage.clear();
+
+		console.log("deleteAccount success", deleteAccountJson);
 	} else {
-		console.error("unhandle error in auth.js deleteAccount", data);
+		console.error("unhandle error in auth.js deleteAccount", deleteAccountJson);
 	}
 
 	return result;
@@ -164,60 +171,60 @@ export async function getAppointments() {
 
 // ------ SERVICES/PRODUCTS ------
 
-export async function getServices() {
-	let result = [];
+// export async function getServices() {
+// 	let result = [];
 
-	try {
-		const data = await apiCall(`services/`, "GET", false);
+// 	try {
+// 		const data = await apiCall(`services/`, "GET", false);
 
-		if (data.errorCode === 0) {
-			result = data.service;
-		} else {
-			console.error("unhandle error in auth.js getservices", data.errorCode);
-		}
-	} catch (error) {
-		console.error("Erreur réseau getServices:", error);
-	}
-	console.log(result + "auth.js getServices");
-	return result;
-}
+// 		if (data.errorCode === 0) {
+// 			result = data.service;
+// 		} else {
+// 			console.error("unhandle error in auth.js getservices", data.errorCode);
+// 		}
+// 	} catch (error) {
+// 		console.error("Erreur réseau getServices:", error);
+// 	}
+// 	console.log(result + "auth.js getServices");
+// 	return result;
+// }
 
 // ------ FEEDBACK ------
 
-export async function getFeedbacks() {
-	let result = [];
+// export async function getFeedbacks() {
+// 	let result = [];
 
-	try {
-		const data = await apiCall(`feedbacks/`, "GET", false);
+// 	try {
+// 		const data = await apiCall(`feedbacks/`, "GET", false);
 
-		if (data.errorCode === 0) {
-			result = data.feedback;
-		} else {
-			console.error("unhandle error in auth.js getFeedbacks", data.errorCode);
-		}
-	} catch (error) {
-		console.error("Erreur réseau getFeedbacks:", error);
-	}
-	console.log(result + "auth.js getFeedbacks");
-	return result;
-}
+// 		if (data.errorCode === 0) {
+// 			result = data.feedback;
+// 		} else {
+// 			console.error("unhandle error in auth.js getFeedbacks", data.errorCode);
+// 		}
+// 	} catch (error) {
+// 		console.error("Erreur réseau getFeedbacks:", error);
+// 	}
+// 	console.log(result + "auth.js getFeedbacks");
+// 	return result;
+// }
 
 // ------ PRODUCTS ------
 
-export async function getProducts() {
-	let result = [];
+// export async function getProducts() {
+// 	let result = [];
 
-	try {
-		const data = await apiCall(`products/`, "GET", false);
+// 	try {
+// 		const data = await apiCall(`products/`, "GET", false);
 
-		if (data.errorCode === 0) {
-			result = data.product;
-		} else {
-			console.error("unhandle error in auth.js getProducts", data.errorCode);
-		}
-	} catch (error) {
-		console.error("Erreur réseau getProducts:", error);
-	}
-	console.log(result + "auth.js getProducts");
-	return result;
-}
+// 		if (data.errorCode === 0) {
+// 			result = data.product;
+// 		} else {
+// 			console.error("unhandle error in auth.js getProducts", data.errorCode);
+// 		}
+// 	} catch (error) {
+// 		console.error("Erreur réseau getProducts:", error);
+// 	}
+// 	console.log(result + "auth.js getProducts");
+// 	return result;
+// }

@@ -1,3 +1,5 @@
+import { deleteAccount } from "../../script/auth.js";
+
 const wcDiv = document.getElementById("wcWrapper");
 
 const h1 = document.querySelector("h1");
@@ -81,21 +83,29 @@ async function displayMain() {
 }
 
 function displayLoginForm() {
-	displayComponent("login-form", {
-		"user-logged-in": (e) => {
-			console.log("User logged successfully");
-			displayMain();
+	displayComponent(
+		"login-form",
+		{
+			"user-logged-in": (e) => {
+				console.log("User logged successfully");
+				displayMain();
+			},
 		},
-	});
+		true
+	);
 }
 
 function displayRegisterForm() {
-	displayComponent("register-form", {
-		registered: () => {
-			console.log("User registered successfully");
-			displayLoginForm();
+	displayComponent(
+		"register-form",
+		{
+			registered: () => {
+				console.log("User registered successfully");
+				displayLoginForm();
+			},
 		},
-	});
+		true
+	);
 }
 
 function displaySettings() {
@@ -103,17 +113,31 @@ function displaySettings() {
 }
 
 function displayProfil() {
-	displayComponent("profil-wc", {
-		"go-to-settings": () => {
-			console.log("Go to settings from profil");
-			displaySettings();
+	displayComponent(
+		"profil-wc",
+		{
+			"go-to-settings": () => {
+				console.log("Go to settings from profil");
+				displaySettings();
+			},
+			"delete-account": () => {
+				console.log("Account deleted");
+				deleteAccount(); // À faire
+				displayMain();
+			},
 		},
-		"delete-account": () => {
-			console.log("Account deleted");
-			deleteAccount(); // À faire
-			displayMain();
-		},
-	});
+		true
+	);
+}
+
+export function formatDate(isoString) {
+	const date = new Date(isoString);
+	const yyyy = date.getFullYear();
+	const mm = String(date.getMonth() + 1).padStart(2, "0");
+	const dd = String(date.getDate()).padStart(2, "0");
+	const hh = String(date.getHours()).padStart(2, "0");
+	const min = String(date.getMinutes()).padStart(2, "0");
+	return `${yyyy}-${mm}-${dd} ${hh}:${min}`;
 }
 
 window.addEventListener("load", (e) => {

@@ -1,5 +1,6 @@
 import { globalStyles } from "../global/style.js";
 import { getAppointments } from "../../script/auth.js";
+import { formatDate } from "../../script/app.js";
 
 // import { login } from "../../script/auth.js";
 // import { hashPassword } from "../../script/auth.js";
@@ -35,10 +36,9 @@ class appointmentsWC extends HTMLElement {
 			this.shadowRoot.querySelector(".appointment tbody");
 		const row = document.createElement("tr");
 		row.innerHTML = `
-      <td>-</td>
-      <td>${appointment.hairdresser}</td>
-      <td>${appointment.date}</td>
-      <td>${appointment.service}</td>
+		<td>-</td>
+	  	<td>${formatDate(appointment.date)}</td>
+     	<td>${appointment.hairdresser_id}</td>
     `;
 		appointmentTable.appendChild(row);
 	}

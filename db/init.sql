@@ -81,7 +81,15 @@ INSERT INTO "products" ("name", "price") VALUES
 
 INSERT INTO "appointments" ("client_id", "hairdresser_id", "service_id", "date", "status") VALUES
 ((SELECT "id" FROM "users" WHERE "email" = 'f'), (SELECT "id" FROM "users" WHERE "email" = 'uh'), (SELECT "id" FROM "services" WHERE "name" = 'Coupe de cheveux'), '2023-10-01 10:00:00', 'pending'),
-((SELECT "id" FROM "users" WHERE "email" = 'u'), (SELECT "id" FROM "users" WHERE "email" = 'ah'), (SELECT "id" FROM "services" WHERE "name" = 'Coloration'), '2023-10-02 11:00:00', 'confirmed');
+((SELECT "id" FROM "users" WHERE "email" = 'u'), (SELECT "id" FROM "users" WHERE "email" = 'ah'), (SELECT "id" FROM "services" WHERE "name" = 'Coloration'), '2023-10-02 11:00:00', 'confirmed'),
+((SELECT "id" FROM "users" WHERE "email" = 'a'), (SELECT "id" FROM "users" WHERE "email" = 'uh'), (SELECT "id" FROM "services" WHERE "name" = 'Brushing'), '2023-10-03 09:00:00', 'confirmed'),
+((SELECT "id" FROM "users" WHERE "email" = 'f'), (SELECT "id" FROM "users" WHERE "email" = 'ah'), (SELECT "id" FROM "services" WHERE "name" = 'Coloration'), '2023-10-04 13:30:00', 'pending'),
+((SELECT "id" FROM "users" WHERE "email" = 'u'), (SELECT "id" FROM "users" WHERE "email" = 'uh'), (SELECT "id" FROM "services" WHERE "name" = 'Brushing'), '2023-10-05 15:00:00', 'confirmed'),
+((SELECT "id" FROM "users" WHERE "email" = 'a'), (SELECT "id" FROM "users" WHERE "email" = 'ah'), (SELECT "id" FROM "services" WHERE "name" = 'Coupe de cheveux'), '2023-10-06 10:15:00', 'completed'),
+((SELECT "id" FROM "users" WHERE "email" = 'u'), (SELECT "id" FROM "users" WHERE "email" = 'uh'), (SELECT "id" FROM "services" WHERE "name" = 'Coloration'), '2023-10-07 16:45:00', 'confirmed'),
+((SELECT "id" FROM "users" WHERE "email" = 'f'), (SELECT "id" FROM "users" WHERE "email" = 'ah'), (SELECT "id" FROM "services" WHERE "name" = 'Brushing'), '2023-10-08 14:00:00', 'confirmed'),
+((SELECT "id" FROM "users" WHERE "email" = 'a'), (SELECT "id" FROM "users" WHERE "email" = 'uh'), (SELECT "id" FROM "services" WHERE "name" = 'Coloration'), '2023-10-09 12:30:00', 'pending'),
+((SELECT "id" FROM "users" WHERE "email" = 'u'), (SELECT "id" FROM "users" WHERE "email" = 'ah'), (SELECT "id" FROM "services" WHERE "name" = 'Coupe de cheveux'), '2023-10-10 11:00:00', 'confirmed');
 
 INSERT INTO "feedback" ("hairdresser_id", "client_id", "rating", "comment") VALUES
 ((SELECT "id" FROM "users" WHERE "email" = 'uh'), (SELECT "id" FROM "users" WHERE "email" = 'f'), 5, 'Excellent service, very satisfied!'),

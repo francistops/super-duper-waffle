@@ -1,5 +1,5 @@
 import { globalStyles } from "../global/style.js";
-import { getFeedbacks } from "../../script/auth.js";
+// import { getFeedbacks } from "../../script/auth.js";
 
 // import { login } from "../../script/auth.js";
 // import { hashPassword } from "../../script/auth.js";
@@ -26,8 +26,8 @@ class feedbacksWC extends HTMLElement {
 	async connectedCallback() {
 		await this.loadContent();
 		this.dispatchEvent(new CustomEvent("load-complete"));
-		const feedbacks = await getFeedbacks();
-		feedbacks.forEach((a) => this.addNextFeedback(a));
+		// const feedbacks = await getFeedbacks();
+		// feedbacks.forEach((a) => this.addNextFeedback(a));
 	}
 
 	addNextFeedback(feedback) {
