@@ -1,6 +1,5 @@
 import { globalStyles } from "../global/style.js";
-import { login } from "../../script/auth.js";
-import { hashPassword } from "../../script/auth.js";
+import { getFeedbacks } from "../../script/auth.js";
 
 class handlingFeedback extends HTMLElement {
 	constructor() {
@@ -23,6 +22,21 @@ class handlingFeedback extends HTMLElement {
 
 	async connectedCallback() {
 		await this.loadContent();
+		this.dispatchEvent(new CustomEvent("load-complete"));
+		const feedbacks = await getFeedbacks();
+		feedbacks.forEach((a) => this.addNextFeedback(a));
+	}
+
+	addNextFeedback(feedback) {
+		const feedbacksTable = this.shadowRoot.querySelector(".feedbacks tbody");
+		const row = document.createElement("tr");
+		row.innerHTML = `
+      <td>-</td>
+      <td>${feedback.name}</td>
+      <td>${feedback.duration}</td>
+      <td>${feedback.price.toFixed(2)} €</td>
+    `;
+		feedbacksTable.appendChild(row);
 	}
 }
 

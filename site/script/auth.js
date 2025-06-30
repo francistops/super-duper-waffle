@@ -37,14 +37,20 @@ async function apiCall(resource, method, auth, body = {}) {
 		} else throw new Error("Empty token while required...");
 	}
 
-	const response = await fetch(apiUrl, apiReq);
-
-	if (response.ok) {
-		result = await response.json();
-	} else {
+	try {
+		const response = await fetch(apiUrl, apiReq);
+		if (response.ok) {
+			result = await response.json();
+		} else {
+			result = {
+				errorCode: response.status,
+				message: await response.text(),
+			};
+		}
+	} catch (err) {
 		result = {
-			errorCode: response.status,
-			message: response.statusText,
+			errorCode: 500,
+			message: err.message,
 		};
 	}
 
@@ -107,10 +113,10 @@ export async function logout() {
 	console.log("in auth.js logout");
 	let result = false;
 
-	const logoutJson = await apiCall("users/logout", "POST", true);
+	const data = await apiCall("users/logout", "POST", true);
 
-	if (logoutJson.errorCode == 0) {
-		result = logoutJson.revoked;
+	if (data.errorCode == 0) {
+		result = data.revoked;
 		localStorage.clear();
 	}
 	return result;
@@ -120,14 +126,14 @@ export async function deleteAccount() {
 	console.log("in auth.js deleteAccount");
 	let result = false;
 
-	const deleteAccountJson = await apiCall("users/delete", "DELETE", true);
-	if (deleteAccountJson.errorCode == 0) {
-		result = deleteAccountJson.revoked;
+	const data = await apiCall("users/delete", "DELETE", true);
+	if (data.errorCode == 0) {
+		result = data.revoked;
 		localStorage.clear();
 
-		console.log("deleteAccount success", deleteAccountJson);
+		console.log("deleteAccount success", data);
 	} else {
-		console.error("unhandle error in auth.js deleteAccount", deleteAccountJson);
+		console.error("unhandle error in auth.js deleteAccount", data);
 	}
 
 	return result;
@@ -171,40 +177,63 @@ export async function getAppointments() {
 
 // ------ SERVICES ------
 
-// export async function getServices() {
-// 	let result = [];
+export async function getServices() {
+	let result = [];
 
-// 	try {
-// 		const data = await apiCall(`services/`, "GET", false);
+	try {
+		const data = await apiCall(`services/`, "GET", false);
 
-// 		if (data.errorCode === 0) {
-// 			result = data.service;
-// 		} else {
-// 			console.error("unhandle error in auth.js getservices", data.errorCode);
-// 		}
-// 	} catch (error) {
-// 		console.error("Erreur réseau getServices:", error);
-// 	}
-// 	console.log(result + "auth.js getServices");
-// 	return result;
-// }
+		if (data.errorCode === 0) {
+			result = data.services;
+		} else {
+			console.error("unhandle error in auth.js getServices", data.errorCode);
+		}
+	} catch (error) {
+		console.error("Erreur réseau getServices:", error);
+	}
+	console.log(result + "auth.js getServices");
+	return result;
+}
 
 // ------ FEEDBACK ------
 
-// export async function getFeedbacks() {
-// 	let result = [];
+export async function getFeedbacks() {
+	let result = [];
 
-// 	try {
-// 		const data = await apiCall(`feedbacks/`, "GET", false);
+	try {
+		const data = await apiCall(`feedbacks/`, "GET", false);
 
-// 		if (data.errorCode === 0) {
-// 			result = data.feedback;
-// 		} else {
-// 			console.error("unhandle error in auth.js getFeedbacks", data.errorCode);
-// 		}
-// 	} catch (error) {
-// 		console.error("Erreur réseau getFeedbacks:", error);
-// 	}
-// 	console.log(result + "auth.js getFeedbacks");
-// 	return result;
-// }
+		if (data.errorCode === 0) {
+			result = data.feedbacks;
+		} else {
+			console.error("unhandle error in auth.js getFeedbacks", data.errorCode);
+		}
+	} catch (error) {
+		console.error("Erreur réseau getFeedbacks:", error);
+	}
+	console.log(result + "auth.js getFeedbacks");
+	return result;
+}
+
+// ------ AVAILABILITIES ------
+
+export async function getAvailabilities() {
+	let result = [];
+
+	try {
+		const data = await apiCall(`availabilities/`, "GET", false);
+
+		if (data.errorCode === 0) {
+			result = data.availabilities;
+		} else {
+			console.error(
+				"unhandle error in auth.js getAvailabilities",
+				data.errorCode
+			);
+		}
+	} catch (error) {
+		console.error("Erreur réseau getAvailabilities:", error);
+	}
+	console.log(result + "auth.js getAvailabilities");
+	return result;
+}

@@ -8,28 +8,32 @@ const registerBtn = document.getElementById("goToRegisterButton");
 const profilBtn = document.getElementById("goToProfilButton");
 const logoutBtn = document.getElementById("loggoutButton");
 
-function displayComponent(wcName, events = {}, clear = false) {
+function displayMultipleComponents(
+	wcNames = [],
+	eventsPerComponent = {},
+	clear = false
+) {
 	if (clear) {
 		wcDiv.innerHTML = "";
 	}
 
-	const wc = wcDiv.appendChild(document.createElement(wcName));
-
-	cancel_button(wc);
-
-	for (const [eventName, handler] of Object.entries(events)) {
-		wc.addEventListener(eventName, handler);
-	}
-
-	return wc;
-}
-
-function displayMultipleComponents(wcNames = []) {
-	wcDiv.innerHTML = "";
+	const components = [];
 
 	for (const name of wcNames) {
-		displayComponent(name);
+		const wc = wcDiv.appendChild(document.createElement(name));
+		cancel_button(wc);
+		components.push(wc);
+
+		if (eventsPerComponent[name]) {
+			for (const [eventName, handler] of Object.entries(
+				eventsPerComponent[name]
+			)) {
+				wc.addEventListener(eventName, handler);
+			}
+		}
 	}
+
+	return components;
 }
 
 function mainEventListeners() {
@@ -66,7 +70,7 @@ function cancel_button(element) {
 }
 
 async function displayMain() {
-	displayMultipleComponents(["feedbacks-wc", "services-wc"]);
+	displayMultipleComponents(["services-wc", "feedbacks-wc"]);
 
 	const user = JSON.parse(localStorage.getItem("user"));
 	const isLoggedIn = user !== null;
@@ -78,12 +82,14 @@ async function displayMain() {
 }
 
 function displayLoginForm() {
-	displayComponent(
-		"login-form",
+	displayMultipleComponents(
+		["login-form"],
 		{
-			"user-logged-in": (e) => {
-				console.log("User logged successfully");
-				displayMain();
+			"login-form": {
+				"user-logged-in": (e) => {
+					console.log("User logged successfully");
+					displayMain();
+				},
 			},
 		},
 		true
@@ -91,12 +97,14 @@ function displayLoginForm() {
 }
 
 function displayRegisterForm() {
-	displayComponent(
-		"register-form",
+	displayMultipleComponents(
+		["register-form"],
 		{
-			registered: () => {
-				console.log("User registered successfully");
-				displayLoginForm();
+			"register-form": {
+				registered: (e) => {
+					console.log("User registered successfully");
+					displayLoginForm();
+				},
 			},
 		},
 		true
@@ -104,25 +112,70 @@ function displayRegisterForm() {
 }
 
 function displaySettings() {
-	displayComponent("setting-wc");
-}
-
-function displayProfil() {
-	displayComponent(
-		"profil-wc",
+	displayMultipleComponents(
+		["setting-wc"],
 		{
-			"go-to-settings": () => {
-				console.log("Go to settings from profil");
-				displaySettings();
-			},
-			"delete-account": () => {
-				console.log("Account deleted");
-				deleteAccount(); // À faire
-				displayMain();
+			"setting-wc": {
+				"updated-user": (e) => {
+					console.log("User updated successfully");
+					displayMain();
+				},
+				"updated-password": (e) => {
+					console.log("Password updated successfully");
+					displayMain();
+				},
 			},
 		},
 		true
 	);
+}
+
+function displayProfil() {
+	const user = JSON.parse(localStorage.getItem("user"));
+	const isClient = user?.role === "client";
+	const isPhysio = user?.role === "physio";
+
+	const components = ["profil-wc"];
+	const eventsPerComponent = {
+		"profil-wc": {
+			"go-to-settings": () => displaySettings(),
+			"delete-account": () => {
+				deleteAccount();
+				displayMain();
+			},
+		},
+	};
+
+	if (isClient) {
+		components.push("appointments-client", "handling-availabilities-client");
+		eventsPerComponent["handling-availabilities-client"] = {
+			"appointment-selected": async (e) => {
+				const { date, physioId, serviceId } = e.detail;
+				console.log(
+					"Client a choisi le rendez-vous :",
+					date,
+					physioId,
+					serviceId
+				);
+				// appel API ici
+			},
+		};
+	} else if (isPhysio) {
+		components.push("appointments-physio", "handling-availabilities-physio");
+		eventsPerComponent["handling-availabilities-physio"] = {
+			"date-selected": (e) => {
+				const date = e.detail.date;
+				const oldSlots = wcDiv.querySelector("availability-slots");
+				if (oldSlots) oldSlots.remove();
+
+				const slotsWC = document.createElement("availability-slots");
+				slotsWC.setAttribute("start-date", date);
+				wcDiv.appendChild(slotsWC);
+			},
+		};
+	}
+
+	displayMultipleComponents(components, eventsPerComponent, true);
 }
 
 export function formatDate(isoString) {
@@ -133,6 +186,14 @@ export function formatDate(isoString) {
 	const hh = String(date.getHours()).padStart(2, "0");
 	const min = String(date.getMinutes()).padStart(2, "0");
 	return `${yyyy}-${mm}-${dd} ${hh}:${min}`;
+}
+
+export function getNextMonday(date) {
+	const next = new Date(date);
+	const day = next.getDay();
+	const diff = (8 - day) % 7 || 7;
+	next.setDate(next.getDate() + diff);
+	return next.toISOString().split("T")[0];
 }
 
 window.addEventListener("load", (e) => {

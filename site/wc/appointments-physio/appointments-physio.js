@@ -2,9 +2,6 @@ import { globalStyles } from "../global/style.js";
 import { getAppointments } from "../../script/auth.js";
 import { formatDate } from "../../script/app.js";
 
-// import { login } from "../../script/auth.js";
-// import { hashPassword } from "../../script/auth.js";
-
 class appointmentsPhysio extends HTMLElement {
 	constructor() {
 		super();
@@ -38,7 +35,7 @@ class appointmentsPhysio extends HTMLElement {
 		row.innerHTML = `
 		<td>-</td>
 	  	<td>${formatDate(appointment.date)}</td>
-     	<td>${appointment.physio_id}</td>
+     	<td>${appointment.client_id}</td>
 		<td>${appointment.service_id}</td>
     `;
 		appointmentTable.appendChild(row);
