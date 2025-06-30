@@ -24,9 +24,6 @@ app.use("/appointments", appointmentRoute);
 import serviceRoute from "./routers/serviceRoutes.js";
 app.use("/services", serviceRoute);
 
-import feedbackRoute from "./routers/feedbackRoutes.js";
-app.use("/feedback", feedbackRoute);
-
 import feedbackRoute from './routers/feedbackRoutes.js';
 app.use('/feedbacks', feedbackRoute);
 
