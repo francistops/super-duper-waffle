@@ -66,9 +66,9 @@ function cancel_button(element) {
 async function displayMain() {
 	displayMultipleComponents([
 		"appointments-wc",
-		"news-feed-wc",
-		"weather-widget",
-		"quote-of-the-day",
+		"feedbacks-wc",
+		"services-wc",
+		"products-wc",
 	]);
 
 	const user = JSON.parse(localStorage.getItem("user"));
