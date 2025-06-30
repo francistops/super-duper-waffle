@@ -68,7 +68,14 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 - `physio_id` (INTEGER, FK → users.id)
 - `service_id` (INTEGER, FK → services.id)
 - `date` (TIMESTAMP)
-- `status` (VARCHAR) — "pending", "completed", "cancelled"
+- `status` (VARCHAR) — "pending", "show", "noshow"
+
+#### `availabilities`
+
+- `id` (SERIAL PRIMARY KEY)
+- `physio_id` (INTEGER, FK → users.id)
+- `date` (TIMESTAMP)
+- `status` (VARCHAR) — "pending", "cancel"
 
 #### `services`
 
@@ -114,11 +121,11 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 - **DEBUG** `GET /users/` : Liste des utilisateurs.
 - **INTERNAL** `GET /users/:id` : Détail d’un utilisateur spécifique.
 - **INTERNAL** `GET /role/:role` : Liste des utilisateurs par rôle.
+- **INTERNAL** `DELETE /delete` : Suppression d'un utilisateur.
 
 #### `AppointmentController`
 
 - **DEBUG** `GET /appointments` : Liste des rendez-vous.
-
 - **TOKEN** (**Client**) `GET /appointments/users/:id` : Liste des rendez-vous d’un client.
 - **TOKEN** (**Physio**) `PUT /appointments/:id/status` : Mise à jour du statut d’un rendez-vous. (show ou noShow)
 
@@ -126,7 +133,6 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 
 - **TOKEN** (**Physio**) `POST /availability/create` : Création de disponibilités par un physio.
 - **TOKEN** (**Physio**) `DELETE /availability/:id` : Suppression d’une disponibilité.
-
 - **TOKEN** (**Client**) `GET /availability/users/role/:role` : Liste des disponibilités de tous les physios.
 - **TOKEN** (**Client**) `GET /availability/users/:id` : Liste des disponibilités d'un physio.
 - **TOKEN** (**client**) `PUT /availability/:id/` : Créer un appointment et mise à jour de la table availability en ajoutant appointment_id

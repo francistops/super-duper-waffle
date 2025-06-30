@@ -39,6 +39,7 @@ CREATE TABLE "appointments" (
     "client_id" uuid NOT NULL REFERENCES "users"("id"),
     "physio_id" uuid NOT NULL REFERENCES "users"("id"),
     "service_id" uuid NOT NULL REFERENCES "services"("id"),
+	"availability_id" uuid REFERENCES "availabilities"("id"),
     "date" TIMESTAMP NOT NULL,
     "status" VARCHAR(20) DEFAULT 'pending',
     PRIMARY KEY ("id")
@@ -47,8 +48,8 @@ CREATE TABLE "appointments" (
 CREATE TABLE "availabilities" (
     "id" uuid DEFAULT gen_random_uuid(),
     "physio_id" uuid NOT NULL REFERENCES "users"("id"),
-	"appointment_id" uuid REFERENCES "appointments"("id"),
 	"date" TIMESTAMP NOT NULL,
+	"status" VARCHAR(20) DEFAULT 'pending',
     PRIMARY KEY ("id")
 );
 

@@ -122,13 +122,13 @@ export async function logout() {
 	return result;
 }
 
-export async function deleteAccount() {
+export async function deleteAccount(id) {
 	console.log("in auth.js deleteAccount");
 	let result = false;
 
-	const data = await apiCall("users/delete", "DELETE", true);
+	const data = await apiCall("users/delete", "DELETE", true, id);
 	if (data.errorCode == 0) {
-		result = data.revoked;
+		result = data.id;
 		localStorage.clear();
 
 		console.log("deleteAccount success", data);
@@ -158,7 +158,7 @@ export async function getAppointments() {
 	let result = [];
 
 	try {
-		const data = await apiCall(`appointments/`, "GET", false);
+		const data = await apiCall(`appointments/`, "GET", true);
 
 		if (data.errorCode === 0) {
 			result = data.appointments;
@@ -172,6 +172,41 @@ export async function getAppointments() {
 		console.error("Erreur réseau getAppointments:", error);
 	}
 	console.log(result + "auth.js getAppointments");
+	return result;
+}
+
+export async function createAppointments(appointment) {
+	let result = [];
+
+	try {
+		const data = await apiCall(`appointments/`, "POST", true, appointment);
+
+		if (data.errorCode === 0) {
+			result = data.appointment;
+		} else {
+			console.error(
+				"unhandle error in auth.js createAppointments",
+				data.errorCode
+			);
+		}
+	} catch (error) {
+		console.error("Erreur réseau createAppointments:", error);
+	}
+	console.log(result + "auth.js createAppointments");
+	return result;
+}
+
+export async function updateAppointmentStatus(id, status) {
+	let result = false;
+	try {
+		const data = await apiCall(`appointments/${id}`, "PUT", true, { status });
+		if (data.errorCode === 0) {
+			result = data.appointment;
+			console.log("Statut mis à jour :", result);
+		}
+	} catch (error) {
+		console.error("Erreur updateAppointmentStatus:", error);
+	}
 	return result;
 }
 
@@ -195,6 +230,63 @@ export async function getServices() {
 	return result;
 }
 
+export async function createService(service) {
+	let result = false;
+
+	try {
+		const data = await apiCall(`services/`, "POST", true, service);
+
+		if (data.errorCode === 0) {
+			result = data.service;
+			console.log("Service créé avec succès :", result);
+		} else {
+			console.error("Erreur dans auth.js createService", data.errorCode);
+		}
+	} catch (error) {
+		console.error("Erreur réseau createService:", error);
+	}
+
+	return result;
+}
+
+export async function updateService(id, service) {
+	let result = false;
+
+	try {
+		const data = await apiCall(`services/${id}`, "POST", true, service);
+
+		if (data.errorCode === 0) {
+			result = data.service;
+			console.log("Service mis à jour avec succès :", result);
+		} else {
+			console.error("Erreur dans auth.js updateService", data.errorCode);
+		}
+	} catch (error) {
+		console.error("Erreur réseau updateService:", error);
+	}
+
+	return result;
+}
+
+export async function deleteService(id) {
+	let result = false;
+
+	try {
+		const data = await apiCall(`services/${id}`, "DELETE", true);
+
+		if (data.errorCode === 0) {
+			result = data.deleted;
+			console.log("Service supprimé avec succès :", result);
+		} else {
+			console.error("Erreur dans auth.js deleteService", data.errorCode);
+		}
+	} catch (error) {
+		console.error("Erreur réseau deleteService:", error);
+	}
+
+	return result;
+}
+
 // ------ FEEDBACK ------
 
 export async function getFeedbacks() {
@@ -215,13 +307,32 @@ export async function getFeedbacks() {
 	return result;
 }
 
+export async function createFeedback(feedback) {
+	let result = false;
+
+	try {
+		const data = await apiCall(`feedbacks/`, "POST", true, feedback);
+
+		if (data.errorCode === 0) {
+			result = data.feedback || true;
+			console.log("createFeedback success:", data);
+		} else {
+			console.error("Erreur logique dans createFeedback:", data.errorCode);
+		}
+	} catch (error) {
+		console.error("Erreur réseau dans createFeedback:", error);
+	}
+
+	return result;
+}
+
 // ------ AVAILABILITIES ------
 
 export async function getAvailabilities() {
 	let result = [];
 
 	try {
-		const data = await apiCall(`availabilities/`, "GET", false);
+		const data = await apiCall(`availabilities/`, "GET", true);
 
 		if (data.errorCode === 0) {
 			result = data.availabilities;
@@ -235,5 +346,85 @@ export async function getAvailabilities() {
 		console.error("Erreur réseau getAvailabilities:", error);
 	}
 	console.log(result + "auth.js getAvailabilities");
+	return result;
+}
+
+export async function getAvailabilitiesByRole(role) {
+	let result = [];
+
+	try {
+		const data = await apiCall(`availability/users/role/${role}`, "GET", true);
+
+		if (data.errorCode === 0) {
+			result = data.availabilities;
+		} else {
+			console.error(
+				"Erreur logique dans getAvailabilitiesByRole",
+				data.errorCode
+			);
+		}
+	} catch (error) {
+		console.error("Erreur réseau dans getAvailabilitiesByRole:", error);
+	}
+
+	return result;
+}
+
+export async function getAvailabilitiesByUserId(userId) {
+	let result = [];
+
+	try {
+		const data = await apiCall(`availability/users/${userId}`, "GET", true);
+
+		if (data.errorCode === 0) {
+			result = data.availabilities;
+		} else {
+			console.error(
+				"Erreur logique dans getAvailabilitiesByUserId",
+				data.errorCode
+			);
+		}
+	} catch (error) {
+		console.error("Erreur réseau dans getAvailabilitiesByUserId:", error);
+	}
+
+	return result;
+}
+
+export async function createAvailability(availability) {
+	let result = false;
+
+	try {
+		const data = await apiCall(`availabilities/`, "POST", true, availability);
+
+		if (data.errorCode === 0) {
+			result = data.availability || true;
+			console.log("createAvailability success:", data);
+		} else {
+			console.error("Erreur logique dans createAvailability:", data.errorCode);
+		}
+	} catch (error) {
+		console.error("Erreur réseau dans createAvailability:", error);
+	}
+
+	return result;
+}
+
+export async function updateAvailability(id, status) {
+	let result = false;
+
+	try {
+		const data = await apiCall(`availabilities/${id}`, "PUT", true, status);
+
+		if (data.errorCode === 0) {
+			result = data.updated || true;
+			console.log("updateAvailability success:", data);
+		} else {
+			console.error("Erreur logique dans updateAvailability:", data.errorCode);
+		}
+	} catch (error) {
+		console.error("Erreur réseau dans updateAvailability:", error);
+	}
+
 	return result;
 }

@@ -27,7 +27,7 @@ class servicesWC extends HTMLElement {
 		await this.loadContent();
 		this.dispatchEvent(new CustomEvent("load-complete"));
 		const services = await getServices();
-		services.forEach((a) => this.addNextService(a));
+		services.forEach((a) => this.addNextService(a, index + 1));
 	}
 
 	addNextService(service, index) {

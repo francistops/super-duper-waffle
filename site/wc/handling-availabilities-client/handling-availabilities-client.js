@@ -76,6 +76,7 @@ class handlingAvailabilitiesClient extends HTMLElement {
 			tr.dataset.date = a.date;
 			tr.dataset.physioId = a.physio_id;
 			tr.dataset.service = a.service_id;
+			tr.dataset.id = a.id;
 
 			tbody.appendChild(tr);
 		});
@@ -91,7 +92,12 @@ class handlingAvailabilitiesClient extends HTMLElement {
 
 					this.dispatchEvent(
 						new CustomEvent("appointment-selected", {
-							detail: { date, physioId, service },
+							detail: {
+								date,
+								physioId,
+								service,
+								availabilityId: tr.dataset.id,
+							},
 							bubbles: true,
 							composed: true,
 						})
