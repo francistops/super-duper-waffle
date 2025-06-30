@@ -2,7 +2,7 @@ import { globalStyles } from "../global/style.js";
 import { login } from "../../script/auth.js";
 import { hashPassword } from "../../script/auth.js";
 
-class handlingPost extends HTMLElement {
+class handlingFeedback extends HTMLElement {
 	constructor() {
 		super();
 		const shadow = this.attachShadow({ mode: "open" });
@@ -13,9 +13,9 @@ class handlingPost extends HTMLElement {
 	}
 
 	async loadContent() {
-		const html = await fetch("/wc/handling-post/handling-post.html").then(
-			(res) => res.text()
-		);
+		const html = await fetch(
+			"/wc/handling-feedback/handling-feedback.html"
+		).then((res) => res.text());
 		const template = document.createElement("template");
 		template.innerHTML = html;
 		this.shadowRoot.appendChild(template.content.cloneNode(true));
@@ -26,4 +26,4 @@ class handlingPost extends HTMLElement {
 	}
 }
 
-customElements.define("handling-post", handlingPost);
+customElements.define("handling-feedback", handlingFeedback);

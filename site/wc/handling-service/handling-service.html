@@ -1,0 +1,21 @@
+<form class="handling-service">
+	<div>
+		<h2>Ajouter un service</h2>
+		<label for="inpServiceName">Nom du service:</label>
+		<input type="text" id="inpServiceName" name="service_name" />
+		<label for="inpServiceDuration">Durée (en minutes):</label>
+		<input
+			type="number"
+			id="inpServiceDuration"
+			name="service_duration"
+			min="15"
+			max="180"
+		/>
+		<label for="inpServicePrice">Prix:</label>
+		<input type="number" id="inpServicePrice" name="service_price" min="0" />
+	</div>
+	<div>
+		<button id="inpAddService">Ajouter un service</button>
+		<button type="button" value="Cancel" id="cancelButton">Annuler</button>
+	</div>
+</form>

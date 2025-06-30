@@ -1,0 +1,24 @@
+<form class="feedback-form">
+	<div>
+		<h2>Avis</h2>
+		<label for="inpFeedbackHairdresser">Coiffeur:</label>
+		<select id="inpFeedbackHairdresser" name="feedback_hairdresser">
+			<!-- La liste est fourni par le backend -->
+		</select>
+		<label for="inpFeedbackRating">Note (1-5):</label>
+		<input
+			type="number"
+			id="inpFeedbackRating"
+			name="feedback_rating"
+			min="1"
+			max="5"
+		/>
+		<label for="inpFeedbackComment">Commentaire:</label>
+		<textarea id="inpFeedbackComment" name="feedback_comment"></textarea>
+	</div>
+	<div>
+		<h2>Avis</h2>
+		<button id="inpAddFeedback">Ajouter un avis</button>
+		<button type="button" value="Cancel" id="cancelButton">Annuler</button>
+	</div>
+</form>

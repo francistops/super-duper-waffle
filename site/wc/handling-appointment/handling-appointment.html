@@ -1,0 +1,26 @@
+<form class="appointment-form">
+	<div>
+		<h2>Rendez-vous</h2>
+		<label for="inpAppointmentHairdresser">Coiffeur:</label>
+		<select id="inpAppointmentHairdresser" name="appointment_hairdresser">
+			<!-- La liste est fourni par le backend -->
+		</select>
+		<label for="inpAppointmentService">Service:</label>
+		<select id="inpAppointmentService" name="appointment_service">
+			<!-- La liste est fourni par le backend -->
+		</select>
+		<label for="inpAppointmentDate">Date et heure:</label>
+		<input
+			type="datetime-local"
+			id="inpAppointmentDate"
+			name="appointment_date"
+		/>
+	</div>
+	<div>
+		<h2>Rendez-vous</h2>
+		<button id="inpAddAppointment">Ajouter un rendez-vous</button>
+		<button type="button" value="Cancel" id="cancelButton">Annuler</button>
+	</div>
+</form>
+
+// Voir son tableau de rendez-vous,

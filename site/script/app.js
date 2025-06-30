@@ -66,12 +66,7 @@ function cancel_button(element) {
 }
 
 async function displayMain() {
-	displayMultipleComponents([
-		"appointments-wc",
-		"feedbacks-wc",
-		"services-wc",
-		"products-wc",
-	]);
+	displayMultipleComponents(["appointments-wc", "feedbacks-wc", "services-wc"]);
 
 	const user = JSON.parse(localStorage.getItem("user"));
 	const isLoggedIn = user !== null;

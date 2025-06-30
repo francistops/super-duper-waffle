@@ -39,6 +39,7 @@ class appointmentsWC extends HTMLElement {
 		<td>-</td>
 	  	<td>${formatDate(appointment.date)}</td>
      	<td>${appointment.hairdresser_id}</td>
+		<td>${appointment.service_id}</td>
     `;
 		appointmentTable.appendChild(row);
 	}

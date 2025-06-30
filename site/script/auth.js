@@ -169,7 +169,7 @@ export async function getAppointments() {
 	return result;
 }
 
-// ------ SERVICES/PRODUCTS ------
+// ------ SERVICES ------
 
 // export async function getServices() {
 // 	let result = [];
@@ -206,25 +206,5 @@ export async function getAppointments() {
 // 		console.error("Erreur réseau getFeedbacks:", error);
 // 	}
 // 	console.log(result + "auth.js getFeedbacks");
-// 	return result;
-// }
-
-// ------ PRODUCTS ------
-
-// export async function getProducts() {
-// 	let result = [];
-
-// 	try {
-// 		const data = await apiCall(`products/`, "GET", false);
-
-// 		if (data.errorCode === 0) {
-// 			result = data.product;
-// 		} else {
-// 			console.error("unhandle error in auth.js getProducts", data.errorCode);
-// 		}
-// 	} catch (error) {
-// 		console.error("Erreur réseau getProducts:", error);
-// 	}
-// 	console.log(result + "auth.js getProducts");
 // 	return result;
 // }
