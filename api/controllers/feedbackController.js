@@ -1,4 +1,5 @@
 import {
+	fetchFeedback,
 	insertFeedback,
     updateFeedback,
 	fetchFeedbackByAppointmentId,
@@ -23,7 +24,7 @@ let result = UNKNOWN_ERROR;
             feedbacks: feedbacks
         };
     } catch (error) {
-        catchMsg(`feedback FetchFeedback`);
+        catchMsg(`feedback FetchFeedback`, error, res, result);
     }
     res.formatView(result);
 };

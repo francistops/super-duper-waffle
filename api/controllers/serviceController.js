@@ -27,7 +27,7 @@ export async function getServices(req, res) {
             services: services
         };
     } catch (error) {
-        catchMsg(`service getServices`);
+        catchMsg(`service getServices`,error, res, result);
     }
     res.formatView(result);
 };
