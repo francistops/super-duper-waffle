@@ -171,7 +171,7 @@ export async function getServices() {
 		const data = await apiCall(`services/`, "GET", false);
 
 		if (data.errorCode === 0) {
-			result = data.services;
+			result = data.service;
 		} else {
 			console.error("unhandle error in auth.js getservices", data.errorCode);
 		}
@@ -191,7 +191,7 @@ export async function getFeedbacks() {
 		const data = await apiCall(`feedbacks/`, "GET", false);
 
 		if (data.errorCode === 0) {
-			result = data.feedbacks;
+			result = data.feedback;
 		} else {
 			console.error("unhandle error in auth.js getFeedbacks", data.errorCode);
 		}
@@ -211,7 +211,7 @@ export async function getProducts() {
 		const data = await apiCall(`products/`, "GET", false);
 
 		if (data.errorCode === 0) {
-			result = data.products;
+			result = data.product;
 		} else {
 			console.error("unhandle error in auth.js getProducts", data.errorCode);
 		}
