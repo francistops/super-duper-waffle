@@ -5,7 +5,6 @@ import {
 	isUserValid,
 	fetchIdByEmail,
 	logoutByToken,
-	fetchByRole,
 	deleteUser,
 } from "../models/userModel.js";
 import { assignToken, isTokenExist } from "../models/tokenModel.js";
