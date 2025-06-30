@@ -19,7 +19,6 @@ export async function getAppointments(req, res) {
 	let result = UNKNOWN_ERROR;
 	try {
 		const appointments = await fetchAppointments();
-
 		result = {
 			message: "Success",
 			errorCode: 0,

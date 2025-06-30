@@ -1,5 +1,3 @@
-import { getAppointments } from "../script/auth.js";
-
 const wcDiv = document.getElementById("wcWrapper");
 
 const h1 = document.querySelector("h1");
@@ -8,8 +6,10 @@ const registerBtn = document.getElementById("goToRegisterButton");
 const profilBtn = document.getElementById("goToProfilButton");
 const logoutBtn = document.getElementById("loggoutButton");
 
-function displayComponent(wcName, events = {}) {
-	wcDiv.innerHTML = "";
+function displayComponent(wcName, events = {}, clear = false) {
+	if (clear) {
+		wcDiv.innerHTML = "";
+	}
 
 	const wc = wcDiv.appendChild(document.createElement(wcName));
 
@@ -20,6 +20,14 @@ function displayComponent(wcName, events = {}) {
 	}
 
 	return wc;
+}
+
+function displayMultipleComponents(wcNames = []) {
+	wcDiv.innerHTML = "";
+
+	for (const name of wcNames) {
+		displayComponent(name);
+	}
 }
 
 function mainEventListeners() {
@@ -55,8 +63,13 @@ function cancel_button(element) {
 	});
 }
 
-async function displayMain(wcName = "main-wc") {
-	const wc = displayComponent(wcName);
+async function displayMain() {
+	displayMultipleComponents([
+		"appointments-wc",
+		"news-feed-wc",
+		"weather-widget",
+		"quote-of-the-day",
+	]);
 
 	const user = JSON.parse(localStorage.getItem("user"));
 	const isLoggedIn = user !== null;
@@ -65,9 +78,6 @@ async function displayMain(wcName = "main-wc") {
 	loginBtn.classList.toggle("hidden", isLoggedIn);
 	registerBtn.classList.toggle("hidden", isLoggedIn);
 	profilBtn.classList.toggle("hidden", !isLoggedIn);
-
-	const appointments = await getAppointments();
-	appointments.forEach((a) => wc.addNextAppointment(a));
 }
 
 function displayLoginForm() {
@@ -106,7 +116,7 @@ function displayProfil() {
 	});
 }
 
-window.addEventListener("load", async (e) => {
-	await displayMain();
+window.addEventListener("load", (e) => {
+	displayMain();
 	mainEventListeners();
 });

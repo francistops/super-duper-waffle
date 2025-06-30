@@ -5,7 +5,6 @@ import {
 	isUserValid,
 	fetchIdByEmail,
 	logoutByToken,
-	fetchByRole,
 	deleteUser,
 } from "../models/userModel.js";
 import { assignToken, isTokenExist } from "../models/tokenModel.js";
@@ -58,7 +57,6 @@ export async function getUsersByRole(req, res) {
 
 	res.formatView(result);
 }
-
 
 export async function registerUser(req, res) {
 	let result = UNKNOWN_ERROR;
@@ -147,7 +145,7 @@ export async function logoutUser(req, res) {
 // todo user can only delete himself like remove user by token
 export async function removeUser(req, res) {
 	let result = UNKNOWN_ERROR;
-  
+
 	const { id } = req.body;
 
 	try {
