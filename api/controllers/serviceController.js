@@ -18,10 +18,9 @@ const UNKNOWN_ERROR = {
 
 
 export async function getServices(req, res) {
-	return 'getServices niy'
 	let result = UNKNOWN_ERROR;
     try {
-        const services = await fetchServices(id);
+        const services = await fetchServices();
         result = {
             message: 'Success',
             errorCode: 0,
