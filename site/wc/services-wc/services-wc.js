@@ -1,5 +1,5 @@
 import { globalStyles } from "../global/style.js";
-import { getServices } from "../../script/auth.js";
+// import { getServices } from "../../script/auth.js";
 
 // import { login } from "../../script/auth.js";
 // import { hashPassword } from "../../script/auth.js";
@@ -26,8 +26,8 @@ class servicesWC extends HTMLElement {
 	async connectedCallback() {
 		await this.loadContent();
 		this.dispatchEvent(new CustomEvent("load-complete"));
-		const services = await getServices();
-		services.forEach((a) => this.addNextService(a));
+		// const services = await getServices();
+		// services.forEach((a) => this.addNextService(a));
 	}
 
 	addNextService(service) {

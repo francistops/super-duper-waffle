@@ -1,5 +1,5 @@
 import { globalStyles } from "../global/style.js";
-import { getProducts } from "../../script/auth.js";
+// import { getProducts } from "../../script/auth.js";
 
 // import { login } from "../../script/auth.js";
 // import { hashPassword } from "../../script/auth.js";
@@ -26,8 +26,8 @@ class productsWC extends HTMLElement {
 	async connectedCallback() {
 		await this.loadContent();
 		this.dispatchEvent(new CustomEvent("load-complete"));
-		const products = await getProducts();
-		products.forEach((a) => this.addNextProduct(a));
+		// const products = await getProducts();
+		// products.forEach((a) => this.addNextProduct(a));
 	}
 
 	addNextProduct(product) {
