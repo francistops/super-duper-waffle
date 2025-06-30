@@ -151,32 +151,73 @@ export async function getAppointments() {
 			result = data.appointments;
 		} else {
 			console.error(
-				"unhandle error in auth.js getAppointmentsByRole",
+				"unhandle error in auth.js getAppointments",
 				data.errorCode
 			);
 		}
 	} catch (error) {
-		console.error("Erreur réseau getFeedbacks:", error);
+		console.error("Erreur réseau getAppointments:", error);
 	}
-
+	console.log(result + "auth.js getAppointments");
 	return result;
 }
 
-// ------ SERVICES ------
+// ------ SERVICES/PRODUCTS ------
 
-export async function addNextService(service) {
-	console.log("in auth.js addNextService", service);
-	let result = false;
+export async function getServices() {
+	let result = [];
 
-	const data = await apiCall("service/add", "POST", true, service);
-	if (data.errorCode == 0) {
-		result = true;
-		console.log("addNextService success", data);
-	} else {
-		console.error("unhandle error in auth.js addNextService", data);
+	try {
+		const data = await apiCall(`services/`, "GET", false);
+
+		if (data.errorCode === 0) {
+			result = data.services;
+		} else {
+			console.error("unhandle error in auth.js getservices", data.errorCode);
+		}
+	} catch (error) {
+		console.error("Erreur réseau getServices:", error);
 	}
-
+	console.log(result + "auth.js getServices");
 	return result;
 }
 
 // ------ FEEDBACK ------
+
+export async function getFeedbacks() {
+	let result = [];
+
+	try {
+		const data = await apiCall(`feedbacks/`, "GET", false);
+
+		if (data.errorCode === 0) {
+			result = data.feedbacks;
+		} else {
+			console.error("unhandle error in auth.js getFeedbacks", data.errorCode);
+		}
+	} catch (error) {
+		console.error("Erreur réseau getFeedbacks:", error);
+	}
+	console.log(result + "auth.js getFeedbacks");
+	return result;
+}
+
+// ------ PRODUCTS ------
+
+export async function getProducts() {
+	let result = [];
+
+	try {
+		const data = await apiCall(`products/`, "GET", false);
+
+		if (data.errorCode === 0) {
+			result = data.products;
+		} else {
+			console.error("unhandle error in auth.js getProducts", data.errorCode);
+		}
+	} catch (error) {
+		console.error("Erreur réseau getProducts:", error);
+	}
+	console.log(result + "auth.js getProducts");
+	return result;
+}

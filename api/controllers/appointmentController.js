@@ -19,14 +19,14 @@ export async function getAppointments(req, res) {
 	let result = UNKNOWN_ERROR;
 
 	try {
-		const appointments = await fetchAppointments(id);
+		const appointments = await fetchAppointments();
 		result = {
 			message: "Success",
 			errorCode: 0,
 			appointments: appointments,
 		};
 	} catch (error) {
-		catchMsg(`appointment getAppointments`);
+		catchMsg(`appointment getAppointments`, error, res, result);
 	}
 	res.formatView(result);
 }

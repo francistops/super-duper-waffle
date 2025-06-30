@@ -2,7 +2,7 @@ import pool from "../db/pool.js";
 
 //debug
 export async function fetchAppointments() {
-	const selectSql = `SELECT * FROM "Appointments"`;
+	const selectSql = `SELECT * FROM "appointments"`;
 	const queryResult = await pool.query(selectSql);
 	return queryResult.rows;
 }
