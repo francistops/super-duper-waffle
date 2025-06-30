@@ -13,6 +13,20 @@ const UNKNOWN_ERROR = {
         errorCode: 9999
 };
 
+export async function getFeedback(req, res) {
+let result = UNKNOWN_ERROR;
+    try {
+        const feedbacks = await fetchFeedback();
+        result = {
+            message: 'Success',
+            errorCode: 0,
+            feedbacks: feedbacks
+        };
+    } catch (error) {
+        catchMsg(`feedback FetchFeedback`);
+    }
+    res.formatView(result);
+};
 
 export async function addFeedback(req, res) {
 	return 'addFeedback niy'
