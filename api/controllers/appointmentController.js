@@ -19,6 +19,7 @@ export async function getAppointments(req, res) {
 	let result = UNKNOWN_ERROR;
 	try {
 		const appointments = await fetchAppointments();
+
 		result = {
 			message: "Success",
 			errorCode: 0,
@@ -43,7 +44,6 @@ export async function getAppointmentsById(req, res) {
 	} catch (error) {
 		catchMsg(`appointment getAppointmentsByClientId ${req.body}`, error, res, result);
 	}
-
 	res.formatView(result);
 }
 
@@ -87,6 +87,7 @@ export async function addAppointment(req, res) {
 	try {
 		const appointment = await insertAppointments(newAppointment);
 
+
 		result = {
 			message: "Success",
 			errorCode: 0,
@@ -103,6 +104,7 @@ export async function editAppointment(req, res) {
 	const id = req.body;
 	try {
 		const appointment = await updateAppointments(id);
+
 		result = {
 			message: "Success",
 			errorCode: 0,

@@ -5,7 +5,9 @@ export async function hashPassword(password) {
 		const data = encoder.encode(password);
 		const hashBuffer = await crypto.subtle.digest("SHA-256", data);
 		const hashArray = Array.from(new Uint8Array(hashBuffer));
-		hashHex = hashArray.map((byte) => byte.toString(16).padStart(2, "0")).join("");
+		hashHex = hashArray
+			.map((byte) => byte.toString(16).padStart(2, "0"))
+			.join("");
 		console.log("hashHex", hashHex);
 	} catch (error) {
 		console.log(`error: ${error}`);
@@ -44,6 +46,8 @@ async function apiCall(resource, method, auth, body = {}) {
 	return result;
 }
 
+// ------ Users ------
+
 export function getConnectedUser() {
 	return JSON.parse(localStorage.getItem("user"));
 }
@@ -54,7 +58,7 @@ export function isIdentified() {
 
 export async function register(user) {
 	let result = false;
-	// console.log('in auth.js register', user.email)
+	console.log("in auth.js register", user.role);
 	const data = await apiCall("users/register", "POST", false, user);
 	//! todo: display code must be must be app.js
 	if (data.errorCode == 0) {
@@ -135,6 +139,31 @@ export async function getUsersByRole(role) {
 	return result;
 }
 
+// ------ APPOINTMENTS ------
+
+export async function getAppointments() {
+	let result = [];
+
+	try {
+		const data = await apiCall(`appointments/`, "GET", false);
+
+		if (data.errorCode === 0) {
+			result = data.appointments;
+		} else {
+			console.error(
+				"unhandle error in auth.js getAppointmentsByRole",
+				data.errorCode
+			);
+		}
+	} catch (error) {
+		console.error("Erreur réseau getFeedbacks:", error);
+	}
+
+	return result;
+}
+
+// ------ SERVICES ------
+
 export async function addNextService(service) {
 	console.log("in auth.js addNextService", service);
 	let result = false;
@@ -149,3 +178,5 @@ export async function addNextService(service) {
 
 	return result;
 }
+
+// ------ FEEDBACK ------

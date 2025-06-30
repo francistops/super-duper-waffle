@@ -1,3 +1,5 @@
+import { getAppointments } from "../script/auth.js";
+
 const wcDiv = document.getElementById("wcWrapper");
 
 const h1 = document.querySelector("h1");
@@ -53,8 +55,8 @@ function cancel_button(element) {
 	});
 }
 
-function displayMain(wcName = "main-wc") {
-	displayComponent(wcName);
+async function displayMain(wcName = "main-wc") {
+	const wc = displayComponent(wcName);
 
 	const user = JSON.parse(localStorage.getItem("user"));
 	const isLoggedIn = user !== null;
@@ -63,6 +65,9 @@ function displayMain(wcName = "main-wc") {
 	loginBtn.classList.toggle("hidden", isLoggedIn);
 	registerBtn.classList.toggle("hidden", isLoggedIn);
 	profilBtn.classList.toggle("hidden", !isLoggedIn);
+
+	const appointments = await getAppointments();
+	appointments.forEach((a) => wc.addNextAppointment(a));
 }
 
 function displayLoginForm() {
@@ -101,7 +106,7 @@ function displayProfil() {
 	});
 }
 
-window.addEventListener("load", (e) => {
-	displayMain();
+window.addEventListener("load", async (e) => {
+	await displayMain();
 	mainEventListeners();
 });
