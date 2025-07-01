@@ -175,6 +175,27 @@ export async function getAppointments() {
 	return result;
 }
 
+export async function getAppointmentsById() {
+	let result = [];
+
+	try {
+		const data = await apiCall(`appointments/users/:id`, "GET", true);
+
+		if (data.errorCode === 0) {
+			result = data.appointment;
+		} else {
+			console.error(
+				"unhandle error in auth.js getAppointmentsById",
+				data.errorCode
+			);
+		}
+	} catch (error) {
+		console.error("Erreur réseau getAppointmentsById:", error);
+	}
+	console.log(result + "auth.js getAppointmentsById");
+	return result;
+}
+
 export async function createAppointments(appointment) {
 	let result = [];
 
@@ -207,6 +228,109 @@ export async function updateAppointmentStatus(id, status) {
 	} catch (error) {
 		console.error("Erreur updateAppointmentStatus:", error);
 	}
+	return result;
+}
+
+// ------ AVAILABILITIES ------
+
+export async function getAvailabilities() {
+	let result = [];
+
+	try {
+		const data = await apiCall(`availabilities/`, "GET", true);
+
+		if (data.errorCode === 0) {
+			result = data.availabilities;
+		} else {
+			console.error(
+				"unhandle error in auth.js getAvailabilities",
+				data.errorCode
+			);
+		}
+	} catch (error) {
+		console.error("Erreur réseau getAvailabilities:", error);
+	}
+	console.log(result + "auth.js getAvailabilities");
+	return result;
+}
+
+export async function getAvailabilitiesByRole(role) {
+	let result = [];
+
+	try {
+		const data = await apiCall(`availability/users/role/${role}`, "GET", true);
+
+		if (data.errorCode === 0) {
+			result = data.availabilities;
+		} else {
+			console.error(
+				"Erreur logique dans getAvailabilitiesByRole",
+				data.errorCode
+			);
+		}
+	} catch (error) {
+		console.error("Erreur réseau dans getAvailabilitiesByRole:", error);
+	}
+
+	return result;
+}
+
+export async function getAvailabilitiesByUserId(userId) {
+	let result = [];
+
+	try {
+		const data = await apiCall(`availability/users/${userId}`, "GET", true);
+
+		if (data.errorCode === 0) {
+			result = data.availabilities;
+		} else {
+			console.error(
+				"Erreur logique dans getAvailabilitiesByUserId",
+				data.errorCode
+			);
+		}
+	} catch (error) {
+		console.error("Erreur réseau dans getAvailabilitiesByUserId:", error);
+	}
+
+	return result;
+}
+
+export async function createAvailability(availability) {
+	let result = false;
+
+	try {
+		const data = await apiCall(`availabilities/`, "POST", true, availability);
+
+		if (data.errorCode === 0) {
+			result = data.availability || true;
+			console.log("createAvailability success:", data);
+		} else {
+			console.error("Erreur logique dans createAvailability:", data.errorCode);
+		}
+	} catch (error) {
+		console.error("Erreur réseau dans createAvailability:", error);
+	}
+
+	return result;
+}
+
+export async function updateAvailability(id, status) {
+	let result = false;
+
+	try {
+		const data = await apiCall(`availabilities/${id}`, "PUT", true, status);
+
+		if (data.errorCode === 0) {
+			result = data.updated || true;
+			console.log("updateAvailability success:", data);
+		} else {
+			console.error("Erreur logique dans updateAvailability:", data.errorCode);
+		}
+	} catch (error) {
+		console.error("Erreur réseau dans updateAvailability:", error);
+	}
+
 	return result;
 }
 
@@ -321,109 +445,6 @@ export async function createFeedback(feedback) {
 		}
 	} catch (error) {
 		console.error("Erreur réseau dans createFeedback:", error);
-	}
-
-	return result;
-}
-
-// ------ AVAILABILITIES ------
-
-export async function getAvailabilities() {
-	let result = [];
-
-	try {
-		const data = await apiCall(`availabilities/`, "GET", true);
-
-		if (data.errorCode === 0) {
-			result = data.availabilities;
-		} else {
-			console.error(
-				"unhandle error in auth.js getAvailabilities",
-				data.errorCode
-			);
-		}
-	} catch (error) {
-		console.error("Erreur réseau getAvailabilities:", error);
-	}
-	console.log(result + "auth.js getAvailabilities");
-	return result;
-}
-
-export async function getAvailabilitiesByRole(role) {
-	let result = [];
-
-	try {
-		const data = await apiCall(`availability/users/role/${role}`, "GET", true);
-
-		if (data.errorCode === 0) {
-			result = data.availabilities;
-		} else {
-			console.error(
-				"Erreur logique dans getAvailabilitiesByRole",
-				data.errorCode
-			);
-		}
-	} catch (error) {
-		console.error("Erreur réseau dans getAvailabilitiesByRole:", error);
-	}
-
-	return result;
-}
-
-export async function getAvailabilitiesByUserId(userId) {
-	let result = [];
-
-	try {
-		const data = await apiCall(`availability/users/${userId}`, "GET", true);
-
-		if (data.errorCode === 0) {
-			result = data.availabilities;
-		} else {
-			console.error(
-				"Erreur logique dans getAvailabilitiesByUserId",
-				data.errorCode
-			);
-		}
-	} catch (error) {
-		console.error("Erreur réseau dans getAvailabilitiesByUserId:", error);
-	}
-
-	return result;
-}
-
-export async function createAvailability(availability) {
-	let result = false;
-
-	try {
-		const data = await apiCall(`availabilities/`, "POST", true, availability);
-
-		if (data.errorCode === 0) {
-			result = data.availability || true;
-			console.log("createAvailability success:", data);
-		} else {
-			console.error("Erreur logique dans createAvailability:", data.errorCode);
-		}
-	} catch (error) {
-		console.error("Erreur réseau dans createAvailability:", error);
-	}
-
-	return result;
-}
-
-export async function updateAvailability(id, status) {
-	let result = false;
-
-	try {
-		const data = await apiCall(`availabilities/${id}`, "PUT", true, status);
-
-		if (data.errorCode === 0) {
-			result = data.updated || true;
-			console.log("updateAvailability success:", data);
-		} else {
-			console.error("Erreur logique dans updateAvailability:", data.errorCode);
-		}
-	} catch (error) {
-		console.error("Erreur réseau dans updateAvailability:", error);
 	}
 
 	return result;
