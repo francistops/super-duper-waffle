@@ -133,7 +133,7 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 #### `AvailabilityController`
 
 - **TOKEN** (**Client et coiffeuse**) `GET /availabilities/users/:id` : Voir les disponibilités d'une coiffeuse.
-- **TOKEN** (**Client**) `GET /availabilities/users/role/:role` : Voir les disponibilités de toutes les coiffeuses.
+- **TOKEN** (**Client**) `GET /availabilities` : Voir toutes les disponibilités.
 - **TOKEN** (**client**) `PUT /availabilities/:id/` : Mise à jour d'une disponibilité.
 - **TOKEN** (**Coiffeuse**) `POST /availabilities` : Création de disponibilités.
 - **TOKEN** (**Coiffeuse**) `DELETE /availabilities/:id` : Suppression d’une disponibilité.
