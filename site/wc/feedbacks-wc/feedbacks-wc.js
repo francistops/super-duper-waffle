@@ -31,7 +31,7 @@ class feedbacksWC extends HTMLElement {
 		const feedbackTable = this.shadowRoot.querySelector(".feedback tbody");
 		const row = document.createElement("tr");
 		row.innerHTML = `
-      <td>${feedback.physio_id}</td>
+      <td>${feedback.hairdresser_id}</td>
       <td>${feedback.client_id}</td>
       <td>${feedback.rating}</td>
       <td>${feedback.comment}</td>

@@ -7,7 +7,7 @@ import {
 } from "../../script/auth.js";
 import { formatDate } from "../../script/app.js";
 
-class appointmentsPhysio extends HTMLElement {
+class appointmentsHairdresser extends HTMLElement {
 	constructor() {
 		super();
 		const shadow = this.attachShadow({ mode: "open" });
@@ -19,7 +19,7 @@ class appointmentsPhysio extends HTMLElement {
 
 	async loadContent() {
 		const html = await fetch(
-			"/wc/appointments-physio/appointments-physio.html"
+			"/wc/appointments-hairdresser/appointments-hairdresser.html"
 		).then((res) => res.text());
 		const template = document.createElement("template");
 		template.innerHTML = html;
@@ -69,4 +69,4 @@ class appointmentsPhysio extends HTMLElement {
 	}
 }
 
-customElements.define("appointments-physio", appointmentsPhysio);
+customElements.define("appointments-hairdresser", appointmentsHairdresser);

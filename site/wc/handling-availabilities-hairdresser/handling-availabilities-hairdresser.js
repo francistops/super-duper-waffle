@@ -1,7 +1,7 @@
 import { globalStyles } from "../global/style.js";
 import { getNextMonday } from "../../script/app.js";
 
-class handlingAvailabilitiesPhysio extends HTMLElement {
+class handlingAvailabilitiesHairdresser extends HTMLElement {
 	constructor() {
 		super();
 		const shadow = this.attachShadow({ mode: "open" });
@@ -13,7 +13,7 @@ class handlingAvailabilitiesPhysio extends HTMLElement {
 
 	async loadContent() {
 		const html = await fetch(
-			"/wc/handling-availabilities-physio/handling-availabilities-physio.html"
+			"/wc/handling-availabilities-hairdresser/handling-availabilities-hairdresser.html"
 		).then((res) => res.text());
 		const template = document.createElement("template");
 		template.innerHTML = html;
@@ -61,6 +61,6 @@ class handlingAvailabilitiesPhysio extends HTMLElement {
 }
 
 customElements.define(
-	"handling-availabilities-physio",
-	handlingAvailabilitiesPhysio
+	"handling-availabilities-hairdresser",
+	handlingAvailabilitiesHairdresser
 );

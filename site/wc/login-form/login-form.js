@@ -46,9 +46,9 @@ class loginForm extends HTMLElement {
 				} else {
 					console.log("login success", success);
 
-					if (user.role === "physio") {
+					if (user.role === "hairdresser") {
 						this.dispatchEvent(
-							new CustomEvent("user-is-physio", {
+							new CustomEvent("user-is-hairdresser", {
 								bubbles: true,
 								composed: true,
 								detail: { user },

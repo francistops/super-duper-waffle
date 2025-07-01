@@ -137,7 +137,7 @@ function displaySettings() {
 function displayProfil() {
 	const user = JSON.parse(localStorage.getItem("user"));
 	const isClient = user?.role === "client";
-	const isPhysio = user?.role === "physio";
+	const isHairdresser = user?.role === "hairdresser";
 
 	const components = ["profil-wc"];
 	const eventsPerComponent = {
@@ -154,19 +154,22 @@ function displayProfil() {
 		components.push("appointments-client", "handling-availabilities-client");
 		eventsPerComponent["handling-availabilities-client"] = {
 			"appointment-selected": async (e) => {
-				const { date, physioId, serviceId } = e.detail;
+				const { date, hairdresserId, serviceId } = e.detail;
 				console.log(
 					"Client a choisi le rendez-vous :",
 					date,
-					physioId,
+					hairdresserId,
 					serviceId
 				);
 				// appel API ici
 			},
 		};
-	} else if (isPhysio) {
-		components.push("appointments-physio", "handling-availabilities-physio");
-		eventsPerComponent["handling-availabilities-physio"] = {
+	} else if (isHairdresser) {
+		components.push(
+			"appointments-hairdresser",
+			"handling-availabilities-hairdresser"
+		);
+		eventsPerComponent["handling-availabilities-hairdresser"] = {
 			"date-selected": (e) => {
 				const date = e.detail.date;
 				const oldSlots = wcDiv.querySelector("availability-slots");

@@ -37,7 +37,7 @@ class appointmentsClient extends HTMLElement {
 		row.innerHTML = `
 	<td class="action-cell"></td> <!-- cellule vide au départ -->
 	<td>${formatDate(appointment.date)}</td>
-	<td>${appointment.physio_id}</td>
+	<td>${appointment.hairdresser_id}</td>
 	<td>${appointment.service_id}</td>
 `;
 
