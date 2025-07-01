@@ -127,15 +127,16 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 
 - **DEBUG** `GET /appointments` : Liste des rendez-vous.
 - **TOKEN** (**Client**) `GET /appointments/users/:id` : Liste des rendez-vous d’un client.
+- **Token** (**Client**) `POST /appointments` : Créer un rendez-vous.
 - **TOKEN** (**Coiffeuse**) `PUT /appointments/:id/status` : Mise à jour du statut d’un rendez-vous. (show ou noShow)
 
 #### `AvailabilityController`
 
-- **TOKEN** (**Coiffeuse**) `POST /availability/create` : Création de disponibilités par une coiffeuse.
-- **TOKEN** (**Coiffeuse**) `DELETE /availability/:id` : Suppression d’une disponibilité.
-- **TOKEN** (**Client**) `GET /availability/users/role/:role` : Liste des disponibilités de toutes les coiffeuses.
-- **TOKEN** (**Client**) `GET /availability/users/:id` : Liste des disponibilités d'une coiffeuse.
-- **TOKEN** (**client**) `PUT /availability/:id/` : Créer un appointment et mise à jour de la table availability en ajoutant appointment_id
+- **TOKEN** (**Coiffeuse**) `POST /availabilities` : Création de disponibilités par une coiffeuse.
+- **TOKEN** (**Coiffeuse**) `DELETE /availabilities/:id` : Suppression d’une disponibilité.
+- **TOKEN** (**Client**) `GET /availabilities/users/role/:role` : Liste des disponibilités de toutes les coiffeuses.
+- **TOKEN** (**Client**) `GET /availabilities/users/:id` : Liste des disponibilités d'une coiffeuse.
+- **TOKEN** (**client**) `PUT /availabilities/:id/` : Mise à jour de la table availability ( en lui assignant un appointment_id )
 
 #### `ServiceController`
 
@@ -146,8 +147,8 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 
 #### `FeedbackController` (Cassandra)
 
-- **PUBLIC** `GET /feedback` : Voir tous les avis.
-- **TOKEN** `POST /feedback` : Ajouter un avis.
+- **PUBLIC** `GET /feedbacks` : Voir tous les avis.
+- **TOKEN** `POST /feedbacks` : Ajouter un avis.
 
 ## 7. Frontend : Organisation et Structure
 
