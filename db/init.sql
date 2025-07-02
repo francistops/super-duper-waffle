@@ -28,9 +28,17 @@ CREATE TABLE "users" (
 
 CREATE TABLE "tokens" (
     "id" uuid DEFAULT gen_random_uuid(),
-    "token" uuid DEFAULT,
+    "token" uuid DEFAULT NULL,
     "expires" TIMESTAMP DEFAULT (CURRENT_TIMESTAMP  + INTERVAL '30 days'),
     "user_id" uuid NOT NULL REFERENCES "users"("id"),
+    PRIMARY KEY ("id")
+);
+
+CREATE TABLE "availabilities" (
+    "id" uuid DEFAULT gen_random_uuid(),
+    "hairdresser_id" uuid NOT NULL REFERENCES "users"("id"),
+    "availability_date" TIMESTAMP NOT NULL,
+    "status" VARCHAR(20) DEFAULT 'pending' CHECK ("status" IN ('pending', 'assigned', 'expired')) NOT NULL,
     PRIMARY KEY ("id")
 );
 
@@ -44,15 +52,8 @@ CREATE TABLE "appointments" (
     PRIMARY KEY ("id")
 );
 
-CREATE TABLE "availabilities" (
-    "id" uuid DEFAULT gen_random_uuid(),
-    "hairdresser_id" uuid NOT NULL REFERENCES "users"("id"),
-    "availability_date" TIMESTAMP NOT NULL,
-    "status" VARCHAR(20) DEFAULT 'pending' CHECK ("status" IN ('pending', 'assigned', 'expired')) NOT NULL,
-    PRIMARY KEY ("id")
-);
-
 CREATE TABLE "feedbacks" (
+	"id" uuid DEFAULT gen_random_uuid(),
 	"appointment_id" uuid NOT NULL REFERENCES "appointments"("id"),
 	"client_id" uuid NOT NULL REFERENCES "users"("id"),
 	"comment" TEXT NOT NULL,
