@@ -57,7 +57,7 @@ async function apiCall(resource, method, auth, body = {}) {
 	return result;
 }
 
-// ------ Users ------
+// ------ USERS ------
 
 export function getConnectedUser() {
 	return JSON.parse(localStorage.getItem("user"));
@@ -251,27 +251,6 @@ export async function getAvailabilities() {
 		console.error("Erreur réseau getAvailabilities:", error);
 	}
 	console.log(result + "auth.js getAvailabilities");
-	return result;
-}
-
-export async function getAvailabilitiesByRole(role) {
-	let result = [];
-
-	try {
-		const data = await apiCall(`availability/users/role/${role}`, "GET", true);
-
-		if (data.errorCode === 0) {
-			result = data.availabilities;
-		} else {
-			console.error(
-				"Erreur logique dans getAvailabilitiesByRole",
-				data.errorCode
-			);
-		}
-	} catch (error) {
-		console.error("Erreur réseau dans getAvailabilitiesByRole:", error);
-	}
-
 	return result;
 }
 

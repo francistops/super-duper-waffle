@@ -59,7 +59,7 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 - `id` (SERIAL PRIMARY KEY)
 - `token` (VARCHAR UNIQUE)
 - `expires` (TIMESTAMP)
-- `userid` (INTEGER, FK → users.id)
+- `user_id` (INTEGER, FK → users.id)
 
 #### `appointments`
 
@@ -67,15 +67,15 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 - `client_id` (INTEGER, FK → users.id)
 - `hairdresser_id` (INTEGER, FK → users.id)
 - `service_id` (INTEGER, FK → services.id)
-- `date` (TIMESTAMP)
-- `status` (VARCHAR) — "pending", "show", "noshow"
+- `availability_id` (INTEGER, FK → availabilities.id)
+- `status` (VARCHAR) — "pending", "show", "noshow", "feedback"
 
 #### `availabilities`
 
 - `id` (SERIAL PRIMARY KEY)
 - `hairdresser_id` (INTEGER, FK → users.id)
-- `date` (TIMESTAMP)
-- `status` (VARCHAR) — "pending", "cancel"
+- `availability_date` (TIMESTAMP)
+- `status` (VARCHAR) — "pending", "assigned", "expired"
 
 #### `services`
 
@@ -83,7 +83,6 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 - `name` (VARCHAR)
 - `duration` (INTEGER)
 - `price` (DECIMAL)
-- `appointment_id` (INTEGER, FK → appointments.id)
 
 ### Table Cassandra
 
@@ -93,7 +92,7 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 - `client_id` (TEXT)
 - `comment` (TEXT)
 - `rating` (INT)
-- `timestamp` (TIMESTAMP)
+- `feedback_date` (TIMESTAMP)
 
 ## 5. Architecture Générale
 
@@ -118,16 +117,16 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 
 #### `UserController`
 
-- **DEBUG** `GET /users/` : Liste des utilisateurs.
-- **INTERNAL** `GET /users/:id` : Détail d’un utilisateur spécifique.
-- **INTERNAL** `GET /role/:role` : Liste des utilisateurs par rôle.
-- **INTERNAL** `DELETE /delete` : Suppression d'un utilisateur.
+- **DEBUG** `GET /users` : Liste des utilisateurs.
+- **TOKEN** `GET /users/:id` : Détail d’un utilisateur spécifique.
+- **TOKEN** `GET /users/role/:role` : Liste des utilisateurs par rôle.
+- **TOKEN** `PUT /users/:id/deactivate` : Désactivation d'un utilisateur. ( Pour ne pas perdre l'historique des rendez-vous)
 
 #### `AppointmentController`
 
 - **TOKEN** (**Client et coiffeuse**) `GET /appointments` : Voir les rendez-vous.
 - **TOKEN** (**Client**) `GET /appointments/users/:id` : Voir les rendez-vous d’un client.
-- **Token** (**Client**) `POST /appointments` : Créer un rendez-vous.
+- **TOKEN** (**Client**) `POST /appointments` : Créer un rendez-vous.
 - **TOKEN** (**Coiffeuse**) `PUT /appointments/:id/status` : Mise à jour du statut d’un rendez-vous.
 
 #### `AvailabilityController`
@@ -136,13 +135,12 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 - **TOKEN** (**Client**) `GET /availabilities` : Voir toutes les disponibilités.
 - **TOKEN** (**client**) `PUT /availabilities/:id/` : Mise à jour d'une disponibilité.
 - **TOKEN** (**Coiffeuse**) `POST /availabilities` : Création de disponibilités.
-- **TOKEN** (**Coiffeuse**) `DELETE /availabilities/:id` : Suppression d’une disponibilité.
 
 #### `ServiceController`
 
 - `GET /services` : Liste des services disponibles.
 - **TOKEN** (**Coiffeuse**) `POST /services` : Ajout d’un service.
-- **TOKEN** (**Coiffeuse**) `POST /services/:id` : Mise à jour d’un service.
+- **TOKEN** (**Coiffeuse**) `PUT /services/:id` : Mise à jour d’un service.
 - **TOKEN** (**Coiffeuse**) `DELETE /services/:id` : Suppression d’un service.
 
 #### `FeedbackController` (Cassandra)
@@ -167,7 +165,7 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 - `handling-availabilities-client.js` : Choisir une disponibilité d'une coiffeuse.
 - `appointments-hairdresser.js` : Voir les rendez-vous d'une coiffeuse.
 - `handling-availabilities-hairdresser.js` : Ajouter des disponibilités comme coiffeuse.
-- `profil-wc.js` : Bouton modifier profil et supprimer compte.
+- `profil-wc.js` : Bouton modifier profil et désactiver compte.
 - `services-wc.js` : Affichage des services.
 - `feedbacks-wc.js` : Affichage des avis.
 - `handling-feedback.js` : Ajouter un avis.
