@@ -11,7 +11,7 @@ import pool from "../db/pool.js";
 // );
 
 export async function fetchAppointments() {
-	const sql = `SELECT "date", "hairdresser_id" 
+	const sql = `SELECT *
   					FROM "appointments"
 					WHERE "status" = 'confirmed'`;
 	const result = await pool.query(sql);
@@ -21,7 +21,8 @@ export async function fetchAppointments() {
 export async function fetchAppointmentById(id) {
 	const sql = `SELECT *
   					FROM "appointments"
-					WHERE "userid" = $1`;
+					WHERE "client_id" = $1
+					OR "hairdresser_id" = $1`;
 	const result = await pool.query(sql, [id]);
 	return result.rows[0];
 }
@@ -43,14 +44,13 @@ export async function fetchNextAppointments(ids, nbRequested) {
 }
 
 export async function insertAppointments(appointment) {
-	const sql = `INSERT INTO "appointments ("client_id", "hairdresser_id", "service_id", "date") 
+	const sql = `INSERT INTO "appointments ("client_id", "hairdresser_id", "service_id") 
                       VALUES ($1, $2, $3, $4)
                       returning *;`;
 	const param = [
 		appointment.clientId,
 		appointment.hairdresserId,
-		appointment.serviceId,
-		appointment.date,
+		appointment.serviceId
 	];
 	const result = await pool.query(sql, param);
 	if (result.rowCount != 1) {

@@ -17,7 +17,7 @@ export async function fetchUserById(id) {
                       "tokens"."token",
                       "tokens"."expires"
                 FROM "users"
-                LEFT JOIN "tokens" ON "users"."id" = "tokens"."userid"
+                LEFT JOIN "tokens" ON "users"."id" = "tokens"."user_id"
                 WHERE "users"."id" = $1;`;
 	const result = await pool.query(sql, [id]);
 
@@ -45,21 +45,20 @@ export async function insertUser(user) {
 export async function isUserValid(email, passhash) {
 	const sql = `SELECT "email", "passhash" 
 					FROM "users" 
-					WHERE "email"=$1 
-						AND "passhash"=$2;`;
+					WHERE "email" = $1 
+						AND "passhash"= $2;`;
 	const result = await pool.query(sql, [email, hash(passhash)]);
 	if (result.rowCount != 1) {
-		throw new Error(`501: failed to identify user on db: ${param}`);
+		throw new Error(`501: failed to identify user on db: ${email}`);
 	}
 	return true;
 }
 
 export async function fetchIdByEmail(email) {
-	const selectSql = `SELECT "id", "email"
+	const sql = `SELECT "id", "email"
                       	FROM "users"
-                      	WHERE email = $1`;
-	const parameters = [email];
-	const result = await pool.query(selectSql, parameters);
+                      	WHERE "email" = $1`;
+	const result = await pool.query(sql, [email]);
 	if (result.rowCount === 0) {
 		throw new Error(`504: User not found with email ${email}`);
 	}
@@ -70,13 +69,13 @@ export async function fetchIdByEmail(email) {
 }
 
 export async function logoutByToken(token) {
-	const sqlUpdatedToken = `UPDATE "tokens" 
+	const sql = `UPDATE "tokens" 
                         		SET "expires" = NOW() 
                        		 	WHERE "token" = $1
                         		RETURNING *;`;
 
-	const updateResult = await pool.query(sqlUpdatedToken, [token]);
-	return updateResult.rowCount == 1 ? true : false;
+	const result = await pool.query(sql, [token]);
+	return result.rowCount == 1 ? true : false;
 }
 
 export async function fetchByRole(role) {

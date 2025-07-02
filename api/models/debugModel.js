@@ -8,7 +8,7 @@ export async function fetchUsers() {
                       "tokens"."token",
                       "tokens"."expires"
                 FROM "users"
-                LEFT JOIN "tokens" ON "users"."id" = "tokens"."userid"
+                LEFT JOIN "tokens" ON "users"."id" = "tokens"."user_id"
                 ORDER BY "users"."email";`;
 	const queryResult = await pool.query(sql);
 	return queryResult.rows;

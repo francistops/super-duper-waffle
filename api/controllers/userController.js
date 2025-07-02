@@ -115,7 +115,7 @@ export async function loginUser(req, res) {
 			res.status(401);
 		}
 	} catch (error) {
-		catchMsg(`user loginUser ${req.body}`, error, res, result);
+		catchMsg(`user loginUser ${req.body.email}`, error, res, result);
 	}
 
 	res.formatView(result);

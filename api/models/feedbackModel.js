@@ -10,8 +10,8 @@ import pool from "../db/pool.js";
 // ); 
 
 export async function fetchFeedback() {
-	const sql = `SELECT "client_id", "hairdresser_id" , "rating", "comment"
-  					FROM "feedback"
+	const sql = `SELECT *
+  					FROM "feedbacks"
 					ORDER BY "rating" DESC;`;
 	const result = await pool.query(sql);
 	return result.rows;

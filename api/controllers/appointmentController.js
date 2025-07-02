@@ -33,7 +33,7 @@ export async function getAppointments(req, res) {
 
 export async function getAppointmentsById(req, res) {
 	let result = UNKNOWN_ERROR;
-	const id = req.body;
+	const { id } = req.body;
 	try {
 		const appointment = await fetchAppointmentById(id);
 		result = {

@@ -17,7 +17,7 @@ export async function getUsers(req, res) {
 			users: users,
 		};
 	} catch (error) {
-		catchMsg("debug getUsers");
+		catchMsg("debug getUsers", error, res, result);
 	}
 	res.formatView(result);
 }
@@ -32,7 +32,7 @@ export async function getTokens(req, res) {
 			tokens: tokens,
 		};
 	} catch (error) {
-		catchMsg("debug getTokens");
+		catchMsg("debug getTokens", error, res, result);
 	}
 	res.formatView(result);
 }
