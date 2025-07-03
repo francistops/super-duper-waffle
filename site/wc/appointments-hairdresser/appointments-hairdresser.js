@@ -28,7 +28,12 @@ class appointmentsHairdresser extends HTMLElement {
 
 	async connectedCallback() {
 		await this.loadContent();
-		this.dispatchEvent(new CustomEvent("load-complete"));
+		this.dispatchEvent(
+			new CustomEvent("agenda-loaded", {
+				bubbles: true,
+				composed: true,
+			})
+		);
 
 		const appointments = await getAppointments();
 		const availabilities = await getAvailabilities();

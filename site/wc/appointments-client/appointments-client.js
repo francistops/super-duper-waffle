@@ -23,10 +23,14 @@ class appointmentsClient extends HTMLElement {
 
 	async connectedCallback() {
 		await this.loadContent();
-		this.dispatchEvent(new CustomEvent("load-complete"));
 		const appointments = await getAppointments();
 		this.updateTable(appointments);
-		this.startPolling();
+		this.dispatchEvent(
+			new CustomEvent("appointments-get", {
+				bubbles: true,
+				composed: true,
+			})
+		);
 	}
 
 	addNextAppointment(appointment) {
