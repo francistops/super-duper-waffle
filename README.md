@@ -120,27 +120,27 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 - **DEBUG** `GET /users` : Liste des utilisateurs.
 - **TOKEN** `GET /users/:id` : Détail d’un utilisateur spécifique.
 - **TOKEN** `GET /users/role/:role` : Liste des utilisateurs par rôle.
-- **TOKEN** `PUT /users/:id/deactivate` : Désactivation d'un utilisateur. ( Pour ne pas perdre l'historique des rendez-vous)
+- **TOKEN** `GET /users/:id/appointments` : Voir les rendez-vous d’un client.
+- **TOKEN** `POST /users/:id/deactivate` : Désactivation d'un utilisateur. ( Pour ne pas perdre l'historique des rendez-vous)
 
 #### `AppointmentController`
 
-- **TOKEN** (**Client et coiffeuse**) `GET /appointments` : Voir les rendez-vous.
-- **TOKEN** (**Client**) `GET /appointments/users/:id` : Voir les rendez-vous d’un client.
+- **DEBUG** (**Client et coiffeuse**) `GET /appointments` : Voir les rendez-vous.
 - **TOKEN** (**Client**) `POST /appointments` : Créer un rendez-vous.
-- **TOKEN** (**Coiffeuse**) `PUT /appointments/:id/status` : Mise à jour du statut d’un rendez-vous.
+- **TOKEN** (**Coiffeuse**) `POST /appointments/:id/status` : Mise à jour du statut d’un rendez-vous.
 
 #### `AvailabilityController`
 
 - **TOKEN** (**Client et coiffeuse**) `GET /availabilities/users/:id` : Voir les disponibilités d'une coiffeuse.
 - **TOKEN** (**Client**) `GET /availabilities` : Voir toutes les disponibilités.
-- **TOKEN** (**client**) `PUT /availabilities/:id/` : Mise à jour d'une disponibilité.
+- **TOKEN** (**client**) `POST /availabilities/:id/` : Mise à jour d'une disponibilité.
 - **TOKEN** (**Coiffeuse**) `POST /availabilities` : Création de disponibilités.
 
 #### `ServiceController`
 
-- `GET /services` : Liste des services disponibles.
+- **PUBLIC** `GET /services` : Liste des services disponibles.
 - **TOKEN** (**Coiffeuse**) `POST /services` : Ajout d’un service.
-- **TOKEN** (**Coiffeuse**) `PUT /services/:id` : Mise à jour d’un service.
+- **TOKEN** (**Coiffeuse**) `POST /services/:id` : Mise à jour d’un service.
 - **TOKEN** (**Coiffeuse**) `DELETE /services/:id` : Suppression d’un service.
 
 #### `FeedbackController` (Cassandra)

@@ -69,7 +69,7 @@ export function isIdentified() {
 
 export async function register(user) {
 	let result = false;
-	console.log("in auth.js register", user.role);
+	console.log("in auth.js register", user);
 	const data = await apiCall("users/register", "POST", false, user);
 	//! todo: display code must be must be app.js
 	if (data.errorCode == 0) {
@@ -122,11 +122,11 @@ export async function logout() {
 	return result;
 }
 
-export async function deleteAccount(id) {
+export async function deactivateAccount(id) {
 	console.log("in auth.js deleteAccount");
 	let result = false;
 
-	const data = await apiCall("users/delete", "DELETE", true, id);
+	const data = await apiCall("users/deactivate/:id", "DELETE", true, id);
 	if (data.errorCode == 0) {
 		result = data.id;
 		localStorage.clear();
@@ -139,8 +139,34 @@ export async function deleteAccount(id) {
 	return result;
 }
 
-export async function getUsersByRole(role) {
+export async function getUsers() {
 	let result = false;
+	const data = await apiCall(`users/`, "GET", true);
+
+	if (data.errorCode === 0) {
+		result = data.users;
+	} else {
+		console.error("unhandle error in auth.js getUsers", data.errorCode);
+	}
+
+	return result;
+}
+
+export async function getUserById(id) {
+	let result = {};
+	const data = await apiCall(`users/:id`, "GET", true, id);
+
+	if (data.errorCode === 0) {
+		result = data.user;
+	} else {
+		console.error("unhandle error in auth.js getUsersById", data.errorCode);
+	}
+
+	return result;
+}
+
+export async function getUsersByRole(role) {
+	let result = [];
 	const data = await apiCall(`users/role/${role}`, "GET", true);
 
 	if (data.errorCode === 0) {
@@ -149,6 +175,27 @@ export async function getUsersByRole(role) {
 		console.error("unhandle error in auth.js getUsersByRole", data.errorCode);
 	}
 
+	return result;
+}
+
+export async function getUserIdAppointments(id) {
+	let result = [];
+
+	try {
+		const data = await apiCall(`users/:id/appointments`, "GET", true, id);
+
+		if (data.errorCode === 0) {
+			result = data.appointment;
+		} else {
+			console.error(
+				"unhandle error in auth.js getUserIdAppointments",
+				data.errorCode
+			);
+		}
+	} catch (error) {
+		console.error("Erreur réseau getUserIdAppointments:", error);
+	}
+	console.log(result + "auth.js getUserIdAppointments");
 	return result;
 }
 
@@ -175,28 +222,7 @@ export async function getAppointments() {
 	return result;
 }
 
-export async function getAppointmentsById() {
-	let result = [];
-
-	try {
-		const data = await apiCall(`appointments/users/:id`, "GET", true);
-
-		if (data.errorCode === 0) {
-			result = data.appointment;
-		} else {
-			console.error(
-				"unhandle error in auth.js getAppointmentsById",
-				data.errorCode
-			);
-		}
-	} catch (error) {
-		console.error("Erreur réseau getAppointmentsById:", error);
-	}
-	console.log(result + "auth.js getAppointmentsById");
-	return result;
-}
-
-export async function createAppointments(appointment) {
+export async function createAppointment(appointment) {
 	let result = [];
 
 	try {

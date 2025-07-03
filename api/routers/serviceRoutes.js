@@ -1,28 +1,22 @@
-import { Router } from 'express';
+import { Router } from "express";
 const router = Router();
-import { validateToken } from '../middlewares/authGuard.js';
+import { validateToken } from "../middlewares/authGuard.js";
 import {
-    getServices,
-    getServicesById,
-    getServicesByAppointmentId,
-    getServicesByHairdresserId,
-	getNextServices,
+	getServices,
+	getServiceById,
+	getServiceByAppointmentId,
 	addService,
 	editService,
-	removeService
-} from '../controllers/serviceController.js';
+	removeService,
+} from "../controllers/serviceController.js";
 
+router.get("/", getServices);
+router.get("/:id", getServiceById);
+router.get("/appointment/:id", getServiceByAppointmentId);
 
-router.get('/', getServices);
-router.get('/:id', getServicesById);
-router.get('/appointment/:id', getServicesByAppointmentId);
-router.get('/hairdresser/:id', getServicesByHairdresserId);
+router.post("/add", /*validateToken,*/ addService); // nice to have
+router.post("/:id", /*validateToken,*/ editService); // nice to have
 
-router.post('/next/:id', getNextServices);
-router.post('/add', /*validateToken,*/ addService);
-router.post('/:id', /*validateToken,*/ editService);
-
-router.delete('/:id', /*validateToken,*/ removeService);
-
+router.delete("/:id", /*validateToken,*/ removeService); // nice to have
 
 export default router;
