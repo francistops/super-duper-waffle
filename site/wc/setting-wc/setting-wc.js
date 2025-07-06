@@ -49,19 +49,19 @@ class settingWC extends HTMLElement {
 			);
 		});
 
-		updatePassword
-			.addEventListener("click", async (e) => {
-				this.dispatchEvent(
-					new CustomEvent("updated-password", {
-						bubbles: true,
-						composed: true,
-						detail: { status: "success" },
-					})
-				);
-			})
+		updatePassword.addEventListener("click", async (e) => {
+			this.dispatchEvent(
+				new CustomEvent("updated-password", {
+					bubbles: true,
+					composed: true,
+					detail: { status: "success" },
+				})
+			);
+		});
 
-			[("cancelButton", "cancelButton2")].forEach((id) => {
-				const btn = this.shadowRoot.getElementById(id);
+		["cancelButton", "cancelButton2"].forEach((id) => {
+			const btn = this.shadowRoot.getElementById(id);
+			if (btn) {
 				btn.addEventListener("click", () => {
 					this.dispatchEvent(
 						new CustomEvent("cancel-event", {
@@ -71,7 +71,8 @@ class settingWC extends HTMLElement {
 						})
 					);
 				});
-			});
+			}
+		});
 	}
 }
 customElements.define("setting-wc", settingWC);

@@ -72,7 +72,7 @@ function cancel_button(element) {
 
 async function displayMain() {
 	console.log("in display main");
-	displayMultipleComponents(["services-wc", "feedbacks-wc"]);
+	displayMultipleComponents(["services-wc", "feedbacks-wc"], {}, true);
 
 	const user = JSON.parse(localStorage.getItem("token"));
 	const isLoggedIn = user !== null;
