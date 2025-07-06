@@ -159,16 +159,16 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 
 ### Web Components
 
-- `login-form.js` : Formulaire de connexion.
-- `register-form.js` : Création de compte.
-- `appointments-client.js` : Voir les rendez-vous d'un client. ( Quand le status passe à "show" peux laisser un avis )
-- `handling-availabilities-client.js` : Choisir une disponibilité d'une coiffeuse.
-- `appointments-hairdresser.js` : Voir les rendez-vous d'une coiffeuse.
-- `handling-availabilities-hairdresser.js` : Ajouter des disponibilités comme coiffeuse.
-- `profil-wc.js` : Bouton modifier profil et désactiver compte.
-- `services-wc.js` : Affichage des services.
-- `feedbacks-wc.js` : Affichage des avis.
-- `handling-feedback.js` : Ajouter un avis.
+[X] `login-form.js` : Formulaire de connexion.
+[X] `register-form.js` : Création de compte.
+[] `appointments-client.js` : Voir les rendez-vous d'un client. ( Quand le status passe à "show" peux laisser un avis )
+[] `handling-availabilities-client.js` : Choisir une disponibilité d'une coiffeuse.
+[] `appointments-hairdresser.js` : Voir les rendez-vous d'une coiffeuse.
+[] `handling-availabilities-hairdresser.js` : Ajouter des disponibilités comme coiffeuse.
+[] `profil-wc.js` : Bouton modifier profil et désactiver compte.
+[] `services-wc.js` : Affichage des services.
+[] `feedbacks-wc.js` : Affichage des avis.
+[] `handling-feedback.js` : Ajouter un avis.
 
 ## 8. Tests Unitaires (TBD)
 

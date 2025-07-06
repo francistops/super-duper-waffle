@@ -5,8 +5,6 @@ class profilWC extends HTMLElement {
 	constructor() {
 		super();
 		const shadow = this.attachShadow({ mode: "open" });
-
-		// Create and append global styles, but you can ovewrite it by creating a css file in the current folder and liking it
 		const globalStyle = document.createElement("style");
 		globalStyle.textContent = globalStyles;
 		shadow.appendChild(globalStyle);
@@ -35,6 +33,7 @@ class profilWC extends HTMLElement {
 			);
 			console.log("Settings button clicked");
 		});
+		
 		const deleteAccountBtn = this.shadowRoot.getElementById("delete-account");
 		deleteAccountBtn.addEventListener("click", (e) => {
 			this.dispatchEvent(

@@ -38,7 +38,7 @@ CREATE TABLE "availabilities" (
     "id" uuid DEFAULT gen_random_uuid(),
     "hairdresser_id" uuid NOT NULL REFERENCES "users"("id"),
     "availability_date" TIMESTAMP NOT NULL,
-    "status" VARCHAR(20) DEFAULT 'pending' CHECK ("status" IN ('pending', 'assigned', 'expired')) NOT NULL,
+    "status" VARCHAR(20) DEFAULT 'pending' CHECK ("status" IN ('pending', 'assigned', 'expired', 'cancelled')) NOT NULL,
     PRIMARY KEY ("id")
 );
 

@@ -41,10 +41,10 @@ class loginForm extends HTMLElement {
 			user["passhash"] = await hashPassword(user.password);
 			delete user.password;
 
-			const success = await login(user);
+			const result = await login(user);
 
-			if (!success) {
-				alert("Échec de la connexion. Veuillez vérifier vos informations.");
+			if (!result.success) {
+				alert("Connexion échouée");
 				return;
 			}
 
@@ -52,7 +52,11 @@ class loginForm extends HTMLElement {
 				new CustomEvent("user-logged-in", {
 					bubbles: true,
 					composed: true,
-					detail: { status: "success" },
+					detail: {
+						userId: result.user,
+						token: result.token,
+						role: result.role ?? null,
+					},
 				})
 			);
 		});

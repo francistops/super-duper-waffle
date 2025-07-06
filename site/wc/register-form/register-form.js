@@ -51,25 +51,26 @@ class registerForm extends HTMLElement {
 				if (!result) {
 					alert("Inscription échouée. Vérifiez vos informations.");
 				} else {
+					this.dispatchEvent(
+						new CustomEvent("registered", {
+							bubbles: true,
+							composed: true,
+							detail: { status: "success" },
+						})
+					);
 					alert("Inscription réussie. Vous pouvez maintenant vous connecter.");
 				}
 			}
-
-			this.dispatchEvent(
-				new CustomEvent("registered", {
-					bubbles: true,
-					composed: true,
-					detail: { status: "success" },
-				})
-			);
 		});
 
 		const cancelButton = this.shadowRoot.getElementById("cancelButton");
 		cancelButton.addEventListener("click", (e) => {
+			const form = this.shadowRoot.getElementById("registerForm");
+			if (form) form.reset();
+
 			const event = new CustomEvent("cancel-event", {
 				bubbles: true,
 				composed: true,
-				detail: { from: "register", to: "login" },
 			});
 			this.dispatchEvent(event);
 		});

@@ -1,11 +1,10 @@
 import { globalStyles } from "../global/style.js";
+import { updateUser, hashPassword } from "../../script/auth.js";
 
 class settingWC extends HTMLElement {
 	constructor() {
 		super();
 		const shadow = this.attachShadow({ mode: "open" });
-
-		// Create and append global styles, but you can ovewrite it by creating a css file in the current folder and liking it
 		const globalStyle = document.createElement("style");
 		globalStyle.textContent = globalStyles;
 		shadow.appendChild(globalStyle);
@@ -23,34 +22,84 @@ class settingWC extends HTMLElement {
 	async connectedCallback() {
 		await this.loadContent();
 
-		const updateUser = this.shadowRoot.getElementById("updateUser");
-		const updatePassword = this.shadowRoot.getElementById("updatePassword");
 		const { parseFormToObject } = await import("/script/utilform.js");
 
-		this.shadowRoot
-			.querySelector(".profil-form")
-			.addEventListener("submit", (e) => {
-				e.preventDefault();
-			});
+		const user = JSON.parse(localStorage.getItem("user"));
+		if (!user?.id) {
+			alert("Utilisateur non identifié.");
+			return;
+		}
 
-		this.shadowRoot
-			.querySelector(".password-form")
-			.addEventListener("submit", (e) => {
-				e.preventDefault();
-			});
+		const profilForm = this.shadowRoot.querySelector(".profil-form");
+		if (profilForm) {
+			profilForm.addEventListener("submit", (e) => e.preventDefault());
+		}
 
-		updateUser.addEventListener("click", async (e) => {
-			this.dispatchEvent(
-				new CustomEvent("updated-user", {
-					bubbles: true,
-					composed: true,
-					detail: { status: "success" },
-				})
-			);
+		const submitUpdatedEmail = this.shadowRoot.getElementById("updateEmailButton");
+
+		submitUpdatedEmail.addEventListener("click", async (e) => {
+			const updatingEmail = parseFormToObject(profilForm);
+
+			if (!updatingEmail.inpOldEmail || !updatingEmail.inpNewEmail || !updatingEmail.inpNewEmailConfirm) {
+				alert("Veuillez remplir tous les champs.");
+				return;
+			}
+
+			if (updatingEmail.inpNewEmail !== updatingEmail.inpNewEmailConfirm) {
+				alert("Les 2 courriels doivent être identiques");
+				return;
+			}
+
+			updatingEmail.id = user.id;
+
+			const result = await updateUser(updatingEmail);
+			if (!result) {
+				alert("Modification échouée")
+			} else {
+				this.dispatchEvent(
+					new CustomEvent("updated-user", {
+						bubbles: true,
+						composed: true,
+						detail: { status: "success" },
+					})
+				);
+			}
 		});
 
-		updatePassword
-			.addEventListener("click", async (e) => {
+		const passwordForm = this.shadowRoot.querySelector(".password-form");
+		if (passwordForm) {
+			passwordForm.addEventListener("submit", (e) => e.preventDefault());
+		}
+
+		const submitUpdatedPassword = this.shadowRoot.getElementById("updatePasswordButton");
+
+		submitUpdatedPassword.addEventListener("click", async (e) => {
+
+			const updatingPassword = parseFormToObject(passwordForm);
+
+			if (!updatingPassword.inpOldPassword || !updatingPassword.inpNewPassword || !updatingPassword.inpNewPasswordConfirm) {
+				alert("Veuillez remplir tous les champs.");
+				return;
+			}
+
+			if (updatingPassword.inpNewPassword !== updatingPassword.inpNewPasswordConfirm) {
+				alert("Les mots de passes doivent être identiques");
+				return;
+			}
+
+			updatingPassword.passhash = await hashPassword(updatingPassword.inpNewPassword);
+			delete updatingPassword.inpNewPassword;
+			delete updatingPassword.inpNewPasswordConfirm;
+			delete updatingPassword.inpOldPassword;
+
+			updatingPassword.id = user.id;
+			
+			const result = await updateUser(updatingPassword)
+
+			if (!result) {
+				alert("Modification du mot de passe échouée");
+				return;
+			} else {
 				this.dispatchEvent(
 					new CustomEvent("updated-password", {
 						bubbles: true,
@@ -58,10 +107,12 @@ class settingWC extends HTMLElement {
 						detail: { status: "success" },
 					})
 				);
-			})
+			}
+		});
 
-			[("cancelButton", "cancelButton2")].forEach((id) => {
-				const btn = this.shadowRoot.getElementById(id);
+		["cancelButton", "cancelButton2"].forEach((id) => {
+			const btn = this.shadowRoot.getElementById(id);
+			if (btn) {
 				btn.addEventListener("click", () => {
 					this.dispatchEvent(
 						new CustomEvent("cancel-event", {
@@ -71,7 +122,17 @@ class settingWC extends HTMLElement {
 						})
 					);
 				});
-			});
+			}
+		});
 	}
+
+	disconnectedCallback() {
+		const profilForm = this.shadowRoot.querySelector(".profil-form");
+		if (profilForm) profilForm.reset();
+	
+		const passwordForm = this.shadowRoot.querySelector(".password-form");
+		if (passwordForm) passwordForm.reset();
+	}
+	
 }
 customElements.define("setting-wc", settingWC);
