@@ -22,7 +22,7 @@ class handlingFeedback extends HTMLElement {
 
 	async connectedCallback() {
 		await this.loadContent();
-		this.dispatchEvent(new CustomEvent("load-complete"));
+
 		const feedbacks = await getFeedbacks();
 		feedbacks.forEach((a) => this.addNextFeedback(a));
 	}

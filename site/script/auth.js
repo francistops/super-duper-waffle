@@ -75,72 +75,91 @@ export function isIdentified() {
 }
 
 export async function register(user) {
-	let result = false;
 	const data = await apiCall("users/register", "POST", false, user);
 
-	if (data.errorCode == 0) {
-		result = true;
-		console.log("registration success", data);
-	} else {
-		result = false;
+	if (data.errorCode !== 0) {
 		console.error(
-			"unhandle error in auth.js registerJson",
+			"unhandled error in auth.js register",
 			"data.errorCode: ",
 			data.errorCode,
-			" data : ",
+			"data:",
 			data
 		);
+		return false;
 	}
-	return result;
+
+	console.log("registration success", data);
+	return true;
 }
 
 export async function login(user) {
-	let result = false;
-
 	const data = await apiCall("users/login", "POST", false, user);
-	console.log("data : ", data);
-	if (data.errorCode === 0) {
-		result = true;
-		localStorage.setItem("token", JSON.stringify(data.token));
-		localStorage.setItem("user_id", JSON.stringify(data.user));
-		document.dispatchEvent(
-			new CustomEvent("auth-loggedin", {
-				bubbles: true,
-				composed: true,
-				detail: `User logged in successfully got token: ${data.token}`,
-			})
-		);
-	} else {
+
+	if (data.errorCode !== 0) {
 		console.error(
-			"unhandle error in auth.js login",
-			"data.errorCode: ",
+			"unhandled error in auth.js login",
+			"data.errorCode:",
 			data.errorCode,
-			" data : ",
+			"data:",
 			data
 		);
+		return {
+			success: false,
+			errorCode: data.errorCode,
+			message: data.message ?? "Erreur de connexion",
+		};
 	}
-	return result;
+
+	// Vérification minimale de sécurité
+	if (!data.user || !data.token) {
+		console.error(
+			"Réponse invalide du backend : utilisateur ou token manquant."
+		);
+		return {
+			success: false,
+			errorCode: 500,
+			message: "Réponse serveur incomplète",
+		};
+	}
+
+	console.log("Login success:", data);
+	return {
+		success: true,
+		user: data.user,
+		token: data.token,
+		role: data.role ?? null,
+	};
 }
 
 export async function logout() {
 	console.log("in auth.js logout");
-	let result = false;
 
 	const data = await apiCall("users/logout", "POST", true);
 
-	if (data.errorCode == 0) {
-		result = data.revoked;
-		localStorage.clear();
-	} else {
+	if (data.errorCode !== 0) {
 		console.error(
-			"unhandle error in auth.js logout",
-			"data.errorCode: ",
+			"unhandled error in auth.js logout",
+			"data.errorCode:",
 			data.errorCode,
-			" data : ",
+			"data:",
 			data
 		);
+		return {
+			success: false,
+			errorCode: data.errorCode,
+			message: data.message ?? "Erreur de déconnexion",
+		};
 	}
-	return result;
+
+	if (data.revoked) {
+		localStorage.clear();
+	}
+
+	console.log("Déconnexion réussie.");
+	return {
+		success: true,
+		revoked: data.revoked,
+	};
 }
 
 export async function deactivateAccount(id) {
@@ -163,41 +182,41 @@ export async function deactivateAccount(id) {
 	return result;
 }
 
-export async function getUsers() {
-	let result = [];
-	const data = await apiCall(`users/`, "GET", true);
+// export async function getUsers() {
+// 	let result = [];
+// 	const data = await apiCall(`users/`, "GET", true);
 
-	if (data.errorCode === 0) {
-		result = data.users;
-	} else {
-		console.error(
-			"unhandle error in auth.js getUsers",
-			"data.errorCode: ",
-			data.errorCode,
-			" data : ",
-			data
-		);
-	}
-	return result;
-}
+// 	if (data.errorCode === 0) {
+// 		result = data.users;
+// 	} else {
+// 		console.error(
+// 			"unhandle error in auth.js getUsers",
+// 			"data.errorCode: ",
+// 			data.errorCode,
+// 			" data : ",
+// 			data
+// 		);
+// 	}
+// 	return result;
+// }
 
-export async function getUserById(id) {
-	let result = {};
-	const data = await apiCall(`users/${id}`, "GET", true);
+// export async function getUserById(id) {
+// 	let result = {};
+// 	const data = await apiCall(`users/${id}`, "GET", true);
 
-	if (data.errorCode === 0) {
-		result = data.user;
-	} else {
-		console.error(
-			"unhandle error in auth.js getUserById",
-			"data.errorCode: ",
-			data.errorCode,
-			" data : ",
-			data
-		);
-	}
-	return result;
-}
+// 	if (data.errorCode === 0) {
+// 		result = data.user;
+// 	} else {
+// 		console.error(
+// 			"unhandle error in auth.js getUserById",
+// 			"data.errorCode: ",
+// 			data.errorCode,
+// 			" data : ",
+// 			data
+// 		);
+// 	}
+// 	return result;
+// }
 
 export async function getUsersByRole(role) {
 	let result = [];
@@ -237,58 +256,47 @@ export async function getUserIdAppointments(id) {
 	return result;
 }
 
-export async function getUserIdAvailability(id) {
+export async function getUserIdAvailabilities(userId) {
 	let result = [];
 	// Pas fonctionel, à vérifier
-	const data = await apiCall(`users/${id}/availabilities`, "GET", true);
+	const data = await apiCall(`users/${userId}/availabilities`, "GET", true);
 
 	if (data.errorCode === 0) {
-		result = data.appointments;
+		result = data.availabilities;
 	} else {
 		console.error(
-			"unhandle error in auth.js getUserIdAvailability",
+			"unhandle error in auth.js getUserIdAvailabilities",
 			"data.errorCode: ",
 			data.errorCode,
 			" data : ",
 			data
 		);
 	}
-	console.log("auth.js getUserIdAvailability", result);
+	console.log("auth.js getUserIdAvailabilities", result);
 	return result;
 }
 
 // ------ APPOINTMENTS ------
 
 export async function createAppointment(appointment) {
-	let result = false;
-
 	const data = await apiCall(`appointments/`, "POST", true, appointment);
 
-	if (data.errorCode === 0) {
-		result = true;
-	} else {
-		console.error(
-			"unhandle error in auth.js createAppointments",
-			"data.errorCode: ",
-			data.errorCode,
-			" data : ",
-			data
-		);
+	if (data.errorCode !== 0) {
+		console.error("unhandle error in createAppointments", data);
+		return { success: false, errorCode: data.errorCode, message: data.message };
 	}
-	console.log("auth.js createAppointment", result);
-	return result;
+
+	console.log("auth.js createAppointment", data);
+	return {
+		success: true,
+		appointment: data.appointment,
+	};
 }
 
 export async function updateAppointmentStatus(id, status) {
 	const data = await apiCall(`appointments/${id}`, "POST", true, { status });
 
-	if (data.errorCode === 0) {
-		console.log("Statut mis à jour :", data.appointment);
-		return {
-			success: true,
-			appointment: data.appointment,
-		};
-	} else {
+	if (data.errorCode !== 0) {
 		console.error(
 			"unhandled error in auth.js updateAppointmentStatus",
 			"data.errorCode:",
@@ -296,11 +304,14 @@ export async function updateAppointmentStatus(id, status) {
 			"data:",
 			data
 		);
-		return {
-			success: false,
-			message: data.message ?? "Erreur lors de la mise à jour du statut",
-		};
+		return { success: false, errorCode: data.errorCode, message: data.message };
 	}
+
+	console.log("Statut mis à jour :", data.appointment);
+	return {
+		success: true,
+		appointment: data.appointment,
+	};
 }
 
 // ------ AVAILABILITIES ------
@@ -367,7 +378,7 @@ export async function createAvailability(availability) {
 export async function updateAvailability(id, status) {
 	let result = false;
 
-	const data = await apiCall(`availabilities/${id}`, "POST", true, status);
+	const data = await apiCall(`availabilities/${id}`, "POST", true, { status });
 
 	if (data.errorCode === 0) {
 		result = data.updated || true;

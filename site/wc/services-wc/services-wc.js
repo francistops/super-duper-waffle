@@ -25,7 +25,7 @@ class servicesWC extends HTMLElement {
 
 	async connectedCallback() {
 		await this.loadContent();
-		this.dispatchEvent(new CustomEvent("load-complete"));
+
 		const services = await getServices();
 		services.forEach((a, index) => this.addNextService(a, index + 1));
 	}

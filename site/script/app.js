@@ -57,8 +57,7 @@ function mainEventListeners() {
 	});
 
 	logoutBtn.addEventListener("click", (e) => {
-		localStorage.removeItem("token");
-		localStorage.removeItem("user_id");
+		localStorage.removeItem("user");
 		logoutBtn.classList.add("hidden");
 		displayMain();
 	});
@@ -74,8 +73,8 @@ async function displayMain() {
 	console.log("in display main");
 	displayMultipleComponents(["services-wc", "feedbacks-wc"], {}, true);
 
-	const user = JSON.parse(localStorage.getItem("token"));
-	const isLoggedIn = user !== null;
+	const user = JSON.parse(localStorage.getItem("user"));
+	const isLoggedIn = !!user?.token;
 
 	logoutBtn.classList.toggle("hidden", !isLoggedIn);
 	loginBtn.classList.toggle("hidden", isLoggedIn);
@@ -89,7 +88,19 @@ function displayLoginForm() {
 		{
 			"login-form": {
 				"user-logged-in": (e) => {
-					console.log("User logged successfully");
+					console.log("User logged successfully", e.detail);
+
+					const { userId, token, role } = e.detail;
+
+					localStorage.setItem(
+						"user",
+						JSON.stringify({
+							id: userId,
+							role: role,
+							token: token,
+						})
+					);
+
 					wcDiv.innerHTML = "";
 					displayMain();
 				},
@@ -134,9 +145,9 @@ function displaySettings() {
 }
 
 function displayProfil() {
-	const user = JSON.parse(localStorage.getItem("user"));
-	const isClient = user?.role === "client";
-	const isHairdresser = user?.role === "hairdresser";
+	// const user = JSON.parse(localStorage.getItem("user"));
+	// const isClient = user?.role === "client";
+	// const isHairdresser = user?.role === "hairdresser";
 
 	const components = ["profil-wc"];
 	const eventsPerComponent = {
@@ -149,37 +160,37 @@ function displayProfil() {
 		},
 	};
 
-	if (isClient) {
-		components.push("appointments-client", "handling-availabilities-client");
-		eventsPerComponent["handling-availabilities-client"] = {
-			"appointment-selected": async (e) => {
-				const { date, hairdresserId, serviceId } = e.detail;
-				console.log(
-					"Client a choisi le rendez-vous :",
-					date,
-					hairdresserId,
-					serviceId
-				);
-				// appel API ici
-			},
-		};
-	} else if (isHairdresser) {
-		components.push(
-			"appointments-hairdresser",
-			"handling-availabilities-hairdresser"
-		);
-		eventsPerComponent["handling-availabilities-hairdresser"] = {
-			"date-selected": (e) => {
-				const date = e.detail.date;
-				const oldSlots = wcDiv.querySelector("availability-slots");
-				if (oldSlots) oldSlots.remove();
+	// if (isClient) {
+	components.push("appointments-client", "handling-availabilities-client");
+	eventsPerComponent["handling-availabilities-client"] = {
+		"appointment-selected": async (e) => {
+			const { date, hairdresserId, serviceId } = e.detail;
+			console.log(
+				"Client a choisi le rendez-vous :",
+				date,
+				hairdresserId,
+				serviceId
+			);
+			// appel API ici
+		},
+	};
+	// } else if (isHairdresser) {
+	// 	components.push(
+	// 		"appointments-hairdresser",
+	// 		"handling-availabilities-hairdresser"
+	// 	);
+	// 	eventsPerComponent["handling-availabilities-hairdresser"] = {
+	// 		"date-selected": (e) => {
+	// 			const date = e.detail.date;
+	// 			const oldSlots = wcDiv.querySelector("availability-slots");
+	// 			if (oldSlots) oldSlots.remove();
 
-				const slotsWC = document.createElement("availability-slots");
-				slotsWC.setAttribute("start-date", date);
-				wcDiv.appendChild(slotsWC);
-			},
-		};
-	}
+	// 			const slotsWC = document.createElement("availability-slots");
+	// 			slotsWC.setAttribute("start-date", date);
+	// 			wcDiv.appendChild(slotsWC);
+	// 		},
+	// 	};
+	// }
 	displayMultipleComponents(components, eventsPerComponent, true);
 }
 

@@ -1,5 +1,6 @@
 import { globalStyles } from "../global/style.js";
 import { getFeedbacks } from "../../script/auth.js";
+import { formatDate } from "../../script/app.js";
 
 class feedbacksWC extends HTMLElement {
 	constructor() {
@@ -22,7 +23,7 @@ class feedbacksWC extends HTMLElement {
 
 	async connectedCallback() {
 		await this.loadContent();
-		this.dispatchEvent(new CustomEvent("load-complete"));
+		
 		const feedbacks = await getFeedbacks();
 		feedbacks.forEach((a) => this.addNextFeedback(a));
 	}
@@ -31,12 +32,12 @@ class feedbacksWC extends HTMLElement {
 		const feedbackTable = this.shadowRoot.querySelector(".feedback tbody");
 		const row = document.createElement("tr");
 		row.innerHTML = `
-      <td>${feedback.hairdresser_id}</td>
-      <td>${feedback.client_id}</td>
-      <td>${feedback.rating}</td>
-      <td>${feedback.comment}</td>
-	  <td>${feedback.feedback_date}</td>
-    `;
+			<td>${feedback.hairdresser_id}</td>
+			<td>${feedback.client_id}</td>
+			<td>${feedback.rating}</td>
+			<td>${feedback.comment}</td>
+			<td>${formatDate(feedback.feedback_date)}</td>
+    	`;
 		feedbackTable.appendChild(row);
 	}
 }

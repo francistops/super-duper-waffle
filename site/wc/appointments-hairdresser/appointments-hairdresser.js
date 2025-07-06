@@ -1,11 +1,10 @@
 import { globalStyles } from "../global/style.js";
 import {
 	getUserIdAppointments,
-	getAvailabilities,
-	// deleteAvailability,
-	// updateAppointmentStatus,
+	getUserIdAvailabilities,
+	updateAvailability,
+	updateAppointmentStatus,
 } from "../../script/auth.js";
-import { formatDate } from "../../script/app.js";
 
 class appointmentsHairdresser extends HTMLElement {
 	constructor() {
@@ -28,47 +27,73 @@ class appointmentsHairdresser extends HTMLElement {
 
 	async connectedCallback() {
 		await this.loadContent();
-		this.dispatchEvent(
-			new CustomEvent("agenda-loaded", {
-				bubbles: true,
-				composed: true,
-			})
-		);
 
-		const appointments = await getUserIdAppointments();
-		const availabilities = await getAvailabilities();
+		const user = JSON.parse(localStorage.getItem("user"));
+		if (!user || !user.id) {
+			console.error("Aucun utilisateur trouvé dans le localStorage");
+			return;
+		}
+
+		const appointments = await getUserIdAppointments(user.id);
+		const availabilities = await getUserIdAvailabilities(user.id);
 
 		this.fillAgenda(appointments, availabilities);
 	}
 
+	renderAvailabilityCell(cell, availabilityId, currentStatus) {
+		const isCancelled = currentStatus === "cancelled";
+	
+		cell.innerHTML = `
+			<button class="toggleAvailability">
+				${isCancelled ? "Ajouter la disponibilité" : "Annuler la disponibilité"}
+			</button>
+		`;
+	
+		cell.querySelector(".toggleAvailability").addEventListener("click", async () => {
+			const newStatus = isCancelled ? "pending" : "cancelled";
+	
+			const success = await updateAvailability(availabilityId, newStatus);
+			if (!success) return;
+	
+			this.renderAvailabilityCell(cell, availabilityId, newStatus);
+		});
+	}	
+
 	fillAgenda(appointments, availabilities) {
 		const allItems = [...appointments, ...availabilities];
-
+	
 		allItems.forEach((item) => {
 			const date = new Date(item.date);
 			const day = date.getDay();
 			const hour = date.toTimeString().slice(0, 5);
-
+	
 			if (day < 1 || day > 5) return;
-
+	
 			const cell = this.shadowRoot.querySelector(
 				`td[data-day="${day}"][data-hour="${hour}"]`
 			);
-
+	
 			if (!cell) return;
-
+	
 			if (item.client_id) {
 				cell.innerHTML = `
-					<div>Client: ${item.client_id}</div>
-					<div>Service: ${item.service_id}</div>
-					<button class="markAsShow">Marquer comme complété</button>
+					<div><strong>Client:</strong> ${item.client_id}</div>
+					<div><strong>Service:</strong> ${item.service_id}</div>
+					<button class="markAsShow">Show</button>
+					<button class="markAsNoShow">NoShow</button>
 				`;
-				cell
-					.querySelector(".markAsShow")
-					.addEventListener("click", async () => {
-						await updateAppointmentStatus(item.id, "show");
-						cell.querySelector(".markAsShow").remove();
-					});
+			
+				cell.querySelector(".markAsShow").addEventListener("click", async () => {
+					await updateAppointmentStatus(item.id, "show");
+					cell.innerHTML = `<div>Rendez-vous complété ✅</div>`;
+				});
+			
+				cell.querySelector(".markAsNoShow").addEventListener("click", async () => {
+					await updateAppointmentStatus(item.id, "noShow");
+					cell.innerHTML = `<div>Client absent ❌</div>`;
+				});
+			} else {
+					this.renderAvailabilityCell(cell, item.id, item.status);				
 			}
 		});
 	}

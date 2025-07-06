@@ -1,5 +1,10 @@
 import { globalStyles } from "../global/style.js";
-import { getUsersByRole, getAvailabilities } from "../../script/auth.js";
+import {
+	getUsersByRole,
+	getUserIdAvailabilities,
+	getServices,
+} from "../../script/auth.js";
+import { formatDate } from "../../script/app.js";
 
 class handlingAvailabilitiesClient extends HTMLElement {
 	constructor() {
@@ -23,49 +28,36 @@ class handlingAvailabilitiesClient extends HTMLElement {
 	async connectedCallback() {
 		await this.loadContent();
 
-		const select = this.shadowRoot.getElementById("search");
+		this.availabilities = await getUserIdAvailabilities();
+		this.services = await getServices();
 
-		const hairdressers = await getUsersByRole("hairdresser");
-		if (hairdressers) {
-			for (const user of hairdressers) {
+		const selectedHairdresser = this.shadowRoot.getElementById(
+			"selectedHairdresser"
+		);
+
+		selectedHairdresser.addEventListener("change", (e) => {
+			this.renderTable(e.target.value);
+		});
+
+		const allHairdressers = await getUsersByRole("hairdresser");
+		if (allHairdressers) {
+			for (const hairdresser of allHairdressers) {
 				const opt = document.createElement("option");
-				opt.value = user.id;
-				opt.textContent = user.email;
-				select.appendChild(opt);
+				opt.value = hairdresser.id;
+				opt.textContent = hairdresser.email;
+				selectedHairdresser.appendChild(opt);
 			}
 		} else {
 			console.warn("Aucun utilisateur avec le rôle hairdresser trouvé.");
 		}
-
-		this.availabilities = await getAvailabilities();
-
-		select.addEventListener("change", () => {
-			this.renderTable(select.value);
-		});
-		this.renderTable("all");
+		await this.renderTable("all");
 	}
 
-	async fetchAvailabilities() {
-		// ⚠️ Remplacer par appel à ton backend plus tard
-		return [
-			{ date: "2025-07-07", hairdresser_id: "1", service_id: "Trauma" },
-			{
-				date: "2025-07-08",
-				hairdresser_id: "2",
-				service_id: "Commotion cérébrale",
-			},
-			{
-				date: "2025-07-09",
-				hairdresser_id: "1",
-				service_id: "Douleur persistante",
-			},
-		];
-	}
-
-	renderTable(selectedHairdresser) {
+	async renderTable(selectedHairdresser) {
 		const tbody = this.shadowRoot.querySelector(
 			".handling-availabilities-client tbody"
 		);
+
 		tbody.innerHTML = "";
 
 		const filtered = this.availabilities.filter(
@@ -74,46 +66,58 @@ class handlingAvailabilitiesClient extends HTMLElement {
 				a.hairdresser_id === selectedHairdresser
 		);
 
-		filtered.forEach((a) => {
+		for (const a of filtered) {
 			const tr = document.createElement("tr");
-			tr.innerHTML = `
-				<td>${a.date}</td>
-				<td>${a.hairdresser_id}</td>
-				<td>${a.service_id}</td>
-				<td><button class="acceptAppointmentButton">Prendre rendez-vous</button></td>
-			`;
 
-			tr.dataset.date = a.date;
-			tr.dataset.hairdresserId = a.hairdresser_id;
-			tr.dataset.service = a.service_id;
-			tr.dataset.id = a.id;
+			const tdDate = document.createElement("td");
+			tdDate.textContent = formatDate(a.date);
+
+			const tdHairdresser = document.createElement("td");
+			tdHairdresser.textContent = a.hairdresser_id;
+
+			const tdService = document.createElement("td");
+			const serviceSelect = document.createElement("select");
+			serviceSelect.innerHTML = `<option value="none">-</option>`;
+			this.services.forEach((service) => {
+				const opt = document.createElement("option");
+				opt.value = service.id;
+				opt.textContent = service.name;
+				serviceSelect.appendChild(opt);
+			});
+			tdService.appendChild(serviceSelect);
+
+			const tdAction = document.createElement("td");
+			const button = document.createElement("button");
+			button.textContent = "Prendre rendez-vous";
+			button.disabled = true;
+			tdAction.appendChild(button);
+
+			serviceSelect.addEventListener("change", () => {
+				button.disabled = serviceSelect.value === "none";
+			});
+
+			button.addEventListener("click", () => {
+				this.dispatchEvent(
+					new CustomEvent("appointment-selected", {
+						detail: {
+							date: a.date,
+							hairdresserId: a.hairdresser_id,
+							service: serviceSelect.value,
+							availabilityId: a.id,
+						},
+						bubbles: true,
+						composed: true,
+					})
+				);
+			});
+
+			tr.appendChild(tdDate);
+			tr.appendChild(tdHairdresser);
+			tr.appendChild(tdService);
+			tr.appendChild(tdAction);
 
 			tbody.appendChild(tr);
-		});
-
-		this.shadowRoot
-			.querySelectorAll(".acceptAppointmentButton")
-			.forEach((button) => {
-				button.addEventListener("click", (event) => {
-					const tr = event.target.closest("tr");
-					const date = tr.dataset.date;
-					const hairdresserId = tr.dataset.hairdresserId;
-					const service = tr.dataset.service;
-
-					this.dispatchEvent(
-						new CustomEvent("appointment-selected", {
-							detail: {
-								date,
-								hairdresserId,
-								service,
-								availabilityId: tr.dataset.id,
-							},
-							bubbles: true,
-							composed: true,
-						})
-					);
-				});
-			});
+		}
 	}
 }
 customElements.define(

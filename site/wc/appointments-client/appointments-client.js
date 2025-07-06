@@ -23,7 +23,16 @@ class appointmentsClient extends HTMLElement {
 
 	async connectedCallback() {
 		await this.loadContent();
-		const appointments = await getUserIdAppointments(id);
+
+		const user = JSON.parse(localStorage.getItem("user"));
+
+		if (!user || !user.id) {
+			console.error("Aucun utilisateur trouvé dans le localStorage");
+			return;
+		}
+
+		const appointments = await getUserIdAppointments(user.id);
+
 		appointments.forEach((a) => this.addNextAppointment(a));
 	}
 
@@ -57,7 +66,6 @@ class appointmentsClient extends HTMLElement {
 		} else {
 			firstCell.textContent = "-";
 		}
-
 		appointmentTable.appendChild(row);
 	}
 
@@ -66,19 +74,6 @@ class appointmentsClient extends HTMLElement {
 			this.shadowRoot.querySelector(".appointment tbody");
 		appointmentTable.innerHTML = "";
 		appointments.forEach((a) => this.addNextAppointment(a));
-	}
-
-	startPolling() {
-		this.pollingInterval = setInterval(async () => {
-			const appointments = await getAppointments();
-			this.updateTable(appointments);
-		}, 10000);
-	}
-
-	disconnectedCallback() {
-		if (this.pollingInterval) {
-			clearInterval(this.pollingInterval);
-		}
 	}
 }
 
