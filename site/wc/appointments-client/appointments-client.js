@@ -1,5 +1,5 @@
 import { globalStyles } from "../global/style.js";
-import { getAppointments } from "../../script/auth.js";
+import { getUserIdAppointments } from "../../script/auth.js";
 import { formatDate } from "../../script/app.js";
 
 class appointmentsClient extends HTMLElement {
@@ -23,14 +23,8 @@ class appointmentsClient extends HTMLElement {
 
 	async connectedCallback() {
 		await this.loadContent();
-		const appointments = await getAppointments();
-		this.updateTable(appointments);
-		this.dispatchEvent(
-			new CustomEvent("appointments-get", {
-				bubbles: true,
-				composed: true,
-			})
-		);
+		const appointments = await getUserIdAppointments(id);
+		appointments.forEach((a) => this.addNextAppointment(a));
 	}
 
 	addNextAppointment(appointment) {
@@ -39,11 +33,11 @@ class appointmentsClient extends HTMLElement {
 		const row = document.createElement("tr");
 
 		row.innerHTML = `
-	<td class="action-cell"></td> <!-- cellule vide au départ -->
-	<td>${formatDate(appointment.date)}</td>
-	<td>${appointment.hairdresser_id}</td>
-	<td>${appointment.service_id}</td>
-`;
+			<td class="action-cell"></td> <!-- cellule vide au départ -->
+			<td>${formatDate(appointment.date)}</td>
+			<td>${appointment.hairdresser_id}</td>
+			<td>${appointment.service_id}</td>
+		`;
 
 		const firstCell = row.querySelector(".action-cell");
 

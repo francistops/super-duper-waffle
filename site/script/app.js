@@ -57,7 +57,8 @@ function mainEventListeners() {
 	});
 
 	logoutBtn.addEventListener("click", (e) => {
-		localStorage.removeItem("user");
+		localStorage.removeItem("token");
+		localStorage.removeItem("user_id");
 		logoutBtn.classList.add("hidden");
 		displayMain();
 	});
@@ -70,9 +71,10 @@ function cancel_button(element) {
 }
 
 async function displayMain() {
+	console.log("in display main");
 	displayMultipleComponents(["services-wc", "feedbacks-wc"]);
 
-	const user = JSON.parse(localStorage.getItem("user"));
+	const user = JSON.parse(localStorage.getItem("token"));
 	const isLoggedIn = user !== null;
 
 	logoutBtn.classList.toggle("hidden", !isLoggedIn);
@@ -88,6 +90,7 @@ function displayLoginForm() {
 			"login-form": {
 				"user-logged-in": (e) => {
 					console.log("User logged successfully");
+					wcDiv.innerHTML = "";
 					displayMain();
 				},
 			},
@@ -177,7 +180,6 @@ function displayProfil() {
 			},
 		};
 	}
-
 	displayMultipleComponents(components, eventsPerComponent, true);
 }
 

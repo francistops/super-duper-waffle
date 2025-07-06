@@ -8,7 +8,6 @@ export async function hashPassword(password) {
 		hashHex = hashArray
 			.map((byte) => byte.toString(16).padStart(2, "0"))
 			.join("");
-		console.log("hashHex", hashHex);
 	} catch (error) {
 		console.log(`error: ${error}`);
 	}
@@ -42,15 +41,23 @@ async function apiCall(resource, method, auth, body = {}) {
 		if (response.ok) {
 			result = await response.json();
 		} else {
+			const errorText = await response.text();
+			let errorJson = {};
+			try {
+				errorJson = JSON.parse(errorText);
+			} catch (e) {
+				errorJson = { message: errorText };
+			}
 			result = {
 				errorCode: response.status,
-				message: await response.text(),
+				message: errorJson.message ?? "Erreur inconnue",
+				data: errorJson,
 			};
 		}
 	} catch (err) {
 		result = {
 			errorCode: 500,
-			message: err.message,
+			message: err.message ?? "Erreur inattendue",
 		};
 	}
 
@@ -69,7 +76,6 @@ export function isIdentified() {
 
 export async function register(user) {
 	let result = false;
-	console.log("in auth.js register", user);
 	const data = await apiCall("users/register", "POST", false, user);
 
 	if (data.errorCode == 0) {
@@ -85,19 +91,18 @@ export async function register(user) {
 			data
 		);
 	}
-
 	return result;
 }
 
 export async function login(user) {
-	console.log("in auth.js login", user);
 	let result = false;
 
 	const data = await apiCall("users/login", "POST", false, user);
-	console.log("data from apiCall in auth.js login", data);
-	if (data) {
+	console.log("data : ", data);
+	if (data.errorCode === 0) {
 		result = true;
-		localStorage.setItem("user", JSON.stringify(data.token));
+		localStorage.setItem("token", JSON.stringify(data.token));
+		localStorage.setItem("user_id", JSON.stringify(data.user));
 		document.dispatchEvent(
 			new CustomEvent("auth-loggedin", {
 				bubbles: true,
@@ -114,7 +119,6 @@ export async function login(user) {
 			data
 		);
 	}
-
 	return result;
 }
 
@@ -136,7 +140,6 @@ export async function logout() {
 			data
 		);
 	}
-
 	return result;
 }
 
@@ -144,7 +147,7 @@ export async function deactivateAccount(id) {
 	console.log("in auth.js deleteAccount");
 	let result = false;
 
-	const data = await apiCall("users/deactivate", "POST", true, id);
+	const data = await apiCall("users/deactivate", "POST", true, { id });
 	if (data.errorCode == 0) {
 		result = true;
 		localStorage.clear();
@@ -157,7 +160,6 @@ export async function deactivateAccount(id) {
 			data
 		);
 	}
-
 	return result;
 }
 
@@ -176,26 +178,24 @@ export async function getUsers() {
 			data
 		);
 	}
-
 	return result;
 }
 
 export async function getUserById(id) {
 	let result = {};
-	const data = await apiCall(`users/:id`, "GET", true, id);
+	const data = await apiCall(`users/${id}`, "GET", true);
 
 	if (data.errorCode === 0) {
 		result = data.user;
 	} else {
 		console.error(
-			"unhandle error in auth.js getUsersById",
+			"unhandle error in auth.js getUserById",
 			"data.errorCode: ",
 			data.errorCode,
 			" data : ",
 			data
 		);
 	}
-
 	return result;
 }
 
@@ -214,17 +214,16 @@ export async function getUsersByRole(role) {
 			data
 		);
 	}
-
 	return result;
 }
 
 export async function getUserIdAppointments(id) {
 	let result = [];
-
-	const data = await apiCall(`users/:id/appointments`, "GET", true, id);
+	// Pas fonctionel, à vérifier
+	const data = await apiCall(`users/${id}/appointments`, "GET", true);
 
 	if (data.errorCode === 0) {
-		result = data.appointment;
+		result = data.appointments;
 	} else {
 		console.error(
 			"unhandle error in auth.js getUserIdAppointments",
@@ -234,39 +233,39 @@ export async function getUserIdAppointments(id) {
 			data
 		);
 	}
-	console.log(result + "auth.js getUserIdAppointments");
+	console.log("auth.js getUserIdAppointments", result);
 	return result;
 }
 
-// ------ APPOINTMENTS ------
-
-export async function getAppointments() {
+export async function getUserIdAvailability(id) {
 	let result = [];
-
-	const data = await apiCall(`appointments/`, "GET", true);
+	// Pas fonctionel, à vérifier
+	const data = await apiCall(`users/${id}/availabilities`, "GET", true);
 
 	if (data.errorCode === 0) {
 		result = data.appointments;
 	} else {
 		console.error(
-			"unhandle error in auth.js getAppointments",
+			"unhandle error in auth.js getUserIdAvailability",
 			"data.errorCode: ",
 			data.errorCode,
 			" data : ",
 			data
 		);
 	}
-	console.log(result + "auth.js getAppointments");
+	console.log("auth.js getUserIdAvailability", result);
 	return result;
 }
 
+// ------ APPOINTMENTS ------
+
 export async function createAppointment(appointment) {
-	let result = [];
+	let result = false;
 
 	const data = await apiCall(`appointments/`, "POST", true, appointment);
 
 	if (data.errorCode === 0) {
-		result = data.appointment;
+		result = true;
 	} else {
 		console.error(
 			"unhandle error in auth.js createAppointments",
@@ -276,26 +275,32 @@ export async function createAppointment(appointment) {
 			data
 		);
 	}
-	console.log(result + "auth.js createAppointments");
+	console.log("auth.js createAppointment", result);
 	return result;
 }
 
 export async function updateAppointmentStatus(id, status) {
-	let result = {};
 	const data = await apiCall(`appointments/${id}`, "POST", true, { status });
+
 	if (data.errorCode === 0) {
-		result = data.appointment;
-		console.log("Statut mis à jour :", result);
+		console.log("Statut mis à jour :", data.appointment);
+		return {
+			success: true,
+			appointment: data.appointment,
+		};
 	} else {
 		console.error(
-			"unhandle error in auth.js updateAppointmentStatus",
-			"data.errorCode: ",
+			"unhandled error in auth.js updateAppointmentStatus",
+			"data.errorCode:",
 			data.errorCode,
-			" data : ",
+			"data:",
 			data
 		);
+		return {
+			success: false,
+			message: data.message ?? "Erreur lors de la mise à jour du statut",
+		};
 	}
-	return result;
 }
 
 // ------ AVAILABILITIES ------
@@ -397,7 +402,6 @@ export async function getServices() {
 			data
 		);
 	}
-	console.log(result + "auth.js getServices");
 	return result;
 }
 
@@ -477,7 +481,6 @@ export async function getFeedbacks() {
 			data
 		);
 	}
-	console.log(result + "auth.js getFeedbacks");
 	return result;
 }
 

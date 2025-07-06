@@ -35,6 +35,7 @@ class feedbacksWC extends HTMLElement {
       <td>${feedback.client_id}</td>
       <td>${feedback.rating}</td>
       <td>${feedback.comment}</td>
+	  <td>${feedback.feedback_date}</td>
     `;
 		feedbackTable.appendChild(row);
 	}

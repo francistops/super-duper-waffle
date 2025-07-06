@@ -1,9 +1,9 @@
 import {
 	fetchServices,
-	fetchServicesById,
-	fetchServicesByAppointmentId,
-	fetchServicesByHairdresserId,
-	fetchNextServices,
+	// fetchServicesById,
+	// fetchServicesByAppointmentId,
+	// fetchServicesByHairdresserId,
+	// fetchNextServices,
 	insertService,
 	updateService,
 	deleteService,

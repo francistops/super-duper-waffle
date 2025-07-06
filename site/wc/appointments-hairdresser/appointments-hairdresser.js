@@ -1,9 +1,9 @@
 import { globalStyles } from "../global/style.js";
 import {
-	getAppointments,
+	getUserIdAppointments,
 	getAvailabilities,
-	deleteAvailability,
-	updateAppointmentStatus,
+	// deleteAvailability,
+	// updateAppointmentStatus,
 } from "../../script/auth.js";
 import { formatDate } from "../../script/app.js";
 
@@ -35,7 +35,7 @@ class appointmentsHairdresser extends HTMLElement {
 			})
 		);
 
-		const appointments = await getAppointments();
+		const appointments = await getUserIdAppointments();
 		const availabilities = await getAvailabilities();
 
 		this.fillAgenda(appointments, availabilities);

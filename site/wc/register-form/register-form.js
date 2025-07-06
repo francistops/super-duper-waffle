@@ -47,7 +47,6 @@ class registerForm extends HTMLElement {
 				user["passhash"] = await hashPassword(user.password);
 				delete user.password;
 				delete user.confirmPassword;
-				console.log("in register-form WC user: ", user);
 				const result = await register(user);
 				if (!result) {
 					alert("Inscription échouée. Vérifiez vos informations.");
@@ -74,6 +73,11 @@ class registerForm extends HTMLElement {
 			});
 			this.dispatchEvent(event);
 		});
+	}
+
+	disconnectedCallback() {
+		const form = this.shadowRoot.getElementById("registerForm");
+		if (form) form.reset();
 	}
 }
 
