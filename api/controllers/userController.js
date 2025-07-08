@@ -94,7 +94,7 @@ export async function loginUser(req, res) {
 				result = {
 					message: "Successfull login",
 					errorCode: 0,
-					// user: loggedUser,
+					user: userid,
 					token: userToken,
 				};
 			} else if (isTokenResult.status) {

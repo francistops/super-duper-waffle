@@ -24,7 +24,7 @@ class loginForm extends HTMLElement {
 	async connectedCallback() {
 		await this.loadContent();
 
-		const form = this.shadowRoot.getElementById("login-post");
+		const form = this.shadowRoot.getElementById("loginForm");
 		const submitInp = this.shadowRoot.getElementById("loginButton");
 		const { parseFormToObject } = await import("/script/utilform.js");
 
@@ -33,38 +33,32 @@ class loginForm extends HTMLElement {
 
 			const user = parseFormToObject(form);
 
-			console.log("in login-form WC user: ", user);
 			if (!user.email || !user.password) {
 				alert("Please fill in all fields.");
 				return;
-			} else {
-				user["passhash"] = await hashPassword(user.password);
-				delete user.password;
-				const success = await login(user);
-				if (!success) {
-					console.error("login failed", success);
-				} else {
-					console.log("login success", success);
-
-					if (user.role === "hairdresser") {
-						this.dispatchEvent(
-							new CustomEvent("user-is-hairdresser", {
-								bubbles: true,
-								composed: true,
-								detail: { user },
-							})
-						);
-					}
-
-					this.dispatchEvent(
-						new CustomEvent("user-logged-in", {
-							bubbles: true,
-							composed: true,
-							detail: { status: "success" },
-						})
-					);
-				}
 			}
+
+			user["passhash"] = await hashPassword(user.password);
+			delete user.password;
+
+			const result = await login(user);
+
+			if (!result.success) {
+				alert("Connexion échouée");
+				return;
+			}
+
+			this.dispatchEvent(
+				new CustomEvent("user-logged-in", {
+					bubbles: true,
+					composed: true,
+					detail: {
+						userId: result.user,
+						token: result.token,
+						role: result.role ?? null,
+					},
+				})
+			);
 		});
 
 		const cancelButton = this.shadowRoot.getElementById("cancelButton");
@@ -77,6 +71,11 @@ class loginForm extends HTMLElement {
 				})
 			);
 		});
+	}
+
+	disconnectedCallback() {
+		const form = this.shadowRoot.getElementById("loginForm");
+		if (form) form.reset();
 	}
 }
 

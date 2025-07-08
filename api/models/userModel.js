@@ -31,10 +31,10 @@ export async function fetchUserById(id) {
 
 //todo make role optionnel
 export async function insertUser(user) {
-	const sql = `INSERT INTO users ("email", "passhash", "role") 
-                      VALUES ($1, $2, $3)
+	const sql = `INSERT INTO users ("email", "passhash") 
+                      VALUES ($1, $2)
                       returning *;`;
-	const param = [user.email, hash(user.passhash), user.role];
+	const param = [user.email, hash(user.passhash)];
 	const result = await pool.query(sql, param);
 	if (result.rowCount != 1) {
 		throw new Error(`501: failed too many users: ${param}`);

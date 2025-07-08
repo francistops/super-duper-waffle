@@ -1,5 +1,5 @@
 import { globalStyles } from "../global/style.js";
-import { getAppointments } from "../../script/auth.js";
+import { getUserIdAppointments } from "../../script/auth.js";
 import { formatDate } from "../../script/app.js";
 
 class appointmentsClient extends HTMLElement {
@@ -23,10 +23,17 @@ class appointmentsClient extends HTMLElement {
 
 	async connectedCallback() {
 		await this.loadContent();
-		this.dispatchEvent(new CustomEvent("load-complete"));
-		const appointments = await getAppointments();
-		this.updateTable(appointments);
-		this.startPolling();
+
+		const user = JSON.parse(localStorage.getItem("user"));
+
+		if (!user || !user.id) {
+			console.error("Aucun utilisateur trouvé dans le localStorage");
+			return;
+		}
+
+		const appointments = await getUserIdAppointments(user.id);
+
+		appointments.forEach((a) => this.addNextAppointment(a));
 	}
 
 	addNextAppointment(appointment) {
@@ -35,11 +42,11 @@ class appointmentsClient extends HTMLElement {
 		const row = document.createElement("tr");
 
 		row.innerHTML = `
-	<td class="action-cell"></td> <!-- cellule vide au départ -->
-	<td>${formatDate(appointment.date)}</td>
-	<td>${appointment.hairdresser_id}</td>
-	<td>${appointment.service_id}</td>
-`;
+			<td class="action-cell"></td> <!-- cellule vide au départ -->
+			<td>${formatDate(appointment.date)}</td>
+			<td>${appointment.hairdresser_id}</td>
+			<td>${appointment.service_id}</td>
+		`;
 
 		const firstCell = row.querySelector(".action-cell");
 
@@ -59,7 +66,6 @@ class appointmentsClient extends HTMLElement {
 		} else {
 			firstCell.textContent = "-";
 		}
-
 		appointmentTable.appendChild(row);
 	}
 
@@ -68,19 +74,6 @@ class appointmentsClient extends HTMLElement {
 			this.shadowRoot.querySelector(".appointment tbody");
 		appointmentTable.innerHTML = "";
 		appointments.forEach((a) => this.addNextAppointment(a));
-	}
-
-	startPolling() {
-		this.pollingInterval = setInterval(async () => {
-			const appointments = await getAppointments();
-			this.updateTable(appointments);
-		}, 10000);
-	}
-
-	disconnectedCallback() {
-		if (this.pollingInterval) {
-			clearInterval(this.pollingInterval);
-		}
 	}
 }
 

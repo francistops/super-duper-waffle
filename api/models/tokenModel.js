@@ -2,8 +2,8 @@ import pool from "../db/pool.js";
 
 export async function isTokenValid(token) {
 	//bypass for debug purpose
-	return token
-	
+	return token;
+
 	const sql = `SELECT "expires", "token"
                 FROM "tokens"
                 WHERE "token" = $1
