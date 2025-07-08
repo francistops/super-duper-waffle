@@ -134,7 +134,6 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 #### `AvailabilityController`
 
 - **DEBUG** (**Client**) `GET /availabilities` : Voir toutes les disponibilités
-- **DEBUG** (**Client**) `GET /availabilities/role/:role` : Voir toutes les disponibilités de toutes les coiffeuses.
 - **TOKEN** (**Client et coiffeuse**) `POST /availabilities/:id/` : Mise à jour d'une disponibilité.
 - **TOKEN** (**Coiffeuse**) `POST /availabilities` : Création de disponibilités.
 

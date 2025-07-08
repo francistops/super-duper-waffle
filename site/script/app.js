@@ -1,4 +1,4 @@
-// import { deleteAccount, createAppointment } from "../../script/auth.js";
+// import { deleteAccount, createAppointment, getApointmentsById, getAvailabilityById } from "../../script/auth.js";
 
 const wcDiv = document.getElementById("wcWrapper");
 
