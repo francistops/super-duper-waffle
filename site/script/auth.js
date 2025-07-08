@@ -19,6 +19,7 @@ async function apiCall(resource, method, auth, body = {}) {
 	const BASE_URL = "https://api.ft.ca/";
 	const apiUrl = `${BASE_URL}${resource}`;
 
+	console.log(BASE_URL, resource);
 	const headers = {
 		"Content-type": "application/json",
 		Accept: "application/json",
@@ -38,6 +39,7 @@ async function apiCall(resource, method, auth, body = {}) {
 
 	try {
 		const response = await fetch(apiUrl, apiReq);
+		console.log("in apiCall response ", response);
 		if (response.ok) {
 			result = await response.json();
 		} else {
@@ -110,7 +112,6 @@ export async function login(user) {
 		};
 	}
 
-	// Vérification minimale de sécurité
 	if (!data.user || !data.token) {
 		console.error(
 			"Réponse invalide du backend : utilisateur ou token manquant."
@@ -122,12 +123,11 @@ export async function login(user) {
 		};
 	}
 
-	console.log("Login success:", data);
 	return {
 		success: true,
-		user: data.user,
 		token: data.token,
-		role: data.role ?? null,
+		id: data.user.id,
+		role: data.user.role,
 	};
 }
 
@@ -151,11 +151,6 @@ export async function logout() {
 		};
 	}
 
-	if (data.revoked) {
-		localStorage.clear();
-	}
-
-	console.log("Déconnexion réussie.");
 	return {
 		success: true,
 		revoked: data.revoked,
@@ -163,63 +158,32 @@ export async function logout() {
 }
 
 export async function deactivateAccount(id) {
-	console.log("in auth.js deleteAccount");
-	let result = false;
+	console.log("in auth.js deactivateAccount");
 
 	const data = await apiCall("users/deactivate", "POST", true, { id });
-	if (data.errorCode == 0) {
-		result = true;
-		localStorage.clear();
 
-		console.log("deactivateAccount success", " data : ", data);
-	} else {
+	if (data.errorCode !== 0) {
 		console.error(
-			"unhandle error in auth.js deactivateAccount",
-			" data : ",
+			"unhandled error in auth.js deactivateAccount",
+			"data.errorCode:",
+			data.errorCode,
+			"data:",
 			data
 		);
+		return {
+			success: false,
+			errorCode: data.errorCode,
+			message: data.message ?? "Erreur de désactivation",
+		};
 	}
-	return result;
+
+	console.log("Compte désactivé avec succès :", id);
+	return {
+		success: true,
+	};
 }
 
-// export async function getUsers() {
-// 	let result = [];
-// 	const data = await apiCall(`users/`, "GET", true);
-
-// 	if (data.errorCode === 0) {
-// 		result = data.users;
-// 	} else {
-// 		console.error(
-// 			"unhandle error in auth.js getUsers",
-// 			"data.errorCode: ",
-// 			data.errorCode,
-// 			" data : ",
-// 			data
-// 		);
-// 	}
-// 	return result;
-// }
-
-// export async function getUserById(id) {
-// 	let result = {};
-// 	const data = await apiCall(`users/${id}`, "GET", true);
-
-// 	if (data.errorCode === 0) {
-// 		result = data.user;
-// 	} else {
-// 		console.error(
-// 			"unhandle error in auth.js getUserById",
-// 			"data.errorCode: ",
-// 			data.errorCode,
-// 			" data : ",
-// 			data
-// 		);
-// 	}
-// 	return result;
-// }
-
 export async function getUsersByRole(role) {
-	let result = [];
 	const data = await apiCall(`users/role/${role}`, "GET", true);
 
 	if (data.errorCode === 0) {
@@ -339,7 +303,7 @@ export async function getAvailabilities() {
 export async function getAvailabilitiesByUserId(userId) {
 	let result = [];
 
-	const data = await apiCall(`availability/users/${userId}`, "GET", true);
+	const data = await apiCall(`users//${userId}/availabilities`, "GET", true);
 
 	if (data.errorCode === 0) {
 		result = data.availabilities;
@@ -375,6 +339,7 @@ export async function createAvailability(availability) {
 	return result;
 }
 
+// À vérifier, si status ou non
 export async function updateAvailability(id, status) {
 	let result = false;
 
@@ -400,7 +365,9 @@ export async function updateAvailability(id, status) {
 export async function getServices() {
 	let result = [];
 
+	console.log(" getServices auth.js avant apiCall");
 	const data = await apiCall(`services/`, "GET", false);
+	console.log(" getServices auth.js après apiCall", data);
 
 	if (data.errorCode === 0) {
 		result = data.services;
@@ -413,6 +380,7 @@ export async function getServices() {
 			data
 		);
 	}
+	console.log("result getServices ", result);
 	return result;
 }
 

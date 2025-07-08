@@ -90,12 +90,12 @@ function displayLoginForm() {
 				"user-logged-in": (e) => {
 					console.log("User logged successfully", e.detail);
 
-					const { userId, token, role } = e.detail;
+					const { id, role, token } = e.detail;
 
 					localStorage.setItem(
 						"user",
 						JSON.stringify({
-							id: userId,
+							id: id,
 							role: role,
 							token: token,
 						})
@@ -145,9 +145,9 @@ function displaySettings() {
 }
 
 function displayProfil() {
-	// const user = JSON.parse(localStorage.getItem("user"));
-	// const isClient = user?.role === "client";
-	// const isHairdresser = user?.role === "hairdresser";
+	const user = JSON.parse(localStorage.getItem("user"));
+	const isClient = user?.role === "client";
+	const isHairdresser = user?.role === "hairdresser";
 
 	const components = ["profil-wc"];
 	const eventsPerComponent = {
@@ -160,7 +160,7 @@ function displayProfil() {
 		},
 	};
 
-	// if (isClient) {
+	if (isClient) {
 	components.push("appointments-client", "handling-availabilities-client");
 	eventsPerComponent["handling-availabilities-client"] = {
 		"appointment-selected": async (e) => {
@@ -174,23 +174,23 @@ function displayProfil() {
 			// appel API ici
 		},
 	};
-	// } else if (isHairdresser) {
-	// 	components.push(
-	// 		"appointments-hairdresser",
-	// 		"handling-availabilities-hairdresser"
-	// 	);
-	// 	eventsPerComponent["handling-availabilities-hairdresser"] = {
-	// 		"date-selected": (e) => {
-	// 			const date = e.detail.date;
-	// 			const oldSlots = wcDiv.querySelector("availability-slots");
-	// 			if (oldSlots) oldSlots.remove();
+	} else if (isHairdresser) {
+		components.push(
+			"appointments-hairdresser",
+			"handling-availabilities-hairdresser"
+		);
+		eventsPerComponent["handling-availabilities-hairdresser"] = {
+			"date-selected": (e) => {
+				const date = e.detail.date;
+				const oldSlots = wcDiv.querySelector("availability-slots");
+				if (oldSlots) oldSlots.remove();
 
-	// 			const slotsWC = document.createElement("availability-slots");
-	// 			slotsWC.setAttribute("start-date", date);
-	// 			wcDiv.appendChild(slotsWC);
-	// 		},
-	// 	};
-	// }
+				const slotsWC = document.createElement("availability-slots");
+				slotsWC.setAttribute("start-date", date);
+				wcDiv.appendChild(slotsWC);
+			},
+		};
+	}
 	displayMultipleComponents(components, eventsPerComponent, true);
 }
 
