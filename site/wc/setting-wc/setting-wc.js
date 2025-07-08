@@ -1,5 +1,5 @@
 import { globalStyles } from "../global/style.js";
-import { updateUser, hashPassword } from "../../script/auth.js";
+// import { updateUser, hashPassword } from "../../script/auth.js";
 
 class settingWC extends HTMLElement {
 	constructor() {
