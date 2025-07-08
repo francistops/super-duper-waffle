@@ -27,6 +27,7 @@ class servicesWC extends HTMLElement {
 		await this.loadContent();
 		this.dispatchEvent(new CustomEvent("load-complete"));
 		const services = await getServices();
+		const index = 0;
 		services.forEach((a) => this.addNextService(a, index + 1));
 	}
 
@@ -37,7 +38,7 @@ class servicesWC extends HTMLElement {
       <td>${index}</td>
       <td>${service.name}</td>
       <td>${service.duration}</td>
-      <td>${service.price.toFixed(2)} €</td>
+      <td>${service.price} €</td>
     `;
 		servicesTable.appendChild(row);
 	}
