@@ -212,6 +212,12 @@ export function getNextMonday(date) {
 	return next.toISOString().split("T")[0];
 }
 
+export function getDateFromTomorrow(offset = 0) {
+	const today = new Date();
+	today.setDate(today.getDate() + 1 + offset);
+	return today.toISOString().split("T")[0];
+}
+
 window.addEventListener("load", (e) => {
 	displayMain();
 	mainEventListeners();
