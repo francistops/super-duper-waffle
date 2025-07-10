@@ -75,7 +75,7 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 - `id` (SERIAL PRIMARY KEY)
 - `hairdresser_id` (INTEGER, FK → users.id)
 - `availability_date` (TIMESTAMP)
-- `status` (VARCHAR) — "pending", "assigned", "expired"
+- `status` (VARCHAR) — "pending", "cancel", "assigned", "expired"
 
 #### `services`
 
@@ -122,7 +122,7 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 - **TOKEN** `GET /users/role/:role` : Un client sélectionne toutes les coiffeuses.
 - **TOKEN** (**Client et coiffeuse**) `GET /users/:id/appointments` : Un client voit ses propre rendez-vous et une coiffeuse voit ses propres rendez-vous.
 - **TOKEN** (**Client et coiffeuse**) `GET /users/:id/availability` : Un client voit les disponibilités d'une coiffeuse et une coiffeuse voit ses propres disponibilités.
-- **TOKEN** (**Client et coiffeuse**) `POST /users/:id` : Désactivation d'un utilisateur ou mise à jour d'un utilisateur. ( Pour ne pas perdre l'historique des rendez-vous)
+- **TOKEN** (**Client et coiffeuse**) `POST /users/:id` : Désactivation d'un utilisateur (mettre id comme email) ou mise à jour d'un utilisateur. ( Pour ne pas perdre l'historique des rendez-vous) Ajouter un field qui vient de auth.js pour le controller
 
 #### `AppointmentController`
 
@@ -134,7 +134,6 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 #### `AvailabilityController`
 
 - **DEBUG** (**Client**) `GET /availabilities` : Voir toutes les disponibilités
-- **DEBUG** (**Client**) `GET /availabilities/role/:role` : Voir toutes les disponibilités de toutes les coiffeuses.
 - **TOKEN** (**Client et coiffeuse**) `POST /availabilities/:id/` : Mise à jour d'une disponibilité.
 - **TOKEN** (**Coiffeuse**) `POST /availabilities` : Création de disponibilités.
 

@@ -20,6 +20,8 @@ services:
     container_name: node-api
     environment:
       - DATABASE_URL=postgresql://postgres:password@postgres:5432/timewaitfornoonedb
+      - CASSANDRA_CONTACT_POINTS=cassandra
+      - CASSANDRA_KEYSPACE=logsystem
     volumes:
       - ./api:/usr/src/app:rw
       - /usr/src/app/node_modules
@@ -38,3 +40,22 @@ services:
     expose:
       - 5432
     restart: unless-stopped
+
+  cassandra:
+    build:
+      context: ./cassandra
+      dockerfile: Dockerfile
+    container_name: cassandra
+    ports:
+      - 9042:9042
+    volumes:
+      - cassandra-data:/var/lib/cassandra
+    healthcheck:
+      test: ["CMD-SHELL", "cqlsh -e 'DESCRIBE KEYSPACES;'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  cassandra-data:
