@@ -1,5 +1,7 @@
 // import { deleteAccount, createAppointment, getApointmentsById, getAvailabilityById } from "../../script/auth.js";
 
+import { createAppointment } from "./auth";
+
 const wcDiv = document.getElementById("wcWrapper");
 
 const h1 = document.querySelector("h1");
@@ -163,15 +165,15 @@ function displayProfil() {
 	if (isClient) {
 	components.push("appointments-client", "handling-availabilities-client");
 	eventsPerComponent["handling-availabilities-client"] = {
-		"appointment-selected": async (e) => {
-			const { date, hairdresserId, serviceId } = e.detail;
-			console.log(
-				"Client a choisi le rendez-vous :",
-				date,
-				hairdresserId,
-				serviceId
-			);
-			// appel API ici
+		"availability-selected": async (e) => {
+			const { clientId, hairdresserId, service_id, availabilityId } = e.detail;
+			console.log("Création de rendez-vous avec :", e.detail);
+			createAppointment({
+				client_id: clientId,
+				hairdresser_id: hairdresserId,
+				service_id,
+				availability_id: availabilityId,
+			});
 		},
 	};
 	} else if (isHairdresser) {
@@ -204,17 +206,9 @@ export function formatDate(isoString) {
 	return `${yyyy}-${mm}-${dd} ${hh}:${min}`;
 }
 
-export function getNextMonday(date) {
-	const next = new Date(date);
-	const day = next.getDay();
-	const diff = (8 - day) % 7 || 7;
-	next.setDate(next.getDate() + diff);
-	return next.toISOString().split("T")[0];
-}
-
-export function getDateFromTomorrow(offset = 0) {
+export function getDateFromToday(offset = 0) {
 	const today = new Date();
-	today.setDate(today.getDate() + 1 + offset);
+	today.setDate(today.getDate() + offset);
 	return today.toISOString().split("T")[0];
 }
 

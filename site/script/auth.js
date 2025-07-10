@@ -319,24 +319,21 @@ export async function getAvailabilitiesByUserId(userId) {
 	return result;
 }
 
-export async function createAvailability(availability) {
-	let result = false;
+export async function createAvailability(hairdresserId, date) {
+	let results = [];
 
-	const data = await apiCall(`availabilities/`, "POST", true, availability);
+	for (let hour = 8; hour < 15; hour++) {
+		const availabilityDate = new Date(`${date}T${hour.toString().padStart(2, "0")}:00:00`);
+		const body = {
+			hairdresser_id: hairdresserId,
+			availability_date: availabilityDate.toISOString(),
+		};
 
-	if (data.errorCode === 0) {
-		result = data.availability || true;
-		console.log("createAvailability success:", data);
-	} else {
-		console.error(
-			"unhandle error in auth.js createAvailability",
-			"data.errorCode: ",
-			data.errorCode,
-			" data : ",
-			data
-		);
+		const data = await apiCall("availabilities", "POST", true, body);
+		results.push(data);
 	}
-	return result;
+
+	return results;
 }
 
 // À vérifier, si status ou non

@@ -1,5 +1,5 @@
 import { globalStyles } from "../global/style.js";
-import { getNextMonday } from "../../script/app.js";
+import { getDateFromToday } from "../../script/app.js";
 
 class handlingAvailabilitiesHairdresser extends HTMLElement {
 	constructor() {
@@ -13,7 +13,8 @@ class handlingAvailabilitiesHairdresser extends HTMLElement {
 
 	async loadContent() {
 		const html = await fetch(
-			"/wc/handling-availabilities-hairdresser/handling-availabilities-hairdresser.html"
+			"/wc/handling-availabilities-hairdresser/handling-availabilities-hairdresser.html" +
+				"?t=" + Date.now()
 		).then((res) => res.text());
 		const template = document.createElement("template");
 		template.innerHTML = html;
@@ -22,40 +23,56 @@ class handlingAvailabilitiesHairdresser extends HTMLElement {
 
 	async connectedCallback() {
 		await this.loadContent();
-
-		this.shadowRoot.querySelector("form").addEventListener("submit", (e) => {
-			e.preventDefault();
-			const date = this.shadowRoot.querySelector("#inpDate").value;
-			console.log("Date soumise :", date);
-
-			this.dispatchEvent(
-				new CustomEvent("date-selected", {
-					detail: { date },
-					bubbles: true,
-					composed: true,
-				})
-			);
-		});
-
+	
 		const inpDate = this.shadowRoot.querySelector("#inpDate");
+	
 		if (!inpDate) {
 			console.warn("inpDate introuvable dans le DOM du composant.");
 			return;
 		}
-
-		const today = new Date();
-		inpDate.min = today.toISOString().split("T")[0];
-
-		inpDate.value = getNextMonday(today);
-
+	
+		const minDate = getDateFromToday(1);
+		const maxDate = getDateFromToday(28);
+		inpDate.min = minDate;
+		inpDate.max = maxDate;
+		inpDate.value = minDate;
+	
 		inpDate.addEventListener("change", (e) => {
-			const selected = e.target.value;
-			const day = new Date(selected + "T00:00:00Z").getUTCDay();
+			const selected = new Date(e.target.value + "T00:00:00");
+			const min = new Date(minDate + "T00:00:00");
+			const max = new Date(maxDate + "T00:00:00");
 
-			if (day !== 1) {
-				alert("Veuillez choisir un lundi.");
-				inpDate.value = getNextMonday(today);
+			if (selected < min || selected > max) {
+				alert(`Veuillez choisir une date entre ${minDate} et ${maxDate}.`);
+				inpDate.value = minDate;
+				this.selectedAvailabilityDate = minDate;
+			} else {
+				this.selectedAvailabilityDate = inpDate.value;
 			}
+		});
+	
+		this.shadowRoot.querySelector("form").addEventListener("submit", (e) => {
+			e.preventDefault();
+			const availability_date = inpDate.value;
+		
+			const user = JSON.parse(localStorage.getItem("user"));
+			const hairdresserId = user?.id;
+		
+			if (!hairdresserId) {
+				console.warn("Hairdresser ID non trouvé dans le localStorage.");
+				return;
+			}
+		
+			this.dispatchEvent(
+				new CustomEvent("hairdresser-add-availabilities", {
+					detail: {
+						availability_date,
+						hairdresserId,
+					},
+					bubbles: true,
+					composed: true,
+				})
+			);
 		});
 	}
 }

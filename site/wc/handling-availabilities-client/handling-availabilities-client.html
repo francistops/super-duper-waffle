@@ -1,23 +1,29 @@
-<div>
-	<label for="selectedHairdresser">Rechercher une coiffeuse :</label>
-	<select id="selectedHairdresser" name="selectedHairdresser">
-		<option value="">-- Choisir une coiffeuse --</option>
-	</select>
-</div>
+<form>
+	<div>
+		<label for="selectedHairdresser">Rechercher une coiffeuse :</label>
+		<select id="selectedHairdresser" name="selectedHairdresser">
+			<option value="">-- Choisir une coiffeuse --</option>
+		</select>
+	</div>
 
-<div>
-	<label for="selectedService">Rechercher un service :</label>
-	<select id="selectedService" name="selectedService">
-		<option value="">-- Choisir un service --</option>
-	</select>
-</div>
+	<div>
+		<label for="selectedService">Rechercher un service :</label>
+		<select id="selectedService" name="selectedService">
+			<option value="">-- Choisir un service --</option>
+		</select>
+	</div>
 
-<div>
-	<label for="inpDate">Sélectionner une date :</label>
-	<input type="date" id="inpDate" name="date"/>
-</div>
+	<div>
+		<label for="inpDate">Sélectionner une date :</label>
+		<input type="date" id="inpDate" name="date"/>
+	</div>
 
-<div id="selectedDateDisplay" class="selected-date-display"></div>
+	<button id="inpSeeAvailabilities">Voir les disponibilités</button>
+</form>
+
+<div class="selected-date-display">
+	<p id="selectedDateDisplay">Date sélectionnée : </p>
+</div>
 
 <table class="handling-availabilities-client">
 	<thead>
