@@ -48,8 +48,6 @@ class handlingAvailabilitiesClient extends HTMLElement {
 				opt.textContent = hairdresser.email;
 				selectedHairdresser.appendChild(opt);
 			}
-		} else {
-			console.warn("Aucun utilisateur avec le rôle hairdresser trouvé.");
 		}
 	
 		if (this.services) {
@@ -59,11 +57,9 @@ class handlingAvailabilitiesClient extends HTMLElement {
 				opt.textContent = service.name;
 				selectedService.appendChild(opt);
 			}
-		} else {
-			console.warn("Aucun service trouvé.");
 		}
 	
-		const minDate = getDateFromToday(0);
+		const minDate = getDateFromToday(1);
 		const maxDate = getDateFromToday(28);
 		inpDate.min = minDate;
 		inpDate.max = maxDate;

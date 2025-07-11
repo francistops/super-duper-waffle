@@ -45,9 +45,10 @@ class handlingAvailabilitiesHairdresser extends HTMLElement {
 			if (selected < min || selected > max) {
 				alert(`Veuillez choisir une date entre ${minDate} et ${maxDate}.`);
 				inpDate.value = minDate;
-				this.selectedAvailabilityDate = minDate;
+				this.selectedDate = minDate;
 			} else {
-				this.selectedAvailabilityDate = inpDate.value;
+				this.selectedDate = inpDate.value;
+				this.selectedDateDisplay.textContent = `Date sélectionnée : ${formatDate(this.selectedDate)}`;
 			}
 		});
 	
