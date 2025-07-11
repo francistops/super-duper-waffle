@@ -29,15 +29,21 @@ class appointmentsHairdresser extends HTMLElement {
 		await this.loadContent();
 
 		const user = JSON.parse(localStorage.getItem("user"));
+
 		if (!user || !user.id) {
 			console.error("Aucun utilisateur trouvé dans le localStorage");
 			return;
 		}
 
-		const appointments = await getUserIdAppointments(user.id);
-		const availabilities = await getUserIdAvailabilities(user.id);
+		const resApp = await getUserIdAppointments(user.id);
+		const resAvail = await getUserIdAvailabilities(user.id);
 
-		this.fillAgenda(appointments, availabilities);
+		if (!resApp.success || !resAvail.success) {
+			console.error("Erreur lors du chargement des rendez-vous ou des disponibilités.");
+			return;
+		}
+
+		this.fillAgenda(resApp.appointments, resAvail.availabilities);
 	}
 
 	renderAvailabilityCell(cell, availabilityId, currentStatus) {

@@ -19,6 +19,7 @@ async function apiCall(resource, method, auth, body = {}) {
 	const BASE_URL = "https://api.ft.ca/";
 	const apiUrl = `${BASE_URL}${resource}`;
 
+	// console.log(BASE_URL, resource);
 	const headers = {
 		"Content-type": "application/json",
 		Accept: "application/json",
@@ -38,6 +39,7 @@ async function apiCall(resource, method, auth, body = {}) {
 
 	try {
 		const response = await fetch(apiUrl, apiReq);
+		console.log("in apiCall response ", response);
 		if (response.ok) {
 			result = await response.json();
 		} else {
@@ -87,7 +89,6 @@ export async function register(user) {
 		);
 		return false;
 	}
-
 	console.log("registration success", data);
 	return true;
 }
@@ -110,11 +111,11 @@ export async function login(user) {
 		};
 	}
 
-	// Vérification minimale de sécurité
 	if (!data.user || !data.token) {
 		console.error(
 			"Réponse invalide du backend : utilisateur ou token manquant."
 		);
+
 		return {
 			success: false,
 			errorCode: 500,
@@ -122,12 +123,11 @@ export async function login(user) {
 		};
 	}
 
-	console.log("Login success:", data);
 	return {
 		success: true,
-		user: data.user,
 		token: data.token,
-		role: data.role ?? null,
+		id: data.user.id,
+		role: data.user.role,
 	};
 }
 
@@ -151,11 +151,6 @@ export async function logout() {
 		};
 	}
 
-	if (data.revoked) {
-		localStorage.clear();
-	}
-
-	console.log("Déconnexion réussie.");
 	return {
 		success: true,
 		revoked: data.revoked,
@@ -163,137 +158,131 @@ export async function logout() {
 }
 
 export async function deactivateAccount(id) {
-	console.log("in auth.js deleteAccount");
-	let result = false;
+	console.log("in auth.js deactivateAccount");
 
 	const data = await apiCall("users/deactivate", "POST", true, { id });
-	if (data.errorCode == 0) {
-		result = true;
-		localStorage.clear();
 
-		console.log("deactivateAccount success", " data : ", data);
-	} else {
+	if (data.errorCode !== 0) {
 		console.error(
-			"unhandle error in auth.js deactivateAccount",
-			" data : ",
+			"unhandled error in auth.js deactivateAccount",
+			"data.errorCode:",
+			data.errorCode,
+			"data:",
 			data
 		);
+		return {
+			success: false,
+			errorCode: data.errorCode,
+			message: data.message ?? "Erreur de désactivation",
+		};
 	}
-	return result;
+
+	return {
+		success: true,
+	};
 }
 
-// export async function getUsers() {
-// 	let result = [];
-// 	const data = await apiCall(`users/`, "GET", true);
-
-// 	if (data.errorCode === 0) {
-// 		result = data.users;
-// 	} else {
-// 		console.error(
-// 			"unhandle error in auth.js getUsers",
-// 			"data.errorCode: ",
-// 			data.errorCode,
-// 			" data : ",
-// 			data
-// 		);
-// 	}
-// 	return result;
-// }
-
-// export async function getUserById(id) {
-// 	let result = {};
-// 	const data = await apiCall(`users/${id}`, "GET", true);
-
-// 	if (data.errorCode === 0) {
-// 		result = data.user;
-// 	} else {
-// 		console.error(
-// 			"unhandle error in auth.js getUserById",
-// 			"data.errorCode: ",
-// 			data.errorCode,
-// 			" data : ",
-// 			data
-// 		);
-// 	}
-// 	return result;
-// }
-
 export async function getUsersByRole(role) {
-	let result = [];
 	const data = await apiCall(`users/role/${role}`, "GET", true);
 
-	if (data.errorCode === 0) {
-		result = data.users;
-	} else {
+	if (data.errorCode !== 0) {
 		console.error(
-			"unhandle error in auth.js getUsersByRole",
-			"data.errorCode: ",
+			"unhandled error in auth.js getUsersByRole",
+			"data.errorCode:",
 			data.errorCode,
-			" data : ",
+			"data:",
 			data
 		);
+		return {
+			success: false,
+			errorCode: data.errorCode,
+			message: data.message ?? "Erreur lors de la récupération des utilisateurs par rôle",
+		};
 	}
-	return result;
+	return {
+		success: true,
+		users: data.users
+	};
 }
 
 export async function getUserIdAppointments(id) {
-	let result = [];
-	// Pas fonctionel, à vérifier
+
 	const data = await apiCall(`users/${id}/appointments`, "GET", true);
 
-	if (data.errorCode === 0) {
-		result = data.appointments;
-	} else {
+	if (data.errorCode !== 0) {
 		console.error(
-			"unhandle error in auth.js getUserIdAppointments",
+			"unhandled error in auth.js getUserIdAppointments",
 			"data.errorCode: ",
 			data.errorCode,
 			" data : ",
 			data
 		);
+		return {
+			success: false,
+			errorCode: data.errorCode,
+			message: data.message ?? "Erreur lors de la récupération des rendez-vous"
+		};
 	}
-	console.log("auth.js getUserIdAppointments", result);
-	return result;
+
+	return {
+		success: true,
+		appointments: data.appointments
+	};
 }
 
-export async function getUserIdAvailabilities(userId) {
-	let result = [];
-	// Pas fonctionel, à vérifier
-	const data = await apiCall(`users/${userId}/availabilities`, "GET", true);
+export async function getUserIdAvailabilities(id) {
 
-	if (data.errorCode === 0) {
-		result = data.availabilities;
-	} else {
+	const data = await apiCall(`users/${id}/availabilities`, "GET", true);
+
+	if (data.errorCode !== 0) {
 		console.error(
-			"unhandle error in auth.js getUserIdAvailabilities",
+			"unhandled error in auth.js getUserIdAvailabilities",
 			"data.errorCode: ",
 			data.errorCode,
 			" data : ",
 			data
 		);
+		return {
+			success: false,
+			errorCode: data.errorCode,
+			message: data.message ?? "Erreur lors de la récupération des disponibilités"
+		};
 	}
-	console.log("auth.js getUserIdAvailabilities", result);
-	return result;
+
+	return {
+		success: true,
+		availabilities: data.availabilities
+	};
 }
 
 // ------ APPOINTMENTS ------
 
 export async function createAppointment(appointment) {
+
 	const data = await apiCall(`appointments/`, "POST", true, appointment);
 
 	if (data.errorCode !== 0) {
-		console.error("unhandle error in createAppointments", data);
-		return { success: false, errorCode: data.errorCode, message: data.message };
+		console.error(
+			"unhandled error in auth.js createAppointment(appointment)",
+			"data.errorCode: ",
+			data.errorCode,
+			" data : ",
+			data
+		);
+		return {
+			success: false,
+			errorCode: data.errorCode,
+			message: data.message ?? "Erreur lors de la création du rendez-vous"
+		};
 	}
 
-	console.log("auth.js createAppointment", data);
 	return {
 		success: true,
-		appointment: data.appointment,
 	};
 }
 
 export async function updateAppointmentStatus(id, status) {
+
 	const data = await apiCall(`appointments/${id}`, "POST", true, { status });
 
 	if (data.errorCode !== 0) {
@@ -304,26 +293,25 @@ export async function updateAppointmentStatus(id, status) {
 			"data:",
 			data
 		);
-		return { success: false, errorCode: data.errorCode, message: data.message };
+		return {
+			success: false,
+			errorCode: data.errorCode,
+			message: data.message
+		};
 	}
 
-	console.log("Statut mis à jour :", data.appointment);
 	return {
 		success: true,
-		appointment: data.appointment,
 	};
 }
 
 // ------ AVAILABILITIES ------
 
 export async function getAvailabilities() {
-	let result = [];
 
 	const data = await apiCall(`availabilities/`, "GET", true);
 
-	if (data.errorCode === 0) {
-		result = data.availabilities;
-	} else {
+	if (data.errorCode !== 0) {
 		console.error(
 			"unhandle error in auth.js getAvailabilities",
 			"data.errorCode: ",
@@ -331,19 +319,24 @@ export async function getAvailabilities() {
 			" data : ",
 			data
 		);
+		return {
+			success: false,
+			errorCode: data.errorCode,
+			message: data.message ?? "Erreur lors de la récupération des disponibilités"
+		};
 	}
-	console.log(result + "auth.js getAvailabilities");
-	return result;
+
+	return {
+		success: true,
+		availabilities: data.availabilities
+	};
 }
 
 export async function getAvailabilitiesByUserId(userId) {
-	let result = [];
 
-	const data = await apiCall(`availability/users/${userId}`, "GET", true);
+	const data = await apiCall(`users/${userId}/availabilities`, "GET", true);
 
-	if (data.errorCode === 0) {
-		result = data.availabilities;
-	} else {
+	if (data.errorCode !== 0) {
 		console.error(
 			"unhandle error in auth.js getAvailabilitiesByUserId",
 			"data.errorCode: ",
@@ -351,19 +344,23 @@ export async function getAvailabilitiesByUserId(userId) {
 			" data : ",
 			data
 		);
+		return {
+			success: false,
+			errorCode: data.errorCode,
+			message: data.message ?? "Erreur lors de la récupération des disponibilités par utilisateur"
+		};
 	}
-	return result;
+	return {
+		success: true,
+		availabilities: data.availabilities
+	};
 }
 
 export async function createAvailability(availability) {
-	let result = false;
 
-	const data = await apiCall(`availabilities/`, "POST", true, availability);
+	const data = await apiCall("availabilities", "POST", true, availability);
 
-	if (data.errorCode === 0) {
-		result = data.availability || true;
-		console.log("createAvailability success:", data);
-	} else {
+	if (data.errorCode !== 0) {
 		console.error(
 			"unhandle error in auth.js createAvailability",
 			"data.errorCode: ",
@@ -371,19 +368,24 @@ export async function createAvailability(availability) {
 			" data : ",
 			data
 		);
+
+		return {
+			success: false,
+			errorCode: data.errorCode,
+			message: data.message ?? "Erreur lors de la création de la disponibilité"
+		};
 	}
-	return result;
+	return {
+		success: true,
+	};
 }
 
 export async function updateAvailability(id, status) {
-	let result = false;
 
 	const data = await apiCall(`availabilities/${id}`, "POST", true, { status });
 
-	if (data.errorCode === 0) {
-		result = data.updated || true;
-		console.log("updateAvailability success:", data);
-	} else {
+	if (data.errorCode !== 0) {
+
 		console.error(
 			"unhandle error in auth.js updateAvailability",
 			"data.errorCode: ",
@@ -391,20 +393,25 @@ export async function updateAvailability(id, status) {
 			" data : ",
 			data
 		);
+		return {
+			success: false,
+			errorCode: data.errorCode,
+			message: data.message ?? "Erreur lors de la mise à jour de la disponibilité"
+		};
 	}
-	return result;
+	return {
+		success: true,
+	};
 }
 
 // ------ SERVICES ------
 
 export async function getServices() {
-	let result = [];
 
 	const data = await apiCall(`services/`, "GET", false);
 
-	if (data.errorCode === 0) {
-		result = data.services;
-	} else {
+	if (data.errorCode !== 0) {
+
 		console.error(
 			"unhandle error in auth.js getServices",
 			"data.errorCode: ",
@@ -412,19 +419,26 @@ export async function getServices() {
 			" data : ",
 			data
 		);
+
+		return {
+			success: false,
+			errorCode: data.errorCode,
+			message: data.message ?? "Erreur lors de la récupération des services"
+		};
 	}
-	return result;
+
+	return {
+		success: true,
+		services: data.services
+	};
 }
 
 export async function createService(service) {
-	let result = false;
 
 	const data = await apiCall(`services/`, "POST", true, service);
 
-	if (data.errorCode === 0) {
-		result = data.service;
-		console.log("Service créé avec succès :", result);
-	} else {
+	if (data.errorCode !== 0) {
+
 		console.error(
 			"unhandle error in auth.js createService",
 			"data.errorCode: ",
@@ -432,18 +446,24 @@ export async function createService(service) {
 			" data : ",
 			data
 		);
+		
+		return {
+			success: false,
+			errorCode: data.errorCode,
+			message: data.message ?? "Erreur lors de la création du service"
+		};
 	}
-	return result;
+	return {
+		success: true,
+	};
 }
 
 export async function updateService(id, service) {
-	let result = false;
+
 	const data = await apiCall(`services/${id}`, "POST", true, service);
 
-	if (data.errorCode === 0) {
-		result = data.service;
-		console.log("Service mis à jour avec succès :", result);
-	} else {
+	if (data.errorCode !== 0) {
+
 		console.error(
 			"unhandle error in auth.js updateService",
 			"data.errorCode: ",
@@ -451,18 +471,24 @@ export async function updateService(id, service) {
 			" data : ",
 			data
 		);
+
+		return {
+			success: false,
+			errorCode: data.errorCode,
+			message: data.message ?? "Erreur lors de la mise à jour du service"
+		};
 	}
-	return result;
+	return {
+		success: true,
+	};
 }
 
 export async function deactivateService(id) {
-	let result = false;
+
 	const data = await apiCall(`services/${id}`, "POST", true, id);
 
-	if (data.errorCode === 0) {
-		result = data.deactivated;
-		console.log("Service supprimé avec succès :", result);
-	} else {
+	if (data.errorCode !== 0) {
+
 		console.error(
 			"unhandle error in auth.js deactivateService",
 			"data.errorCode: ",
@@ -470,20 +496,24 @@ export async function deactivateService(id) {
 			" data : ",
 			data
 		);
+
+		return {
+			success: false,
+			errorCode: data.errorCode,
+			message: data.message ?? "Erreur lors de la désactivation du service"
+		};
 	}
-	return result;
+	return {
+		success: true,
+	};
 }
 
 // ------ FEEDBACK ------
 
 export async function getFeedbacks() {
-	let result = [];
 
 	const data = await apiCall(`feedbacks/`, "GET", false);
-
-	if (data.errorCode === 0) {
-		result = data.feedbacks;
-	} else {
+	if (data.errorCode !== 0) {
 		console.error(
 			"unhandle error in auth.js getFeedbacks",
 			"data.errorCode: ",
@@ -491,19 +521,26 @@ export async function getFeedbacks() {
 			" data : ",
 			data
 		);
+
+		return {
+			success: false,
+			errorCode: data.errorCode,
+			message: data.message ?? "Erreur lors de la récupération des feedbacks"
+		};
 	}
-	return result;
+
+	return {
+		success: true,
+		feedbacks: data.feedbacks
+	};
 }
 
 export async function createFeedback(feedback) {
-	let result = false;
 
 	const data = await apiCall(`feedbacks/`, "POST", true, feedback);
 
-	if (data.errorCode === 0) {
-		result = data.feedback || true;
-		console.log("createFeedback success:", data);
-	} else {
+	if (data.errorCode !== 0) {
+
 		console.error(
 			"unhandle error in auth.js createFeedback",
 			"data.errorCode: ",
@@ -511,6 +548,15 @@ export async function createFeedback(feedback) {
 			" data : ",
 			data
 		);
+
+		return {
+			success: false,
+			errorCode: data.errorCode,
+			message: data.message ?? "Erreur lors de la création du feedback"
+		};
 	}
-	return result;
+
+	return {
+		success: true,
+	};
 }

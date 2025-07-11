@@ -31,9 +31,9 @@ class appointmentsClient extends HTMLElement {
 			return;
 		}
 
-		const appointments = await getUserIdAppointments(user.id);
+		const result = await getUserIdAppointments(user.id);
 
-		appointments.forEach((a) => this.addNextAppointment(a));
+		result.appointments.forEach((a) => this.addNextAppointment(a));
 	}
 
 	addNextAppointment(appointment) {

@@ -7,19 +7,20 @@
     "scripts": {
         "start": "node server.js",
         "dev": "nodemon",
-        "test": "jest --coverage"
+		"test": "jest --coverage"
     },
     "dependencies": {
         "express": "^5.1.0",
         "cors": "^2.8.5",
         "pg": "^8.16.0",
-        "js-yaml": "^4.1.0"
+        "js-yaml": "^4.1.0",
+		"cassandra-driver": "^4.8.0"
     },
     "devDependencies": {
         "nodemon": "^3.1.10",
-        "jest": "^30.0.4",
-        "@babel/core": "^7.28.0",
-        "@babel/preset-env": "^7.28.0",
-        "babel-jest": "^30.0.4"
+		"jest": "^30.0.4",
+		"@babel/core": "^7.28.0",
+		"@babel/preset-env": "^7.28.0",
+		"babel-jest": "^30.0.4"
     }
 }

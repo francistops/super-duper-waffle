@@ -1,4 +1,6 @@
-// import { deleteAccount, createAppointment } from "../../script/auth.js";
+// import { deleteAccount, createAppointment, getApointmentsById, getAvailabilityById } from "../../script/auth.js";
+
+import { createAppointment } from "../../script/auth.js";
 
 const wcDiv = document.getElementById("wcWrapper");
 
@@ -90,12 +92,12 @@ function displayLoginForm() {
 				"user-logged-in": (e) => {
 					console.log("User logged successfully", e.detail);
 
-					const { userId, token, role } = e.detail;
+					const { id, role, token } = e.detail;
 
 					localStorage.setItem(
 						"user",
 						JSON.stringify({
-							id: userId,
+							id: id,
 							role: role,
 							token: token,
 						})
@@ -145,9 +147,9 @@ function displaySettings() {
 }
 
 function displayProfil() {
-	// const user = JSON.parse(localStorage.getItem("user"));
-	// const isClient = user?.role === "client";
-	// const isHairdresser = user?.role === "hairdresser";
+	const user = JSON.parse(localStorage.getItem("user"));
+	const isClient = user?.role === "client";
+	const isHairdresser = user?.role === "hairdresser";
 
 	const components = ["profil-wc"];
 	const eventsPerComponent = {
@@ -160,37 +162,37 @@ function displayProfil() {
 		},
 	};
 
-	// if (isClient) {
+	if (isClient) {
 	components.push("appointments-client", "handling-availabilities-client");
 	eventsPerComponent["handling-availabilities-client"] = {
-		"appointment-selected": async (e) => {
-			const { date, hairdresserId, serviceId } = e.detail;
-			console.log(
-				"Client a choisi le rendez-vous :",
-				date,
-				hairdresserId,
-				serviceId
-			);
-			// appel API ici
+		"availability-selected": async (e) => {
+			const { clientId, hairdresserId, service_id, availabilityId } = e.detail;
+			console.log("Création de rendez-vous avec :", e.detail);
+			createAppointment({
+				client_id: clientId,
+				hairdresser_id: hairdresserId,
+				service_id,
+				availability_id: availabilityId,
+			});
 		},
 	};
-	// } else if (isHairdresser) {
-	// 	components.push(
-	// 		"appointments-hairdresser",
-	// 		"handling-availabilities-hairdresser"
-	// 	);
-	// 	eventsPerComponent["handling-availabilities-hairdresser"] = {
-	// 		"date-selected": (e) => {
-	// 			const date = e.detail.date;
-	// 			const oldSlots = wcDiv.querySelector("availability-slots");
-	// 			if (oldSlots) oldSlots.remove();
+	} else if (isHairdresser) {
+		components.push(
+			"appointments-hairdresser",
+			"handling-availabilities-hairdresser"
+		);
+		eventsPerComponent["handling-availabilities-hairdresser"] = {
+			"date-selected": (e) => {
+				const date = e.detail.date;
+				const oldSlots = wcDiv.querySelector("availability-slots");
+				if (oldSlots) oldSlots.remove();
 
-	// 			const slotsWC = document.createElement("availability-slots");
-	// 			slotsWC.setAttribute("start-date", date);
-	// 			wcDiv.appendChild(slotsWC);
-	// 		},
-	// 	};
-	// }
+				const slotsWC = document.createElement("availability-slots");
+				slotsWC.setAttribute("start-date", date);
+				wcDiv.appendChild(slotsWC);
+			},
+		};
+	}
 	displayMultipleComponents(components, eventsPerComponent, true);
 }
 
@@ -204,12 +206,10 @@ export function formatDate(isoString) {
 	return `${yyyy}-${mm}-${dd} ${hh}:${min}`;
 }
 
-export function getNextMonday(date) {
-	const next = new Date(date);
-	const day = next.getDay();
-	const diff = (8 - day) % 7 || 7;
-	next.setDate(next.getDate() + diff);
-	return next.toISOString().split("T")[0];
+export function getDateFromToday(offset = 0) {
+	const today = new Date();
+	today.setDate(today.getDate() + offset);
+	return today.toISOString().split("T")[0];
 }
 
 window.addEventListener("load", (e) => {
