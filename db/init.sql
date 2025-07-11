@@ -72,12 +72,12 @@ INSERT INTO "users" ("email", "passhash", "role") VALUES
 ('ah', ENCODE(SHA256('monGrainDeCumminah'), 'hex'), 'hairdresser');
 
 INSERT INTO "services" ("name", "duration", "price") VALUES
-('Coupe homme', 20, 25.00),
-('Coupe femme', 45, 50.00),
-('Teinture', 90, 150.00),
-('Mise en plie', 30, 40.00),
-('Balayage', 90, 160.00),
-('Soin capillaire', 30, 35.00);
+('Coupe homme', 60, 25.00),
+('Coupe femme', 60, 50.00),
+('Teinture', 60, 150.00),
+('Mise en plie', 60, 40.00),
+('Balayage', 60, 160.00),
+('Soin capillaire', 60, 35.00);
 
 INSERT INTO "availabilities" ("hairdresser_id", "availability_date", "status") VALUES
 ((SELECT "id" FROM "users" WHERE "email" = 'ah'), '2023-10-01 11:00:00', 'expired'),

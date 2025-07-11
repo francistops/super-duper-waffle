@@ -19,7 +19,7 @@ async function apiCall(resource, method, auth, body = {}) {
 	const BASE_URL = "https://api.ft.ca/";
 	const apiUrl = `${BASE_URL}${resource}`;
 
-	console.log(BASE_URL, resource);
+	// console.log(BASE_URL, resource);
 	const headers = {
 		"Content-type": "application/json",
 		Accept: "application/json",
@@ -362,9 +362,9 @@ export async function updateAvailability(id, status) {
 export async function getServices() {
 	let result = [];
 
-	console.log(" getServices auth.js avant apiCall");
+	// console.log(" getServices auth.js avant apiCall");
 	const data = await apiCall(`services/`, "GET", false);
-	console.log(" getServices auth.js après apiCall", data);
+	// console.log(" getServices auth.js après apiCall", data);
 
 	if (data.errorCode === 0) {
 		result = data.services;
@@ -377,7 +377,7 @@ export async function getServices() {
 			data
 		);
 	}
-	console.log("result getServices ", result);
+	// console.log("result getServices ", result);
 	return result;
 }
 
