@@ -5,6 +5,7 @@ export async function fetchServices() {
 	const queryResult = await pool.query(selectSql);
 	return queryResult.rows;
 }
+
 export async function fetchServiceById(id) {
 	return "fetchServicesById niy";
 }

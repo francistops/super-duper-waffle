@@ -3,9 +3,9 @@ import {
 	fetchAppointmentById,
 	updateAppointmentStatus,
 	fetchNextAppointments,
-	insertAppointments,
-	updateAppointments,
-	deleteAppointments,
+	insertAppointment,
+	updateAppointment,
+	deleteAppointment,
 } from "../models/appointmentModel.js";
 
 import { catchMsg } from "../lib/utils.js";
@@ -73,7 +73,7 @@ export async function getNextAppointments(req, res) {
 	let result = UNKNOWN_ERROR;
 	const { ids, nbRequested } = req.body;
 	try {
-		const appointments = await fetchNextAppointments(ids, nbRequested);
+		const appointments = await fetchNextAppointment(ids, nbRequested);
 		result = {
 			message: "Success",
 			errorCode: 0,
@@ -90,7 +90,7 @@ export async function addAppointment(req, res) {
 	let result = UNKNOWN_ERROR;
 	const newAppointment = req.body;
 	try {
-		const appointment = await insertAppointments(newAppointment);
+		const appointment = await insertAppointment(newAppointment);
 
 		result = {
 			message: "Success",
@@ -107,7 +107,7 @@ export async function editAppointment(req, res) {
 	let result = UNKNOWN_ERROR;
 	const id = req.body;
 	try {
-		const appointment = await updateAppointments(id);
+		const appointment = await updateAppointment(id);
 
 		result = {
 			message: "Success",
@@ -124,7 +124,7 @@ export async function removeAppointment(req, res) {
 	let result = UNKNOWN_ERROR;
 	const id = req.body;
 	try {
-		const appointment = await deleteAppointments(id);
+		const appointment = await deleteAppointment(id);
 		result = {
 			message: "Success",
 			errorCode: 0,
