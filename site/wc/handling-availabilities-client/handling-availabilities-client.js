@@ -3,6 +3,8 @@ import {
 	getUsersByRole,
 	getUserIdAvailabilities,
 	getServices,
+	updateAvailability, 
+	insertAppointments
 } from "../../script/auth.js";
 import { formatDate, getDateFromToday } from "../../script/app.js";
 
@@ -35,6 +37,53 @@ class handlingAvailabilitiesClient extends HTMLElement {
 		const selectedService = this.shadowRoot.getElementById("selectedService");
 		const inpDate = this.shadowRoot.querySelector("#inpDate");
 		this.selectedDateDisplay = this.shadowRoot.getElementById("selectedDateDisplay");
+
+		this.tbody = this.shadowRoot.querySelector(".handling-availabilities-client tbody");
+
+		this.tbody.addEventListener("click", async (e) => {
+			if (
+				e.target.tagName === "BUTTON" &&
+				e.target.textContent === "Prendre rendez-vous"
+			) {
+				const user = JSON.parse(localStorage.getItem("user"));
+				const clientId = user?.id;
+		
+				if (!clientId) {
+					console.warn("Client ID non trouvé dans le localStorage.");
+					return;
+				}
+		
+				const availabilityId = e.target.dataset.availabilityId;
+				const hairdresserId = e.target.dataset.hairdresserId;
+				const serviceId = e.target.dataset.serviceId;
+		
+				const updated = await modifyAvailability({
+					id: availabilityId,
+					status: "assigned",
+				});
+		
+				if (!updated) {
+					console.error("La mise à jour de la disponibilité a échoué.");
+					return;
+				}
+		
+				const inserted = await insertAppointments({
+					client_id: clientId,
+					hairdresser_id: hairdresserId,
+					service_id: serviceId,
+					availability_id: availabilityId,
+				});
+		
+				if (!inserted) {
+					console.error("Échec de la création du rendez-vous.");
+					return;
+				}
+		
+				alert("Rendez-vous pris avec succès !");
+				this.tryRenderTable();
+			}
+		});
+		
 	
 		if (!selectedHairdresser || !selectedService || !inpDate) {
 			console.warn("Un des éléments du formulaire est introuvable.");
@@ -120,10 +169,6 @@ class handlingAvailabilitiesClient extends HTMLElement {
 	}
 
 	async renderTable(hairdresserId, selectedDate, serviceId) {
-		if (!this.availabilities || !this.hairdressers || !this.services) {
-			console.warn("Données manquantes pour afficher le tableau.");
-			return;
-		}
 
 		const tbody = this.shadowRoot.querySelector(".handling-availabilities-client tbody");
 		tbody.innerHTML = "";
@@ -162,41 +207,19 @@ class handlingAvailabilitiesClient extends HTMLElement {
 			const tdAction = document.createElement("td");
 			const button = document.createElement("button");
 			button.textContent = "Prendre rendez-vous";
+			button.dataset.availabilityId = a.id;
+			button.dataset.hairdresserId = a.hairdresser_id;
+			button.dataset.serviceId = a.service_id;
 			tdAction.appendChild(button);
-	
-			button.addEventListener("click", () => {
-				const user = JSON.parse(localStorage.getItem("user"));
-				const clientId = user?.id;
-
-				if (!clientId) {
-					console.warn("Client ID non trouvé dans le localStorage.");
-					return;
-				}
-
-				this.dispatchEvent(
-					new CustomEvent("availability-selected", {
-						detail: {
-							clientId,
-							hairdresserId: a.hairdresser_id,
-							service_id: a.service_id,
-							availabilityId: a.id,
-						},
-						bubbles: true,
-						composed: true,
-					})
-				);
-				
-			});
 	
 			tr.appendChild(tdDate);
 			tr.appendChild(tdHairdresser);
 			tr.appendChild(tdService);
 			tr.appendChild(tdAction);
 	
-			tbody.appendChild(tr);
+			this.tbody.appendChild(tr);
 		}
 	}
-	
 }
 
 customElements.define(

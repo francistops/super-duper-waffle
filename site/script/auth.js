@@ -89,7 +89,7 @@ export async function register(user) {
 		);
 		return false;
 	}
-	console.log("registration success", data);
+	
 	return true;
 }
 
@@ -307,31 +307,6 @@ export async function updateAppointmentStatus(id, status) {
 
 // ------ AVAILABILITIES ------
 
-export async function getAvailabilities() {
-
-	const data = await apiCall(`availabilities/`, "GET", true);
-
-	if (data.errorCode !== 0) {
-		console.error(
-			"unhandle error in auth.js getAvailabilities",
-			"data.errorCode: ",
-			data.errorCode,
-			" data : ",
-			data
-		);
-		return {
-			success: false,
-			errorCode: data.errorCode,
-			message: data.message ?? "Erreur lors de la récupération des disponibilités"
-		};
-	}
-
-	return {
-		success: true,
-		availabilities: data.availabilities
-	};
-}
-
 export async function getAvailabilitiesByUserId(userId) {
 
 	const data = await apiCall(`users/${userId}/availabilities`, "GET", true);
@@ -358,7 +333,7 @@ export async function getAvailabilitiesByUserId(userId) {
 
 export async function createAvailability(availability) {
 
-	const data = await apiCall("availabilities", "POST", true, availability);
+	const data = await apiCall("availabilities/add", "POST", true, availability);
 
 	if (data.errorCode !== 0) {
 		console.error(
@@ -380,7 +355,7 @@ export async function createAvailability(availability) {
 	};
 }
 
-export async function updateAvailability(id, status) {
+export async function modifyAvailability({id, status}) {
 
 	const data = await apiCall(`availabilities/${id}`, "POST", true, { status });
 

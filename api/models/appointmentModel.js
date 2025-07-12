@@ -43,7 +43,7 @@ export async function fetchNextAppointments(ids, nbRequested) {
 	return "getNextAppointments niy";
 }
 
-export async function insertAppointments(appointment) {
+export async function insertAppointment(appointment) {
 	const sql = `INSERT INTO "appointments ("client_id", "hairdresser_id", "service_id") 
                       VALUES ($1, $2, $3, $4)
                       returning *;`;
@@ -59,7 +59,7 @@ export async function insertAppointments(appointment) {
 	return true;
 }
 
-export async function updateAppointments(id) {
+export async function updateAppointment(id) {
 	const sql = `UPDATE "appointments" 
                     SET "status" = 'confirmed' 
                     WHERE "id" = $1
@@ -68,7 +68,7 @@ export async function updateAppointments(id) {
 	return result.rowCount == 1 ? true : false;
 }
 
-export async function deleteAppointments(id) {
+export async function deleteAppointment(id) {
 	const sql = `DELETE FROM "appointments"
 						WHERE "id" = $1`;
 	const result = await pool.query(sql, [id]);

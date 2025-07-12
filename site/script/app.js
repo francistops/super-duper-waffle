@@ -163,35 +163,14 @@ function displayProfil() {
 	};
 
 	if (isClient) {
-	components.push("appointments-client", "handling-availabilities-client");
-	eventsPerComponent["handling-availabilities-client"] = {
-		"availability-selected": async (e) => {
-			const { clientId, hairdresserId, service_id, availabilityId } = e.detail;
-			console.log("Création de rendez-vous avec :", e.detail);
-			createAppointment({
-				client_id: clientId,
-				hairdresser_id: hairdresserId,
-				service_id,
-				availability_id: availabilityId,
-			});
-		},
-	};
+		components.push(
+			"appointments-client", "handling-availabilities-client"
+		);
 	} else if (isHairdresser) {
 		components.push(
 			"appointments-hairdresser",
 			"handling-availabilities-hairdresser"
 		);
-		eventsPerComponent["handling-availabilities-hairdresser"] = {
-			"date-selected": (e) => {
-				const date = e.detail.date;
-				const oldSlots = wcDiv.querySelector("availability-slots");
-				if (oldSlots) oldSlots.remove();
-
-				const slotsWC = document.createElement("availability-slots");
-				slotsWC.setAttribute("start-date", date);
-				wcDiv.appendChild(slotsWC);
-			},
-		};
 	}
 	displayMultipleComponents(components, eventsPerComponent, true);
 }

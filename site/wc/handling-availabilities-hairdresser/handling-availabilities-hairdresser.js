@@ -1,5 +1,6 @@
 import { globalStyles } from "../global/style.js";
 import { getDateFromToday } from "../../script/app.js";
+import { createAvailability } from "../../script/auth.js";
 
 class handlingAvailabilitiesHairdresser extends HTMLElement {
 	constructor() {
@@ -23,20 +24,20 @@ class handlingAvailabilitiesHairdresser extends HTMLElement {
 
 	async connectedCallback() {
 		await this.loadContent();
-	
+
 		const inpDate = this.shadowRoot.querySelector("#inpDate");
-	
+
 		if (!inpDate) {
 			console.warn("inpDate introuvable dans le DOM du composant.");
 			return;
 		}
-	
+
 		const minDate = getDateFromToday(1);
 		const maxDate = getDateFromToday(28);
 		inpDate.min = minDate;
 		inpDate.max = maxDate;
 		inpDate.value = minDate;
-	
+
 		inpDate.addEventListener("change", (e) => {
 			const selected = new Date(e.target.value + "T00:00:00");
 			const min = new Date(minDate + "T00:00:00");
@@ -48,32 +49,38 @@ class handlingAvailabilitiesHairdresser extends HTMLElement {
 				this.selectedDate = minDate;
 			} else {
 				this.selectedDate = inpDate.value;
-				this.selectedDateDisplay.textContent = `Date sélectionnée : ${formatDate(this.selectedDate)}`;
+				if (this.selectedDateDisplay)
+					this.selectedDateDisplay.textContent = `Date sélectionnée : ${formatDate(this.selectedDate)}`;
 			}
 		});
-	
-		this.shadowRoot.querySelector("form").addEventListener("submit", (e) => {
+
+		this.shadowRoot.querySelector("form").addEventListener("submit", async (e) => {
 			e.preventDefault();
-			const availability_date = inpDate.value;
-		
+
+			const date = inpDate.value;
 			const user = JSON.parse(localStorage.getItem("user"));
 			const hairdresserId = user?.id;
-		
-			if (!hairdresserId) {
-				console.warn("Hairdresser ID non trouvé dans le localStorage.");
+
+			if (!hairdresserId || !date) {
+				console.warn("Données incomplètes");
 				return;
 			}
-		
-			this.dispatchEvent(
-				new CustomEvent("hairdresser-add-availabilities", {
-					detail: {
-						availability_date,
-						hairdresserId,
-					},
-					bubbles: true,
-					composed: true,
-				})
-			);
+
+			const hours = [8, 9, 10, 11, 13, 14, 15, 16];
+
+			for (const hour of hours) {
+				const paddedHour = String(hour).padStart(2, "0");
+				const availability_date = `${date}T${paddedHour}:00:00`;
+			
+				const result = await createAvailability({
+					hairdresser_id: hairdresserId,
+					availability_date,
+				});
+			
+				if (!result.success) {
+					console.error("Erreur lors de la création :", availability_date, "  ",hairdresserId);
+				}
+			}
 		});
 	}
 }
