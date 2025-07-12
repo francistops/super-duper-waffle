@@ -9,6 +9,12 @@ function hash(passHash) {
 		.digest("hex");
 }
 
+export async function fetchAllUsers() {
+	const sql = `SELECT * FROM "users";`;
+	const result = await pool.query(sql);
+	return result.rows;
+}
+
 export async function fetchUserById(id) {
 	const sql = `SELECT "users"."email",
                       "users"."id",

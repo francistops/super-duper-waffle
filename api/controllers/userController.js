@@ -1,4 +1,5 @@
 import {
+	fetchAllUsers,
 	fetchUserById,
 	fetchByRole,
 	insertUser,
@@ -14,6 +15,21 @@ const UNKNOWN_ERROR = {
 	message: "Unknown error",
 	errorCode: 9999,
 };
+
+export async function getAllUsers(req, res) {
+	let result = UNKNOWN_ERROR;
+	try {
+		const users = await fetchAllUsers();
+		result = {
+			message: "Success",
+			errorCode: 0,
+			users: users,
+		};
+	} catch (error) {
+		catchMsg(`user getAllUsers`, error, res, result);
+	}
+	res.formatView(result);
+}
 
 // todo change param for req.body
 export async function getUserById(req, res) {

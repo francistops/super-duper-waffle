@@ -2,6 +2,7 @@ import { Router } from "express";
 const router = Router();
 import { validateToken } from "../middlewares/authGuard.js";
 import {
+	getAllUsers,
 	getUsersByRole,
 	getUserById,
 	registerUser,
@@ -9,6 +10,8 @@ import {
 	logoutUser,
 	removeUser,
 } from "../controllers/userController.js";
+
+router.get("/", getAllUsers);
 
 //todo change for obj instead of a param for security
 //todo catch error when id is not valid
