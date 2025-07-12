@@ -168,64 +168,64 @@ INSERT INTO "appointments" ("client_id", "hairdresser_id", "service_id", "status
   (SELECT "id" FROM "availabilities" WHERE "availability_date" = '2023-10-15 13:00:00' AND "hairdresser_id" = (SELECT "id" FROM "users" WHERE "email" = 'ah'))
 );
 
-INSERT INTO "feedbacks" ("appointment_id", "client_id", "comment", "rating", "feedback_date") VALUES
-(
-  (SELECT "id" FROM "appointments"
-   WHERE "status" = 'show'
-   AND "availability_id" = (
-     SELECT "id" FROM "availabilities"
-     WHERE "availability_date" = '2023-10-06 12:00:00'
-   )),
-  (SELECT "id" FROM "users" WHERE "email" = 'f'),
-  'Excellent service, je recommande!',
-  5,
-  '2023-10-06 00:00:00'
-),
-(
-  (SELECT "id" FROM "appointments"
-   WHERE "status" = 'show'
-   AND "availability_id" = (
-     SELECT "id" FROM "availabilities"
-     WHERE "availability_date" = '2023-10-07 12:00:00'
-   )),
-  (SELECT "id" FROM "users" WHERE "email" = 'u'),
-  'Très satisfaite de la coupe.',
-  4,
-  '2023-10-07 00:00:00'
-),
-(
-  (SELECT "id" FROM "appointments"
-   WHERE "status" = 'show'
-   AND "availability_id" = (
-     SELECT "id" FROM "availabilities"
-     WHERE "availability_date" = '2023-10-08 12:00:00'
-   )),
-  (SELECT "id" FROM "users" WHERE "email" = 'f'),
-  'Ponctuelle et professionnelle.',
-  5,
-  '2023-10-08 00:00:00'
-),
-(
-  (SELECT "id" FROM "appointments"
-   WHERE "status" = 'show'
-   AND "availability_id" = (
-     SELECT "id" FROM "availabilities"
-     WHERE "availability_date" = '2023-10-11 13:00:00'
-   )),
-  (SELECT "id" FROM "users" WHERE "email" = 'u'),
-  'Un peu rapide mais bon résultat.',
-  3,
-  '2023-10-09 00:00:00'
-),
-(
-  (SELECT "id" FROM "appointments"
-   WHERE "status" = 'show'
-   AND "availability_id" = (
-     SELECT "id" FROM "availabilities"
-     WHERE "availability_date" = '2023-10-12 13:00:00'
-   )),
-  (SELECT "id" FROM "users" WHERE "email" = 'f'),
-  'Accueil chaleureux, ambiance agréable.',
-  4,
-  '2023-10-10 00:00:00'
-);
+-- INSERT INTO "feedbacks" ("appointment_id", "client_id", "comment", "rating", "feedback_date") VALUES
+-- (
+--   (SELECT "id" FROM "appointments"
+--    WHERE "status" = 'show'
+--    AND "availability_id" = (
+--      SELECT "id" FROM "availabilities"
+--      WHERE "availability_date" = '2023-10-06 12:00:00'
+--    )),
+--   (SELECT "id" FROM "users" WHERE "email" = 'f'),
+--   'Excellent service, je recommande!',
+--   5,
+--   '2023-10-06 00:00:00'
+-- ),
+-- (
+--   (SELECT "id" FROM "appointments"
+--    WHERE "status" = 'show'
+--    AND "availability_id" = (
+--      SELECT "id" FROM "availabilities"
+--      WHERE "availability_date" = '2023-10-07 12:00:00'
+--    )),
+--   (SELECT "id" FROM "users" WHERE "email" = 'u'),
+--   'Très satisfaite de la coupe.',
+--   4,
+--   '2023-10-07 00:00:00'
+-- ),
+-- (
+--   (SELECT "id" FROM "appointments"
+--    WHERE "status" = 'show'
+--    AND "availability_id" = (
+--      SELECT "id" FROM "availabilities"
+--      WHERE "availability_date" = '2023-10-08 12:00:00'
+--    )),
+--   (SELECT "id" FROM "users" WHERE "email" = 'f'),
+--   'Ponctuelle et professionnelle.',
+--   5,
+--   '2023-10-08 00:00:00'
+-- ),
+-- (
+--   (SELECT "id" FROM "appointments"
+--    WHERE "status" = 'show'
+--    AND "availability_id" = (
+--      SELECT "id" FROM "availabilities"
+--      WHERE "availability_date" = '2023-10-11 13:00:00'
+--    )),
+--   (SELECT "id" FROM "users" WHERE "email" = 'u'),
+--   'Un peu rapide mais bon résultat.',
+--   3,
+--   '2023-10-09 00:00:00'
+-- ),
+-- (
+--   (SELECT "id" FROM "appointments"
+--    WHERE "status" = 'show'
+--    AND "availability_id" = (
+--      SELECT "id" FROM "availabilities"
+--      WHERE "availability_date" = '2023-10-12 13:00:00'
+--    )),
+--   (SELECT "id" FROM "users" WHERE "email" = 'f'),
+--   'Accueil chaleureux, ambiance agréable.',
+--   4,
+--   '2023-10-10 00:00:00'
+-- );

@@ -1,5 +1,4 @@
 import {
-	fetchUserById,
 	fetchByRole,
 	insertUser,
 	isUserValid,
@@ -15,22 +14,6 @@ const UNKNOWN_ERROR = {
 	errorCode: 9999,
 };
 
-// todo change param for req.body
-export async function getUserById(req, res) {
-	let result = UNKNOWN_ERROR;
-	const { id } = req.params;
-	try {
-		const user = await fetchUserById(id);
-		result = {
-			message: "Success",
-			errorCode: 0,
-			user: user,
-		};
-	} catch (error) {
-		catchMsg(`user getUserById ${id}`, error, res, result);
-	}
-	res.formatView(result);
-}
 
 // todo change param for req.body
 export async function getUsersByRole(req, res) {

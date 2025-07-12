@@ -1,6 +1,6 @@
 import { catchMsg } from "../lib/utils.js";
 
-import {fetchUsers, fetchTokens} from "../models/debugModel.js"
+import { fetchUsers, fetchTokens, fetchUserById } from "../models/debugModel.js"
 
 const UNKNOWN_ERROR = {
 	message: "Unknown error",
@@ -33,6 +33,22 @@ export async function getTokens(req, res) {
 		};
 	} catch (error) {
 		catchMsg("debug getTokens", error, res, result);
+	}
+	res.formatView(result);
+}
+
+export async function getUserById(req, res) {
+	let result = UNKNOWN_ERROR;
+	const { id } = req.params;
+	try {
+		const user = await fetchUserById(id);
+		result = {
+			message: "Success",
+			errorCode: 0,
+			user: user,
+		};
+	} catch (error) {
+		catchMsg(`user getUserById ${id}`, error, res, result);
 	}
 	res.formatView(result);
 }
