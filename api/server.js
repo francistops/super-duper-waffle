@@ -18,6 +18,9 @@ app.use(negotiate);
 import userRoute from "./routers/userRoutes.js";
 app.use("/users", userRoute);
 
+import availabilityRoute from "./routers/availabilityRoutes.js";
+app.use("/availabilities", availabilityRoute);
+
 import appointmentRoute from "./routers/appointmentRoutes.js";
 app.use("/appointments", appointmentRoute);
 
