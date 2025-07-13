@@ -2,8 +2,8 @@ import { globalStyles } from "../global/style.js";
 import {
 	getUserIdAppointments,
 	getUserIdAvailabilities,
-	updateAvailability,
-	updateAppointmentStatus,
+	modifyAvailability,
+	modifyAppointmentStatus,
 } from "../../script/auth.js";
 
 class appointmentsHairdresser extends HTMLElement {
@@ -58,7 +58,7 @@ class appointmentsHairdresser extends HTMLElement {
 		cell.querySelector(".toggleAvailability").addEventListener("click", async () => {
 			const newStatus = isCancelled ? "pending" : "cancelled";
 	
-			const success = await updateAvailability(availabilityId, newStatus);
+			const success = await modifyAvailability(availabilityId, newStatus);
 			if (!success) return;
 	
 			this.renderAvailabilityCell(cell, availabilityId, newStatus);
@@ -90,12 +90,12 @@ class appointmentsHairdresser extends HTMLElement {
 				`;
 			
 				cell.querySelector(".markAsShow").addEventListener("click", async () => {
-					await updateAppointmentStatus(item.id, "show");
+					await modifyAppointmentStatus(item.id, "show");
 					cell.innerHTML = `<div>Rendez-vous complété ✅</div>`;
 				});
 			
 				cell.querySelector(".markAsNoShow").addEventListener("click", async () => {
-					await updateAppointmentStatus(item.id, "noShow");
+					await modifyAppointmentStatus(item.id, "noShow");
 					cell.innerHTML = `<div>Client absent ❌</div>`;
 				});
 			} else {

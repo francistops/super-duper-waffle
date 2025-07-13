@@ -25,7 +25,7 @@ class feedbacksWC extends HTMLElement {
 		await this.loadContent();
 		
 		const feedbacks = await getFeedbacks();
-		feedbacks.forEach((a) => this.addNextFeedback(a));
+		feedbacks.feedbacks.forEach((a) => this.addNextFeedback(a));
 	}
 
 	addNextFeedback(feedback) {

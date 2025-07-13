@@ -22,27 +22,16 @@ class profilWC extends HTMLElement {
 	async connectedCallback() {
 		await this.loadContent();
 
-		const settingsBtn = this.shadowRoot.getElementById("goToSettingsButton");
-
-		settingsBtn.addEventListener("click", (e) => {
-			this.dispatchEvent(
-				new CustomEvent("go-to-settings", {
-					bubbles: true,
-					composed: true,
-				})
-			);
-			console.log("Settings button clicked");
-		});
+		const deactivateAccountBtn = this.shadowRoot.getElementById("deactivateAccountButton");
 		
-		const deleteAccountBtn = this.shadowRoot.getElementById("delete-account");
-		deleteAccountBtn.addEventListener("click", (e) => {
+		deactivateAccountBtn.addEventListener("click", (e) => {
 			this.dispatchEvent(
-				new CustomEvent("delete-account", {
+				new CustomEvent("deactivate-account", {
 					bubbles: true,
 					composed: true,
 				})
 			);
-			console.log("Delete account button clicked");
+			console.log("Deactivate account button clicked");
 		});
 	}
 }

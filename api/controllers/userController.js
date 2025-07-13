@@ -1,12 +1,12 @@
 import {
 	fetchAllUsers,
+	fetchIdByEmail,
 	fetchUserById,
 	fetchByRole,
 	insertUser,
 	isUserValid,
-	fetchIdByEmail,
+	deactivateUserById,
 	logoutByToken,
-	deleteUser,
 } from "../models/userModel.js";
 import { assignToken, isTokenExist } from "../models/tokenModel.js";
 import { catchMsg } from "../lib/utils.js";
@@ -78,11 +78,11 @@ export async function registerUser(req, res) {
 	let result = UNKNOWN_ERROR;
 	const newUser = req.body;
 	try {
-		const success = await insertUser(newUser);
-		if (success) {
+		const user = await insertUser(newUser);
+		if (user) {
 			result = {
 				message: "Success",
-				errorCode: 0,
+				errorCode: 0
 			};
 		} else {
 			result = {
@@ -102,28 +102,34 @@ export async function loginUser(req, res) {
 	const { email: email, passhash: passHash } = req.body;
 	try {
 		const checkedUser = await isUserValid(email, passHash);
+		console.log("checkedUser", checkedUser);
 		if (checkedUser) {
-			const userid = await fetchIdByEmail(email);
-			const isTokenResult = await isTokenExist(userid);
+
+			const userId = await fetchIdByEmail(email);
+			const isTokenResult = await isTokenExist(userId);
+
 			if (!isTokenResult.status) {
-				const userToken = await assignToken(userid);
+				const userToken = await assignToken(userId);
+				const user = await fetchUserById(userId);
+
 				result = {
 					message: "Successfull login",
 					errorCode: 0,
-					user: userid,
+					user: {
+						id: userId,
+						email: user.email,
+						role: user.role,
+					},
 					token: userToken,
 				};
 			} else if (isTokenResult.status) {
 				result = {
 					message: "already logged in",
 					errorCode: 0,
-					// user: loggedUser,
 					token: isTokenResult.token,
 				};
 			}
 		} else {
-			// we only want to catch and throw errors from the backend here hence an user invalid auth is not handled here
-			// tho we return result that will the frontend it failed
 			result = {
 				message: "Invalid credentials",
 				errorCode: 401,
@@ -139,8 +145,28 @@ export async function loginUser(req, res) {
 
 export async function logoutUser(req, res) {
 	let result = UNKNOWN_ERROR;
+
 	try {
-		const logoutConfirmation = await logoutByToken(req.selectedToken);
+
+		const userIdFromToken = req.user.id;
+		const userIdFromBody = req.body.id;
+
+		if (!userIdFromToken || !userIdFromBody || userIdFromToken !== userIdFromBody) {
+		  return res.status(403).formatView({
+			message: "Unauthorized logout attempt",
+			errorCode: 403,
+		  });
+		}
+
+		const isTokenResult = await isTokenExist(userIdFromToken);
+		if (!isTokenResult.status) {
+		  return res.status(404).formatView({
+			message: "No active session found",
+			errorCode: 404,
+		  });
+		}
+
+		const logoutConfirmation = await logoutByToken(req.selectedToken.token);
 		if (logoutConfirmation) {
 			result = {
 				message: "Success",
@@ -158,27 +184,48 @@ export async function logoutUser(req, res) {
 	res.formatView(result);
 }
 
-// todo user can only delete himself like remove user by token
-export async function removeUser(req, res) {
+export async function deactivateUser(req, res) {
 	let result = UNKNOWN_ERROR;
 
-	const { id } = req.body;
-
 	try {
-		const success = await deleteUser(id);
-		if (success) {
+
+		const userIdFromToken = req.user.id;
+		const userIdFromBody = req.body.id;
+
+		if (!userIdFromToken || !userIdFromBody || userIdFromToken !== userIdFromBody) {
+		  return res.status(403).formatView({
+			message: "Unauthorized deactivation attempt",
+			errorCode: 403,
+		  });
+		}
+
+		const isTokenResult = await isTokenExist(userIdFromToken);
+		if (!isTokenResult.status) {
+		  return res.status(404).formatView({
+			message: "No active session found",
+			errorCode: 404,
+		  });
+		}
+
+		const deactivationConfirmation = await deactivateUserById(userIdFromBody);
+
+		if (deactivationConfirmation) {
+			const removingToken = await logoutByToken(req.selectedToken.token);
+			if (!removingToken) {
+				throw new Error("Failed to remove token during user deactivation.");
+			}
 			result = {
-				message: `User ${id} deleted successfully`,
+				message: `User ${userIdFromBody } deactivated successfully`,
 				errorCode: 0,
 			};
 		} else {
 			result = {
-				message: `Failed to delete user ${id}`,
+				message: `Failed to deactivate user ${userIdFromBody}`,
 				errorCode: 1,
 			};
 		}
 	} catch (error) {
-		catchMsg(`user deleteUser ${id}`, error, res, result);
+		catchMsg(`user deactivateUser ${req.user?.id}`, error, res, result);
 	}
 
 	res.formatView(result);
