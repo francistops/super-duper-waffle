@@ -1,24 +1,30 @@
-import {
-	writeLog,
-	fetchAllLogs
-} from '../models/logModel.js';
+import { makeError, makeSuccess } from '../utils/resultFactory.js';
+import { writeLog, fetchLogs } from '../models/logModel.js';
 
-export async function createLog(req, res) {
-	const { log } = req.body;
-	let result = UNKNOWN_ERROR;
+export async function sendLog(req, res) {
+	let result = makeError();
+	const log = req.body;
 
 	try {
 		await writeLog(log);
-		result = {
-			message: 'Success',
-			errorCode: 0
-		};
+		result = makeSuccess({ status: "success" });
 	} catch (error) {
 		// sauf ici - LOG PAS ICI
 		res.status(401);
-		result.message = `Erreur ${error}`;
-		result.errorCode = 9055;
+		result = makeError(`Error writing log: ${log} with error: ${error}`, 1004);
 	}
 
+	res.formatView(result);
+}
+
+export async function getLogs(req, res) {
+	let result = makeError();
+	try {
+		const logs = await fetchLogs();
+		result = makeSuccess({ logs: logs });
+	} catch (error) {
+		res.status(400);
+		result = makeError(`Error retrieving logs ${error}`, 1003);
+	}
 	res.formatView(result);
 }

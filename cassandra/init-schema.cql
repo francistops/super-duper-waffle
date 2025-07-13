@@ -9,8 +9,11 @@ CREATE TABLE IF NOT EXISTS logsystem.logs (
   id UUID PRIMARY KEY,
   timestamp TIMESTAMP,
   level TEXT,
-  description TEXT,
-  module TEXT,
-  file TEXT,
-  line INT
+  method TEXT,
+  route TEXT,
+  status INT,
+  message TEXT,
+  user_agent TEXT,
+  error_message TEXT,
+  stack_trace TEXT
 );

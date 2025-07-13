@@ -15,6 +15,10 @@ app.use(json());
 import negotiate from "./middlewares/negotiate.js";
 app.use(negotiate);
 
+import { loggerMiddleware, errorLoggerMiddleware } from './middlewares/logger.js';
+
+app.use(loggerMiddleware);
+
 import userRoute from "./routers/userRoutes.js";
 app.use("/users", userRoute);
 
@@ -33,14 +37,10 @@ app.use('/feedbacks', feedbackRoute);
 import debugRoute from './routers/debugRoutes.js';
 app.use('/debug', debugRoute);
 
-// just messing arround
-// api.ft.ca/api?apikey= xyz123
-app.get("/api", (req, res) => {
-	// can also be store in the header to be more secure
-	const apikey = req.query.apikey;
+app.use(errorLoggerMiddleware);
 
-	res.send({ data: "you access Tam Hair" });
-});
+import logRoute from './routers/logRoutes.js';
+app.use('/logs', logRoute);
 
 app.listen(PORT, "0.0.0.0", () => {
 	console.log(`Server running on port ${PORT}`);

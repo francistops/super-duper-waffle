@@ -118,8 +118,11 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 #### `UserController`
 
 - **DEBUG** `GET /users` : Liste des utilisateurs.
-- **TOKEN** (**Client et coiffeuse**) `GET /users/:id` : Détail d’un utilisateur spécifique. (Pas besoin pour notre site)
+
+~~- **TOKEN** (**Client et coiffeuse**) `GET /users/:id` : Détail d’un utilisateur spécifique. (Pas besoin pour notre site)~~
+
 - **TOKEN** `GET /users/role/:role` : Un client sélectionne toutes les coiffeuses.
+
 - **TOKEN** (**Client et coiffeuse**) `GET /users/:id/appointments` : Un client voit ses propre rendez-vous et une coiffeuse voit ses propres rendez-vous.
 - **TOKEN** (**Client et coiffeuse**) `GET /users/:id/availability` : Un client voit les disponibilités d'une coiffeuse et une coiffeuse voit ses propres disponibilités.
 - **TOKEN** (**Client et coiffeuse**) `POST /users/:id` : Désactivation d'un utilisateur (mettre id comme email) ou mise à jour d'un utilisateur. ( Pour ne pas perdre l'historique des rendez-vous) Ajouter un field qui vient de auth.js pour le controller
