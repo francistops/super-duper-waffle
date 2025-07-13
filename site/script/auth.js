@@ -565,3 +565,11 @@ window.onerror = function (message, source, lineno, colno, error) {
 	logFrontendError(message, error.stack);
 	return true; // Prevents the default browser error handling
 };
+
+export async function getLogs() {
+	const data = await apiCall('logs', 'GET');
+	if (data.errorCode == 0) {
+		return data.logs
+	}
+	return null;
+}
