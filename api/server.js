@@ -37,10 +37,12 @@ app.use('/feedbacks', feedbackRoute);
 import debugRoute from './routers/debugRoutes.js';
 app.use('/debug', debugRoute);
 
-app.use(errorLoggerMiddleware);
-
 import logRoute from './routers/logRoutes.js';
 app.use('/logs', logRoute);
+
+app.use(errorLoggerMiddleware);
+
+
 
 app.listen(PORT, "0.0.0.0", () => {
 	console.log(`Server running on port ${PORT}`);
