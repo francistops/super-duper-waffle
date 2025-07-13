@@ -535,3 +535,31 @@ export async function createFeedback(feedback) {
 		success: true,
 	};
 }
+
+
+// ---- staging logging test ----
+// Frontend logger function (client-side)
+const logFrontendError = async (message, stackTrace) => {
+	try {
+		await fetch('/logs', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				level: 'ERROR',
+				message: message,
+				stackTrace: stackTrace,
+				userAgent: navigator.userAgent,
+			}),
+		});
+	} catch (err) {
+		console.error('Error sending log to server:', err);
+	}
+};
+
+// Example of logging an error on the frontend
+window.onerror = function (message, source, lineno, colno, error) {
+	logFrontendError(message, error.stack);
+	return true; // Prevents the default browser error handling
+};

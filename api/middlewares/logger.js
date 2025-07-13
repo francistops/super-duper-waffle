@@ -1,9 +1,9 @@
-const { cassandraClient } = require('../config/db');
-const uuid = require('uuid'); // To generate unique log IDs
+import { cassandraClient } from '../config/db';
+import { v4 } from 'uuid'; // To generate unique log IDs
 
 // Helper function to log request details
 const logRequest = async (method, route, status, message, userAgent, errorMessage = '', stackTrace = '') => {
-    const logId = uuid.v4();
+    const logId = v4();
     const timestamp = new Date();
     const logData = {
         id: logId,
@@ -67,4 +67,4 @@ const errorLoggerMiddleware = async (err, req, res, next) => {
     res.status(500).json({ message: 'Something went wrong!' });
 };
 
-module.exports = { loggerMiddleware, errorLoggerMiddleware };
+export default { loggerMiddleware, errorLoggerMiddleware };

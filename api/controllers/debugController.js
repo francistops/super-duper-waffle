@@ -1,54 +1,40 @@
-import { catchMsg } from "../lib/utils.js";
+import { makeError, makeSuccess } from '../utils/resultFactory.js';
 
 import { fetchUsers, fetchTokens, fetchUserById } from "../models/debugModel.js"
 
-const UNKNOWN_ERROR = {
-	message: "Unknown error",
-	errorCode: 9999,
-};
-
 export async function getUsers(req, res) {
-	let result = UNKNOWN_ERROR;
+	let result = makeError();
 	try {
 		const users = await fetchUsers();
-		result = {
-			message: "Success",
-			errorCode: 0,
-			users: users,
-		};
+		result = makeSuccess({ users: users });
 	} catch (error) {
-		catchMsg("debug getUsers", error, res, result);
+		res.status(400);
+		result = makeError(`Error retrieving users: ${error}`, 1001);
 	}
 	res.formatView(result);
 }
 
 export async function getTokens(req, res) {
-	let result = UNKNOWN_ERROR;
+	let result = makeError();
 	try {
 		const tokens = await fetchTokens();
-		result = {
-			message: "Success",
-			errorCode: 0,
-			tokens: tokens,
-		};
+		result = makeSuccess({ tokens: tokens });
 	} catch (error) {
-		catchMsg("debug getTokens", error, res, result);
+		res.status(400);
+		result = makeError(`Error retrieving token: ${error}`, 1002);
 	}
 	res.formatView(result);
 }
 
 export async function getUserById(req, res) {
-	let result = UNKNOWN_ERROR;
+	let result = makeError();
 	const { id } = req.params;
 	try {
 		const user = await fetchUserById(id);
-		result = {
-			message: "Success",
-			errorCode: 0,
-			user: user,
-		};
+		result = makeSuccess({ user: user });
 	} catch (error) {
-		catchMsg(`user getUserById ${id}`, error, res, result);
+		res.status(400);
+		result = makeError(`Error retrieving user with id ${id}`, 1003);
 	}
 	res.formatView(result);
 }
