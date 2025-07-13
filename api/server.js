@@ -37,15 +37,6 @@ app.use('/feedbacks', feedbackRoute);
 import debugRoute from './routers/debugRoutes.js';
 app.use('/debug', debugRoute);
 
-// just messing arround
-// api.ft.ca/api?apikey= xyz123
-app.get("/api", (req, res) => {
-	// can also be store in the header to be more secure
-	const apikey = req.query.apikey;
-
-	res.send({ data: "you access Tam Hair" });
-});
-
 app.use(errorLoggerMiddleware);
 
 app.listen(PORT, "0.0.0.0", () => {
