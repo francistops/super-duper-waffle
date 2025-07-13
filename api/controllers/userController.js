@@ -1,10 +1,6 @@
 import {
-<<<<<<< HEAD
-=======
-	fetchAllUsers,
 	fetchIdByEmail,
 	fetchUserById,
->>>>>>> b437137231ad0ccc6e011f8d45ab8e33b6602050
 	fetchByRole,
 	insertUser,
 	isUserValid,
