@@ -24,4 +24,4 @@ async function connectDatabases() {
     }
 }
 
-export default { pool, client, connectDatabases };
+export { pool, client, connectDatabases };

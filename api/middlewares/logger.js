@@ -1,4 +1,4 @@
-import { } from '../config/db.js';
+import { client } from '../config/db.js';
 
 // Helper function to log request details
 const logRequest = async (method, route, status, message, userAgent, errorMessage = '', stackTrace = '') => {
@@ -64,4 +64,4 @@ const errorLoggerMiddleware = async (err, req, res, next) => {
     res.status(500).json({ message: 'Something went wrong!' });
 };
 
-export default { loggerMiddleware, errorLoggerMiddleware };
+export { loggerMiddleware, errorLoggerMiddleware };
