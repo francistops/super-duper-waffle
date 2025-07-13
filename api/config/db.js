@@ -1,29 +1,27 @@
 
-const { Client } = require('pg');
-const cassandra = require('cassandra-driver');
+import { Pool } from 'pg';
+import cassandra from 'cassandra-driver';
 
-const pgClient = new Client({
-    host: process.env.PG_HOST,
-    database: process.env.PG_DB,
-    user: process.env.PG_USER,
-    password: process.env.PG_PASSWORD,
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL
 });
 
-const cassClient = new cassandra.Client({
-    contactPoints: [process.env.CASSANDRA_HOST],
+
+const client = new cassandra.Client({
+    contactPoints: [process.env.CASSANDRA_CONTACT_POINTS || 'cassandra'],
     localDataCenter: 'datacenter1',
-    keyspace: process.env.CASSANDRA_KEYSPACE,
+    keyspace: 'logsystem'
 });
 
 async function connectDatabases() {
     try {
-        await pgClient.connect();
+        await pool.connect();
         console.log("PostgreSQL connected");
-        await cassClient.connect();
+        await client.connect();
         console.log("Cassandra connected");
-    } catch (err) {
-        console.error("Error connecting to databases", err);
+    } catch (error) {
+        console.error("Error connecting to databases", error);
     }
 }
 
-module.exports = { pgClient, cassClient, connectDatabases };
+export default { pool, client, connectDatabases };

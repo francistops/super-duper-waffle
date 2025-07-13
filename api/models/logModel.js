@@ -1,12 +1,4 @@
-import cassandra from 'cassandra-driver';
-
-const client = new cassandra.Client({
-	contactPoints: [process.env.CASSANDRA_CONTACT_POINTS || 'cassandra'],
-	localDataCenter: 'datacenter1',
-	keyspace: 'logsystem'
-});
-
-await client.connect();
+connectDatabases();
 
 export async function writeLog(log) {
 	const query = `

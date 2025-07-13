@@ -1,10 +1,7 @@
-import { cassandraClient } from '../config/db';
-import { v4 } from 'uuid'; // To generate unique log IDs
+import { } from '../config/db.js';
 
 // Helper function to log request details
 const logRequest = async (method, route, status, message, userAgent, errorMessage = '', stackTrace = '') => {
-    const logId = v4();
-    const timestamp = new Date();
     const logData = {
         id: logId,
         timestamp: timestamp,
@@ -36,7 +33,7 @@ const logRequest = async (method, route, status, message, userAgent, errorMessag
     ];
 
     try {
-        await cassandraClient.execute(query, params, { prepare: true });
+        await client.execute(query, params, { prepare: true });
     } catch (err) {
         console.error('Error writing to Cassandra log:', err);
     }
