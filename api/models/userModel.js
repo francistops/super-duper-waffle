@@ -9,8 +9,28 @@ function hash(passHash) {
 		.digest("hex");
 }
 
+export async function fetchAllUsers() {
+	const sql = `SELECT * FROM "users";`;
+	const result = await pool.query(sql);
+	return result.rows;
+}
 
-//todo make role optionnel
+export async function fetchUserById(id) {
+	const sql = `SELECT "id",
+                      "email",
+                      "role"
+                FROM "users"
+                WHERE "users"."id" = $1;`;
+	const result = await pool.query(sql, [id]);
+
+	if (result.rowCount > 1) {
+		throw new Error(`Too many users retrieve for id ${id}.`);
+	} else if (result.rowCount < 1) {
+		throw new Error(`User ${id} not found`);
+	}
+	return result.rows[0];
+}
+
 export async function insertUser(user) {
 	const sql = `INSERT INTO users ("email", "passhash") 
                       VALUES ($1, $2)
@@ -51,9 +71,10 @@ export async function fetchIdByEmail(email) {
 
 export async function logoutByToken(token) {
 	const sql = `UPDATE "tokens" 
-                        		SET "expires" = NOW() 
-                       		 	WHERE "token" = $1
-                        		RETURNING *;`;
+					SET "expires" = NOW() 
+					WHERE "token" = $1
+					RETURNING *;
+				`;
 
 	const result = await pool.query(sql, [token]);
 	return result.rowCount == 1 ? true : false;
@@ -64,11 +85,17 @@ export async function fetchByRole(role) {
 	const result = await pool.query(query, [role]);
 	return result.rows;
 }
-//todo check if user and token match
-//todo cannot delete due to db structure
-export async function deleteUser(id) {
-	const sql = `DELETE FROM "users"
-						WHERE "id" = $1`;
-	const result = await pool.query(sql, [id]);
-	return result.rowCount == 1 ? true : false;
+
+export async function deactivateUserById(id) {
+	const newEmail  = `${id}`;
+
+	const sql = `
+		UPDATE "users"
+		SET "email" = $1, "passhash" = 'deactivated', "role" = 'deactivated'
+		WHERE "id" = $2
+	`;
+
+	const result = await pool.query(sql, [newEmail, id]);
+
+	return result.rowCount === 1;
 }

@@ -1,6 +1,4 @@
-// import { deleteAccount, createAppointment, getApointmentsById, getAvailabilityById } from "../../script/auth.js";
-
-import { createAppointment } from "../../script/auth.js";
+import { deactivateAccount, createAppointment, getUserIdAppointments, getUserIdAvailabilities, logout } from "../../script/auth.js";
 
 const wcDiv = document.getElementById("wcWrapper");
 
@@ -59,6 +57,8 @@ function mainEventListeners() {
 	});
 
 	logoutBtn.addEventListener("click", (e) => {
+		const userId = JSON.parse(localStorage.getItem("user"))?.id;
+		logout(userId);
 		localStorage.removeItem("user");
 		logoutBtn.classList.add("hidden");
 		displayMain();
@@ -92,12 +92,13 @@ function displayLoginForm() {
 				"user-logged-in": (e) => {
 					console.log("User logged successfully", e.detail);
 
-					const { id, role, token } = e.detail;
+					const { id, email, role, token } = e.detail;
 
 					localStorage.setItem(
 						"user",
 						JSON.stringify({
 							id: id,
+							email: email,
 							role: role,
 							token: token,
 						})
@@ -154,9 +155,9 @@ function displayProfil() {
 	const components = ["profil-wc"];
 	const eventsPerComponent = {
 		"profil-wc": {
-			"go-to-settings": () => displaySettings(),
-			"delete-account": () => {
-				deleteAccount();
+			"deactivate-account": () => {
+				displayDeactivate();
+				deactivateAccount(); // Pas fini !!!!
 				displayMain();
 			},
 		},

@@ -7,6 +7,7 @@ export async function fetchAvailabilities() {
 }
 
 export async function insertAvailability({ hairdresser_id, availability_date }) {
+	
 	const sql = `INSERT INTO "availabilities" ("hairdresser_id", "availability_date") 
                       VALUES ($1, $2)
                       returning *;`;

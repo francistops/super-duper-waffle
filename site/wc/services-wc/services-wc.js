@@ -28,7 +28,7 @@ class servicesWC extends HTMLElement {
 
 		const services = await getServices();
 		// console.log(services, " services")
-		services.forEach((a, index) => this.addNextService(a, index + 1));
+		services.services.forEach((a, index) => this.addNextService(a, index + 1));
 	}
 
 	addNextService(service, index) {

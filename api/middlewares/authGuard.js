@@ -12,6 +12,8 @@ export async function validateToken(req, res, next) {
 
   try {
     const tokenRow = await isTokenValid(token);
+	console.log("🔎 tokenRow in validateToken:", tokenRow);
+
     if (!tokenRow) {
       return res
         .status(401)
@@ -19,6 +21,8 @@ export async function validateToken(req, res, next) {
     }
 
     req.selectedToken = tokenRow;
+	console.log('Token validated:', req.selectedToken);
+	req.user = { id: tokenRow.user_id }; 
     return next();
   } catch (err) {
     console.error('authGuard error:', err);

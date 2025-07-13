@@ -69,7 +69,7 @@ async function apiCall(resource, method, auth, body = {}) {
 // ------ USERS ------
 
 export function getConnectedUser() {
-	return JSON.parse(localStorage.getItem("user"));
+	return JSON.parse(localStorage.getItem("user"))?.token;
 }
 
 export function isIdentified() {
@@ -89,7 +89,6 @@ export async function register(user) {
 		);
 		return false;
 	}
-	
 	return true;
 }
 
@@ -127,14 +126,16 @@ export async function login(user) {
 		success: true,
 		token: data.token,
 		id: data.user.id,
+		email: data.user.email,
 		role: data.user.role,
 	};
 }
 
-export async function logout() {
+export async function logout(id) {
 	console.log("in auth.js logout");
 
-	const data = await apiCall("users/logout", "POST", true);
+	// ça prend id ou non?
+	const data = await apiCall(`users/logout/`, "POST", true, { id });
 
 	if (data.errorCode !== 0) {
 		console.error(
@@ -179,6 +180,7 @@ export async function deactivateAccount(id) {
 
 	return {
 		success: true,
+		revoked: data.revoked,
 	};
 }
 
@@ -281,13 +283,13 @@ export async function createAppointment(appointment) {
 	};
 }
 
-export async function updateAppointmentStatus(id, status) {
+export async function modifyAppointmentStatus(id, status) {
 
 	const data = await apiCall(`appointments/${id}`, "POST", true, { status });
 
 	if (data.errorCode !== 0) {
 		console.error(
-			"unhandled error in auth.js updateAppointmentStatus",
+			"unhandled error in auth.js modifyAppointmentStatus",
 			"data.errorCode:",
 			data.errorCode,
 			"data:",
@@ -433,14 +435,14 @@ export async function createService(service) {
 	};
 }
 
-export async function updateService(id, service) {
+export async function modifyService(id, service) {
 
 	const data = await apiCall(`services/${id}`, "POST", true, service);
 
 	if (data.errorCode !== 0) {
 
 		console.error(
-			"unhandle error in auth.js updateService",
+			"unhandle error in auth.js modifyService",
 			"data.errorCode: ",
 			data.errorCode,
 			" data : ",
@@ -458,30 +460,30 @@ export async function updateService(id, service) {
 	};
 }
 
-export async function deactivateService(id) {
+// export async function deactivateService(id) {
 
-	const data = await apiCall(`services/${id}`, "POST", true, id);
+// 	const data = await apiCall(`services/${id}`, "POST", true, id);
 
-	if (data.errorCode !== 0) {
+// 	if (data.errorCode !== 0) {
 
-		console.error(
-			"unhandle error in auth.js deactivateService",
-			"data.errorCode: ",
-			data.errorCode,
-			" data : ",
-			data
-		);
+// 		console.error(
+// 			"unhandle error in auth.js deactivateService",
+// 			"data.errorCode: ",
+// 			data.errorCode,
+// 			" data : ",
+// 			data
+// 		);
 
-		return {
-			success: false,
-			errorCode: data.errorCode,
-			message: data.message ?? "Erreur lors de la désactivation du service"
-		};
-	}
-	return {
-		success: true,
-	};
-}
+// 		return {
+// 			success: false,
+// 			errorCode: data.errorCode,
+// 			message: data.message ?? "Erreur lors de la désactivation du service"
+// 		};
+// 	}
+// 	return {
+// 		success: true,
+// 	};
+// }
 
 // ------ FEEDBACK ------
 

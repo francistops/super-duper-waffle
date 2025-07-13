@@ -54,6 +54,7 @@ class loginForm extends HTMLElement {
 					composed: true,
 					detail: {
 						id: result.id,
+						email: result.email,
 						role: result.role,
 						token: result.token,
 					},
