@@ -3,8 +3,8 @@ import {
 	getUsersByRole,
 	getUserIdAvailabilities,
 	getServices,
-	updateAvailability, 
-	insertAppointments
+	modifyAvailability, 
+	createAppointment
 } from "../../script/auth.js";
 import { formatDate, getDateFromToday } from "../../script/app.js";
 
@@ -67,7 +67,7 @@ class handlingAvailabilitiesClient extends HTMLElement {
 					return;
 				}
 		
-				const inserted = await insertAppointments({
+				const inserted = await createAppointment({
 					client_id: clientId,
 					hairdresser_id: hairdresserId,
 					service_id: serviceId,
