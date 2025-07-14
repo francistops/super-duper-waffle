@@ -11,73 +11,45 @@ import { fetchUserIdAppointments } from "../models/appointmentModel.js";
 import { fetchUserIdAvailabilities } from "../models/availabilityModel.js";
 import { assignToken, isTokenExist } from "../models/tokenModel.js";
 import { catchMsg, assertSameUserOrThrow } from "../lib/utils.js";
+import { makeSuccess, makeError } from "../utils/resultFactory.js";
 
 const UNKNOWN_ERROR = {
 	message: "Unknown error",
 	errorCode: 9999,
 };
 
-export async function getAllUsers(req, res) {
-	let result = UNKNOWN_ERROR;
-	try {
-		const users = await fetchAllUsers();
-		result = {
-			message: "Success",
-			errorCode: 0,
-			users: users,
-		};
-	} catch (error) {
-		catchMsg(`user getAllUsers`, error, res, result);
-	}
-	res.formatView(result);
-}
+// already in debugCtrl same reason as the one for the model
+// unleast you need it to be display or internal feature
+// it should be in debug i believe
+// export async function getAllUsers(req, res) {
 
 export async function getUsersByRole(req, res) {
-	let result = UNKNOWN_ERROR;
-
+	let result = makeError();
 	const role = req.body.role;
-
-	if (!role) {
-		return res.status(400).formatView({
-			message: "Missing role in request body",
-			errorCode: 400,
-		});
-	}
-	
-	const validRoles = ["hairdresser"];
-	if (!validRoles.includes(role)) {
-		return res.status(400).formatView({
-			message: `Invalid role: must be one of ${validRoles.join(", ")}`,
-			errorCode: 400,
-		});
-	}
 	
 	try {
+		const validRoles = ["hairdresser", "client"];
+		if (!role || !validRoles.includes(role)) throw new Error(`Invalid or missing role: 
+			must be one of ${validRoles.join(", ")}`);
+		
 		const users = await fetchByRole(role);
 
-		if (users) {
-			result = {
-				message: "Users retrieved successfully",
-				errorCode: 0,
-				users: users,
-			};
-		} else {
-			result = {
-				message: "Failed to retrieve users",
-				errorCode: 1,
-			};
-		}
-	} catch (error) {
-		catchMsg(`user getUsersByRole ${req.params}`, error, res, result);
-	}
+		if (users) makeSuccess({ users: users }, "Users retrieved successfully")
+		else makeError("Failed to retrieve users", 1)
 
+	} catch (error) {
+		catchMsg(`user getUsersByRole ${req.params}`, error, res, result, 500);
+	}
 	res.formatView(result);
 }
 
+// the below is valid but just not how we did things until now see above for example
+// i'm talking about returning asap instead of once.
+// also you must pick a way are using result formatview or catchmsg and the way you format your return
+// if you are confuse why, come talk to me
 export async function getUserIdAppointments(req, res) {
-	const result = UNKNOWN_ERROR;
-
-	const userIdFromToken = req.user.id;
+	const result = makeError();
+	const userIdFromToken = req.user.id; // this exist?
 	const userIdFromParams = req.params.id;
 
 	try {

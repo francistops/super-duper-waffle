@@ -1,6 +1,6 @@
-export function makeSuccess(data = {}) {
+export function makeSuccess(data = {}, message = "Success") {
     return {
-        message: 'Success',
+        message: message,
         errorCode: 0,
         ...data
     };
