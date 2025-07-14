@@ -33,8 +33,10 @@ export async function writeLog(logData) {
 	await client.execute(query, params, { prepare: true});
 }
 
-export async function fetchLogs() {
-	const query = `SELECT * FROM logs`;
-	const result = await client.execute(query);
-	return result.rows;
+export async function fetchLogs(limit = 15) {
+	let { rows } = await client.execute(`SELECT * FROM logs`);
+
+	rows.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+	rows = rows.slice(0, parseInt(limit));
+	return rows;
 }
