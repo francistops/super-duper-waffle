@@ -10,92 +10,75 @@ function hash(passHash) {
 }
 
 export async function fetchAllUsers() {
-	const sql = `SELECT * FROM "users";`;
-	const result = await pool.query(sql);
-	return result.rows;
+	const selectSql = `SELECT * FROM "users";`;
+	const queryResult = await pool.query(selectSql);
+	return queryResult.rows;
 }
 
 export async function fetchUserById(id) {
-	const sql = `SELECT "id",
+	const selectSql = `SELECT "id",
                       "email",
                       "role"
-                FROM "users"
-                WHERE "users"."id" = $1;`;
-	const result = await pool.query(sql, [id]);
-
-	if (result.rowCount > 1) {
-		throw new Error(`Too many users retrieve for id ${id}.`);
-	} else if (result.rowCount < 1) {
-		throw new Error(`User ${id} not found`);
-	}
-	return result.rows[0];
+						FROM "users"
+						WHERE "users"."id" = $1;`;
+	const queryResult = await pool.query(selectSql, [id]);
+	return queryResult.rows[0];
 }
 
 export async function insertUser(user) {
-	const sql = `INSERT INTO users ("email", "passhash") 
-                      VALUES ($1, $2)
-                      returning *;`;
-	const param = [user.email, hash(user.passhash)];
-	const result = await pool.query(sql, param);
-	if (result.rowCount != 1) {
-		throw new Error(`501: failed too many users: ${param}`);
-	}
-	return true;
+	const role = user.role || "client";
+	const selectSql = `INSERT INTO users ("email", "passhash", "role") 
+						VALUES ($1, $2, $3)
+						returning *;`;
+	const param = [
+		user.email, 
+		hash(user.passhash), 
+		role
+	];
+	const queryResult = await pool.query(selectSql, param);
+	return queryResult.rows[0];
 }
 
 export async function isUserValid(email, passhash) {
-	const sql = `SELECT "email", "passhash" 
-					FROM "users" 
-					WHERE "email" = $1 
-						AND "passhash"= $2;`;
-	const result = await pool.query(sql, [email, hash(passhash)]);
-	if (result.rowCount != 1) {
-		throw new Error(`501: failed to identify user on db: ${email}`);
-	}
-	return true;
+	const selectSql = `SELECT "email"
+	                   FROM "users"
+	                   WHERE "email" = $1 AND "passhash"= $2;`;
+
+	const queryResult = await pool.query(selectSql, [email, hash(passhash)]);
+	return queryResult.rowCount === 1;
 }
 
 export async function fetchIdByEmail(email) {
-	const sql = `SELECT "id", "email"
+	const selectSql = `SELECT "id"
                       	FROM "users"
                       	WHERE "email" = $1`;
-	const result = await pool.query(sql, [email]);
-	if (result.rowCount === 0) {
-		throw new Error(`504: User not found with email ${email}`);
-	}
-	if (result.rowCount > 1) {
-		throw new Error(`Error 500: Too many users retrieve for email ${email}.`);
-	}
-	return result.rows[0].id;
+	const queryResult = await pool.query(selectSql, [email]);
+	if (queryResult.rowCount === 0) return null;
+	return queryResult.rows[0].id;
 }
 
 export async function logoutByToken(token) {
-	const sql = `UPDATE "tokens" 
-					SET "expires" = NOW() 
-					WHERE "token" = $1
-					RETURNING *;
+	const updateSql = `UPDATE "tokens" 
+						SET "expires" = NOW() 
+						WHERE "token" = $1
+						RETURNING *;
 				`;
-
-	const result = await pool.query(sql, [token]);
-	return result.rowCount == 1 ? true : false;
+	const queryResult = await pool.query(updateSql, [token]);
+	return queryResult.rowCount == 1 ? true : false;
 }
 
 export async function fetchByRole(role) {
-	const query = `SELECT * FROM "users" WHERE "role" = $1`;
-	const result = await pool.query(query, [role]);
-	return result.rows;
+	const selectSql = `SELECT * FROM "users" WHERE "role" = $1`;
+	const queryResult = await pool.query(selectSql, [role]);
+	return queryResult.rows;
 }
 
 export async function deactivateUserById(id) {
-	const newEmail  = `${id}`;
-
-	const sql = `
-		UPDATE "users"
-		SET "email" = $1, "passhash" = 'deactivated', "role" = 'deactivated'
-		WHERE "id" = $2
-	`;
-
-	const result = await pool.query(sql, [newEmail, id]);
-
-	return result.rowCount === 1;
+	const newEmail  = `${id}@deactivated.local`;
+	const updateSql = `	UPDATE "users"
+							SET "email" = $1, "passhash" = 'deactivated', "role" = 'deactivated'
+							WHERE "id" = $2
+						`;
+	const queryResult = await pool.query(updateSql, [newEmail, id]);
+	return queryResult.rowCount === 1;
 }

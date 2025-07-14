@@ -1,14 +1,11 @@
 import {
 	fetchAppointments,
-	fetchAppointmentById,
-	updateAppointmentStatus,
-	fetchNextAppointments,
 	insertAppointment,
 	updateAppointment,
-	deleteAppointment,
+	isAppointmentExist
 } from "../models/appointmentModel.js";
-
-import { catchMsg } from "../lib/utils.js";
+import { catchMsg, assertSameUserOrThrow } from "../lib/utils.js";
+import { isTokenExist } from "../models/tokenModel.js";
 
 const UNKNOWN_ERROR = {
 	message: "Unknown error",
@@ -19,6 +16,12 @@ export async function getAppointments(req, res) {
 	let result = UNKNOWN_ERROR;
 	try {
 		const appointments = await fetchAppointments();
+		if (!appointments || appointments.length === 0) {
+			return res.status(404).formatView({
+				message: "No appointments found",
+				errorCode: 404,
+			});
+		}
 		result = {
 			message: "Success",
 			errorCode: 0,
@@ -31,64 +34,11 @@ export async function getAppointments(req, res) {
 	res.formatView(result);
 }
 
-export async function getAppointmentsById(req, res) {
-	let result = UNKNOWN_ERROR;
-	const { id } = req.body;
-	try {
-		const appointment = await fetchAppointmentById(id);
-		result = {
-			message: "Success",
-			errorCode: 0,
-			appointment: appointment,
-		};
-	} catch (error) {
-		catchMsg(
-			`appointment getAppointmentsByClientId ${req.body}`,
-			error,
-			res,
-			result
-		);
-	}
-	res.formatView(result);
-}
-
-export async function putAppointmentStatus(req, res) {
-	let result = UNKNOWN_ERROR;
-	const id = req.body;
-	try {
-		const appointment = await updateAppointmentStatus(id);
-		result = {
-			message: "Success",
-			errorCode: 0,
-			appointment: appointment,
-		};
-	} catch (error) {
-		catchMsg(`appointment putAppointmentStatus ${req.body}`);
-	}
-	res.formatView(result);
-}
-
-export async function getNextAppointments(req, res) {
-	return "updateAppointmentStatus niy";
-	let result = UNKNOWN_ERROR;
-	const { ids, nbRequested } = req.body;
-	try {
-		const appointments = await fetchNextAppointment(ids, nbRequested);
-		result = {
-			message: "Success",
-			errorCode: 0,
-			appointments: appointments,
-		};
-	} catch (error) {
-		catchMsg(`appointment getNextAppointments ${req.body}`);
-	}
-
-	res.formatView(result);
-}
-
 export async function addAppointment(req, res) {
 	let result = UNKNOWN_ERROR;
 	const newAppointment = req.body;
+	console.log("newAppointment in addAppointment controller:", newAppointment);
+
 	try {
 		const appointment = await insertAppointment(newAppointment);
 
@@ -98,14 +48,14 @@ export async function addAppointment(req, res) {
 			appointment: appointment,
 		};
 	} catch (error) {
-		catchMsg(`appointment addAppointment ${req.body}`);
+		catchMsg(`appointment addAppointment`, error, res, result);
 	}
 	res.formatView(result);
 }
 
-export async function editAppointment(req, res) {
+export async function modifyAppointment(req, res) {
 	let result = UNKNOWN_ERROR;
-	const id = req.body;
+	const id = req.body.id;
 	try {
 		const appointment = await updateAppointment(id);
 
@@ -116,22 +66,6 @@ export async function editAppointment(req, res) {
 		};
 	} catch (error) {
 		catchMsg(`appointment updateAppointment ${req.body}`);
-	}
-	res.formatView(result);
-}
-
-export async function removeAppointment(req, res) {
-	let result = UNKNOWN_ERROR;
-	const id = req.body;
-	try {
-		const appointment = await deleteAppointment(id);
-		result = {
-			message: "Success",
-			errorCode: 0,
-			appointment: appointment,
-		};
-	} catch (error) {
-		catchMsg(`appointment deleteAppointments ${req.body}`);
 	}
 	res.formatView(result);
 }

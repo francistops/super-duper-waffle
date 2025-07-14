@@ -7,22 +7,54 @@ import {
 	deactivateUserById,
 	logoutByToken,
 } from "../models/userModel.js";
+import { fetchUserIdAppointments } from "../models/appointmentModel.js";
+import { fetchUserIdAvailabilities } from "../models/availabilityModel.js";
 import { assignToken, isTokenExist } from "../models/tokenModel.js";
-import { catchMsg } from "../lib/utils.js";
+import { catchMsg, assertSameUserOrThrow } from "../lib/utils.js";
 
 const UNKNOWN_ERROR = {
 	message: "Unknown error",
 	errorCode: 9999,
 };
 
+export async function getAllUsers(req, res) {
+	let result = UNKNOWN_ERROR;
+	try {
+		const users = await fetchAllUsers();
+		result = {
+			message: "Success",
+			errorCode: 0,
+			users: users,
+		};
+	} catch (error) {
+		catchMsg(`user getAllUsers`, error, res, result);
+	}
+	res.formatView(result);
+}
 
-// todo change param for req.body
 export async function getUsersByRole(req, res) {
 	let result = UNKNOWN_ERROR;
 
-	const { role: role } = req.params;
+	const role = req.body.role;
+
+	if (!role) {
+		return res.status(400).formatView({
+			message: "Missing role in request body",
+			errorCode: 400,
+		});
+	}
+	
+	const validRoles = ["hairdresser"];
+	if (!validRoles.includes(role)) {
+		return res.status(400).formatView({
+			message: `Invalid role: must be one of ${validRoles.join(", ")}`,
+			errorCode: 400,
+		});
+	}
+	
 	try {
 		const users = await fetchByRole(role);
+
 		if (users) {
 			result = {
 				message: "Users retrieved successfully",
@@ -42,9 +74,88 @@ export async function getUsersByRole(req, res) {
 	res.formatView(result);
 }
 
+export async function getUserIdAppointments(req, res) {
+	const result = UNKNOWN_ERROR;
+
+	const userIdFromToken = req.user.id;
+	const userIdFromParams = req.params.id;
+
+	try {
+		assertSameUserOrThrow(userIdFromParams, userIdFromToken);
+
+		const appointments = await fetchUserIdAppointments(userIdFromToken);
+		if (!appointments) {
+			return res.status(404).formatView({
+				message: `No appointments found for user ${userIdFromToken}`,
+				errorCode: 404,
+			});
+		}
+
+		return res.formatView({
+			message: "Success",
+			errorCode: 0,
+			appointment: appointments,
+		});
+	} catch (error) {
+		if (error.statusCode === 403) {
+			return res.status(403).formatView({
+				message: error.message,
+				errorCode: 403,
+			});
+		}
+
+		catchMsg(`appointment getAppointmentsByClientId ${req.body}`, error, res, result);
+		res.formatView(result);
+	}
+}
+
+export async function getUserIdAvailabilities(req, res) {
+	let result = UNKNOWN_ERROR;
+
+	try {
+		const userIdFromToken = req.user.id;
+		const userIdFromParams = req.params.id;
+		
+		assertSameUserOrThrow(userIdFromParams, userIdFromToken);
+		
+		const isTokenResult = await isTokenExist(userIdFromToken);
+
+		if (!isTokenResult.status) {
+		  return res.status(404).formatView({
+			message: "No active session found",
+			errorCode: 404,
+		  });
+		}
+		const availability = await fetchUserIdAvailabilities(userIdFromToken);
+
+		if (!availability) {
+			return res.status(404).formatView({
+				message: `No availabilities found for user ${userIdFromToken}`,
+				errorCode: 404,
+			});
+		}
+
+		result = {
+			message: "Success",
+			errorCode: 0,
+			availability: availability,
+		};
+	} catch (error) {
+		catchMsg(
+			`appointment getAppointmentsByClientId ${req.body}`,
+			error,
+			res,
+			result
+		);
+	}
+	res.formatView(result);
+}
+
 export async function registerUser(req, res) {
 	let result = UNKNOWN_ERROR;
 	const newUser = req.body;
+	console.log("newUser", newUser);
+
 	try {
 		const user = await insertUser(newUser);
 		if (user) {
@@ -116,17 +227,17 @@ export async function logoutUser(req, res) {
 
 	try {
 
-		const userIdFromToken = req.user.id;
-		const userIdFromBody = req.body.id;
+		const userId  = req.body.id;
 
-		if (!userIdFromToken || !userIdFromBody || userIdFromToken !== userIdFromBody) {
-		  return res.status(403).formatView({
-			message: "Unauthorized logout attempt",
-			errorCode: 403,
-		  });
+		if (!userId) {
+			return res.status(400).formatView({
+				message: "User not authenticated",
+				errorCode: 400,
+			});
 		}
+		
+		const isTokenResult = await isTokenExist(userId);
 
-		const isTokenResult = await isTokenExist(userIdFromToken);
 		if (!isTokenResult.status) {
 		  return res.status(404).formatView({
 			message: "No active session found",
@@ -135,20 +246,22 @@ export async function logoutUser(req, res) {
 		}
 
 		const logoutConfirmation = await logoutByToken(req.selectedToken.token);
+
 		if (logoutConfirmation) {
 			result = {
-				message: "Success",
+				message: "Logout successful",
 				errorCode: 0,
 			};
 		} else {
 			result = {
-				message: "Failed",
+				message: "Logout failed",
 				errorCode: 1,
 			};
 		}
 	} catch (error) {
 		catchMsg(`user logoutUser ${req.selectedToken}`, error, res, result);
 	}
+
 	res.formatView(result);
 }
 
@@ -160,12 +273,7 @@ export async function deactivateUser(req, res) {
 		const userIdFromToken = req.user.id;
 		const userIdFromBody = req.body.id;
 
-		if (!userIdFromToken || !userIdFromBody || userIdFromToken !== userIdFromBody) {
-		  return res.status(403).formatView({
-			message: "Unauthorized deactivation attempt",
-			errorCode: 403,
-		  });
-		}
+		assertSameUserOrThrow(userIdFromBody, userIdFromToken);
 
 		const isTokenResult = await isTokenExist(userIdFromToken);
 		if (!isTokenResult.status) {

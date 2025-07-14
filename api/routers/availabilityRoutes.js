@@ -4,13 +4,13 @@ import { validateToken } from "../middlewares/authGuard.js";
 import {
 	getAvailabilities,
 	addAvailability,
-	editAvailability,
+	modifyAvailability,
 
 } from "../controllers/availabilityController.js";
 
 router.get("/", getAvailabilities);
 
 router.post("/add", validateToken, addAvailability);
-router.post("/:id", validateToken, editAvailability);
+router.patch("/update", validateToken, modifyAvailability);
 
 export default router;
