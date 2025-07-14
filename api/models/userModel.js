@@ -31,7 +31,7 @@ export async function fetchUserById(id) {
 						WHERE "users"."id" = $1;`;
 	const queryResult = await pool.query(selectSql, [id]);
 	//re-adding the trow let me know if i shouldn't have
-	if (result.rowCount < 1) throw new Error(`User ${id} not found`);
+	if (queryResult.rowCount < 1) throw new Error(`User ${id} not found`);
 	
 	return queryResult.rows[0];
 }
