@@ -1,26 +1,42 @@
-import cassandra from 'cassandra-driver';
+import { connectDatabases, client } from '../config/db.js';
 
-const client = new cassandra.Client({
-	contactPoints: [process.env.CASSANDRA_CONTACT_POINTS || 'cassandra'],
-	localDataCenter: 'datacenter1',
-	keyspace: 'logsystem'
-});
+connectDatabases
 
-await client.connect();
-
-export async function writeLog(log) {
+export async function writeLog(logData) {
+	// console.log('in logModel logdata: ', logData);
 	const query = `
-		INSERT INTO logs (id, timestamp, level, description, module, file, line)
-			VALUES(uuid(), toTimestamp(now)), ?, ?, ?, ?, ?)
-	`;
-
-	const params = [log.level, log.description, log.module, log.file, log.line];
+    INSERT INTO logsystem.logs (
+                        id, 
+                        timestamp,
+                        level,
+                        method, 
+                        route, 
+                        status, 
+                        message, 
+                        user_agent,
+                        error_message,
+                        stack_trace
+                    )
+    VALUES (uuid(), toTimestamp(now()), ?, ?, ?, ?, ?, ?, ?, ?);
+  `;
+	const params = [
+		logData.level,
+		logData.method,
+		logData.route,
+		logData.status,
+		logData.message,
+		logData.user_agent,
+		logData.error_message,
+		logData.stack_trace
+	];
 
 	await client.execute(query, params, { prepare: true});
 }
 
-export async function fetchAllLogs() {
-	const query = `SELECT * FROM logs`;
-	const result = await client.execute(query);
-	return result.rows;
+export async function fetchLogs(limit = 15) {
+	let { rows } = await client.execute(`SELECT * FROM logs`);
+
+	rows.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+	rows = rows.slice(0, parseInt(limit));
+	return rows;
 }

@@ -18,4 +18,3 @@ export async function fetchTokens() {
 	const selectSql = `SELECT * FROM "tokens"`;
 	const queryResult = await pool.query(selectSql);
 	return queryResult.rows;
-}

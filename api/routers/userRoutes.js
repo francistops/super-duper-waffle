@@ -2,7 +2,6 @@ import { Router } from "express";
 const router = Router();
 import { validateToken } from "../middlewares/authGuard.js";
 import {
-	getAllUsers,
 	getUsersByRole,
 	getUserIdAppointments,
 	getUserIdAvailabilities,
@@ -12,7 +11,7 @@ import {
 	deactivateUser,
 } from "../controllers/userController.js";
 
-router.get("/", getAllUsers);
+//router.get("/", getAllUsers); use the debug route
 
 //todo change for obj instead of a param for security
 //todo catch error when id is not valid

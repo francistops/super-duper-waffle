@@ -1,5 +1,4 @@
 import {
-	fetchAllUsers,
 	fetchIdByEmail,
 	fetchUserById,
 	fetchByRole,
