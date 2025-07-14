@@ -38,12 +38,12 @@ class DisplayLogElement extends HTMLElement {
     async connectedCallback() {
         const btn = this.shadowRoot.getElementById('getLogs');
         btn.addEventListener('click', async e => {
-            this.shadowRoot.querySelector('tbody').innerHTML = ''
-
+            this.shadowRoot.querySelector('tbody').innerHTML = '';
             const logs = await getLogs();
+            
             for (let i = 0; i < logs.length; i++) {
-                const log = logs[i]
-                this.addData(log)
+                const log = logs[i];
+                this.addData(log);
             }
         });
     }
