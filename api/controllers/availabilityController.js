@@ -2,9 +2,11 @@ import {
 	fetchAvailabilities,
 	insertAvailability,
 	updateAvailability,
+	isAvailabilityExist
 } from "../models/availabilityModel.js";
+import { catchMsg, assertSameUserOrThrow, assertSameTokenOrThrow } from "../lib/utils.js";
+import { isTokenExist } from "../models/tokenModel.js";
 
-import { catchMsg } from "../lib/utils.js";
 
 const UNKNOWN_ERROR = {
 	message: "Unknown error",
@@ -28,8 +30,41 @@ export async function getAvailabilities(req, res) {
 
 export async function addAvailability(req, res) {
 	let result = UNKNOWN_ERROR;
-	const data = req.body;
+
 	try {
+		const data = req.body;
+		if (!data.hairdresser_id || !data.availability_date) {
+			return res.status(400).formatView({
+				message: "Missing hairdresser_id or availability_date",
+				errorCode: 1,
+			});
+		}
+
+		const userIdFromToken = req.user.id;
+		assertSameUserOrThrow(data.hairdresser_id, userIdFromToken);
+
+		
+		const isTokenResult = await isTokenExist(userIdFromToken);
+
+		if (!isTokenResult.status) {
+			return res.status(404).formatView({
+			message: "No active session found",
+			errorCode: 404,
+			});
+		}
+
+		const tokenFromRequest = req.selectedToken.token;
+		const tokenFromDb = isTokenResult.token.token;
+		assertSameTokenOrThrow(tokenFromRequest, tokenFromDb);
+
+		const alreadyExists = await isAvailabilityExist(data.hairdresser_id, data.availability_date);
+		if (alreadyExists) {
+			return res.status(409).formatView({
+				message: "Availability already exists for this date and hairdresser",
+				errorCode: 409,
+			});
+		}
+
 		if (data) {
 			const availability = await insertAvailability({
 				hairdresser_id: data.hairdresser_id,
@@ -55,13 +90,23 @@ export async function addAvailability(req, res) {
 	res.formatView(result);
 }
 
-export async function editAvailability(req, res) {
+export async function modifyAvailability(req, res) {
 	let result = UNKNOWN_ERROR;
-	const { id } = req.params;
-	const { status } = req.body;
 
 	try {
-		if (id && status) {
+		const userIdFromToken = req.user.id;
+		const userIdFromParams = req.params.id;
+		
+		assertSameUserOrThrow(userIdFromParams, userIdFromToken);
+		
+		const isTokenResult = await isTokenExist(userIdFromToken);
+
+		if (!isTokenResult.status) {
+		  return res.status(404).formatView({
+			message: "No active session found",
+			errorCode: 404,
+		  });
+		}
 			const availability = await updateAvailability({ id, status });
 
 			result = {
@@ -69,12 +114,10 @@ export async function editAvailability(req, res) {
 				errorCode: 0,
 				availability: availability,
 			};
-		} else {
 			result = {
 				message: "Missing id or status",
 				errorCode: 1,
 			};
-		}
 	} catch (error) {
 		catchMsg(`availability updateAvailability id=${id}`, error, res, result);
 	}

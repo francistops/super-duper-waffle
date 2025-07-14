@@ -4,6 +4,8 @@ import { validateToken } from "../middlewares/authGuard.js";
 import {
 	getAllUsers,
 	getUsersByRole,
+	getUserIdAppointments,
+	getUserIdAvailabilities,
 	registerUser,
 	loginUser,
 	logoutUser,
@@ -15,14 +17,12 @@ router.get("/", getAllUsers);
 //todo change for obj instead of a param for security
 //todo catch error when id is not valid
 router.get("/role/:role", validateToken, getUsersByRole);
-// router.get("/:id/appointments", validateToken, getUserIdAppointments); À faire SVP
-// router.get("/:id/availabilities", validateToken, getUserIdAvailabilities); À faire SVP
+router.get("/:id/appointments", validateToken, getUserIdAppointments);
+router.get("/:id/availabilities", validateToken, getUserIdAvailabilities);
 
 router.post("/register", registerUser);
-router.post("/login", loginUser); // Renvoie moi le role du user aussi svp
-
-//todo catch invalid token
+router.post("/login", loginUser);
 router.post("/logout", validateToken, logoutUser);
+router.post("/deactivate", validateToken, deactivateUser);
 
-router.delete("/deactivate", validateToken, deactivateUser);
 export default router;

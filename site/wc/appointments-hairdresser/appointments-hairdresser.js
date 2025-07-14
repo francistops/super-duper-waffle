@@ -3,7 +3,7 @@ import {
 	getUserIdAppointments,
 	getUserIdAvailabilities,
 	modifyAvailability,
-	modifyAppointmentStatus,
+	modifyAppointment,
 } from "../../script/auth.js";
 
 class appointmentsHairdresser extends HTMLElement {
@@ -90,12 +90,12 @@ class appointmentsHairdresser extends HTMLElement {
 				`;
 			
 				cell.querySelector(".markAsShow").addEventListener("click", async () => {
-					await modifyAppointmentStatus(item.id, "show");
+					await modifyAppointment(item.id, "show");
 					cell.innerHTML = `<div>Rendez-vous complété ✅</div>`;
 				});
 			
 				cell.querySelector(".markAsNoShow").addEventListener("click", async () => {
-					await modifyAppointmentStatus(item.id, "noShow");
+					await modifyAppointment(item.id, "noShow");
 					cell.innerHTML = `<div>Client absent ❌</div>`;
 				});
 			} else {

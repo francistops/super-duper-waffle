@@ -1,7 +1,7 @@
 import pool from "../db/pool.js";
 
 export async function fetchUsers() {
-	const sql = `SELECT "users"."email",
+	const selectSql = `SELECT "users"."email",
                       "users"."id",
                       "users"."passhash",
                       "users"."role",
@@ -10,12 +10,12 @@ export async function fetchUsers() {
                 FROM "users"
                 LEFT JOIN "tokens" ON "users"."id" = "tokens"."user_id"
                 ORDER BY "users"."email";`;
-	const queryResult = await pool.query(sql);
+	const queryResult = await pool.query(selectSql);
 	return queryResult.rows;
 }
 
 export async function fetchTokens() {
-	const sql = `SELECT * FROM "tokens"`;
-	const queryResult = await pool.query(sql);
+	const selectSql = `SELECT * FROM "tokens"`;
+	const queryResult = await pool.query(selectSql);
 	return queryResult.rows;
 }

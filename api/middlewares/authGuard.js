@@ -1,33 +1,49 @@
 
-import { isTokenValid } from '../models/tokenModel.js';
+import { isTokenValid, isTokenExist } from '../models/tokenModel.js';
+import { catchMsg } from '../lib/utils.js';
+
+const UNKNOWN_ERROR = {
+	message: "Unknown error",
+	errorCode: 9999,
+};
 
 export async function validateToken(req, res, next) {
-  const header = req.headers.authorization || '';
-  const [scheme, token] = header.split(' ');
-  if (scheme !== 'Bearer' || !token) {
-    return res
-      .status(400)
-      .formatView({ message: 'Missing or malformed token', errorCode: 400 });
-  }
+	const header = req.headers.authorization || '';
+	const [scheme, token] = header.split(' ');
+	if (scheme !== 'Bearer' || !token) {
+		return res
+			.status(400)
+			.formatView({ message: 'Missing or malformed token', errorCode: 400 });
+	}
 
-  try {
-    const tokenRow = await isTokenValid(token);
-	console.log("🔎 tokenRow in validateToken:", tokenRow);
+	try {
+		const tokenRow = await isTokenValid(token);
 
-    if (!tokenRow) {
-      return res
-        .status(401)
-        .formatView({ message: 'Invalid or expired token', errorCode: 401 });
-    }
+		if (!tokenRow) {
+			return res
+			.status(401)
+			.formatView({ message: 'Invalid or expired token', errorCode: 401 });
+		}
 
-    req.selectedToken = tokenRow;
-	console.log('Token validated:', req.selectedToken);
-	req.user = { id: tokenRow.user_id }; 
-    return next();
-  } catch (err) {
-    console.error('authGuard error:', err);
-    return res
-      .status(500)
-      .formatView({ message: 'Auth check failed', errorCode: 500 });
-  }
+		const isTokenResult = await isTokenExist(tokenRow.user_id);
+		if (!isTokenResult.status) {
+			return res
+				.status(403)
+				.formatView({ message: 'No active session found', errorCode: 403 });
+		}
+
+		if (isTokenResult.token.token !== token) {
+			return res
+				.status(403)
+				.formatView({ message: 'Token mismatch: unauthorized', errorCode: 403 });
+		}
+
+		req.selectedToken = tokenRow;
+		req.user = { id: tokenRow.user_id }; 
+		next();
+	} catch (err) {
+		const result = { ...UNKNOWN_ERROR };
+		catchMsg("authGuard validateToken", err, res, result, 500);
+		res.formatView(result);
+	}
 }

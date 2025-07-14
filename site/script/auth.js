@@ -135,7 +135,7 @@ export async function logout(id) {
 	console.log("in auth.js logout");
 
 	// ça prend id ou non?
-	const data = await apiCall(`users/logout/`, "POST", true, { id });
+	const data = await apiCall(`users/logout`, "POST", true, { id });
 
 	if (data.errorCode !== 0) {
 		console.error(
@@ -161,7 +161,7 @@ export async function logout(id) {
 export async function deactivateAccount(id) {
 	console.log("in auth.js deactivateAccount");
 
-	const data = await apiCall("users/deactivate", "POST", true, { id });
+	const data = await apiCall(`users/deactivate`, "POST", true, { id });
 
 	if (data.errorCode !== 0) {
 		console.error(
@@ -261,7 +261,7 @@ export async function getUserIdAvailabilities(id) {
 
 export async function createAppointment(appointment) {
 
-	const data = await apiCall(`appointments/`, "POST", true, appointment);
+	const data = await apiCall(`appointments/add`, "POST", true, appointment);
 
 	if (data.errorCode !== 0) {
 		console.error(
@@ -283,13 +283,13 @@ export async function createAppointment(appointment) {
 	};
 }
 
-export async function modifyAppointmentStatus(id, status) {
+export async function modifyAppointment(id, status) {
 
-	const data = await apiCall(`appointments/${id}`, "POST", true, { status });
+	const data = await apiCall(`appointments/${id}`, "PATCH", true, { status });
 
 	if (data.errorCode !== 0) {
 		console.error(
-			"unhandled error in auth.js modifyAppointmentStatus",
+			"unhandled error in auth.js modifyAppointment",
 			"data.errorCode:",
 			data.errorCode,
 			"data:",
@@ -308,30 +308,6 @@ export async function modifyAppointmentStatus(id, status) {
 }
 
 // ------ AVAILABILITIES ------
-
-export async function getAvailabilitiesByUserId(userId) {
-
-	const data = await apiCall(`users/${userId}/availabilities`, "GET", true);
-
-	if (data.errorCode !== 0) {
-		console.error(
-			"unhandle error in auth.js getAvailabilitiesByUserId",
-			"data.errorCode: ",
-			data.errorCode,
-			" data : ",
-			data
-		);
-		return {
-			success: false,
-			errorCode: data.errorCode,
-			message: data.message ?? "Erreur lors de la récupération des disponibilités par utilisateur"
-		};
-	}
-	return {
-		success: true,
-		availabilities: data.availabilities
-	};
-}
 
 export async function createAvailability(availability) {
 
@@ -359,7 +335,7 @@ export async function createAvailability(availability) {
 
 export async function modifyAvailability({id, status}) {
 
-	const data = await apiCall(`availabilities/${id}`, "POST", true, { status });
+	const data = await apiCall(`availabilities/${id}`, "PATCH", true, { status });
 
 	if (data.errorCode !== 0) {
 
@@ -410,81 +386,6 @@ export async function getServices() {
 	};
 }
 
-export async function createService(service) {
-
-	const data = await apiCall(`services/`, "POST", true, service);
-
-	if (data.errorCode !== 0) {
-
-		console.error(
-			"unhandle error in auth.js createService",
-			"data.errorCode: ",
-			data.errorCode,
-			" data : ",
-			data
-		);
-		
-		return {
-			success: false,
-			errorCode: data.errorCode,
-			message: data.message ?? "Erreur lors de la création du service"
-		};
-	}
-	return {
-		success: true,
-	};
-}
-
-export async function modifyService(id, service) {
-
-	const data = await apiCall(`services/${id}`, "POST", true, service);
-
-	if (data.errorCode !== 0) {
-
-		console.error(
-			"unhandle error in auth.js modifyService",
-			"data.errorCode: ",
-			data.errorCode,
-			" data : ",
-			data
-		);
-
-		return {
-			success: false,
-			errorCode: data.errorCode,
-			message: data.message ?? "Erreur lors de la mise à jour du service"
-		};
-	}
-	return {
-		success: true,
-	};
-}
-
-// export async function deactivateService(id) {
-
-// 	const data = await apiCall(`services/${id}`, "POST", true, id);
-
-// 	if (data.errorCode !== 0) {
-
-// 		console.error(
-// 			"unhandle error in auth.js deactivateService",
-// 			"data.errorCode: ",
-// 			data.errorCode,
-// 			" data : ",
-// 			data
-// 		);
-
-// 		return {
-// 			success: false,
-// 			errorCode: data.errorCode,
-// 			message: data.message ?? "Erreur lors de la désactivation du service"
-// 		};
-// 	}
-// 	return {
-// 		success: true,
-// 	};
-// }
-
 // ------ FEEDBACK ------
 
 export async function getFeedbacks() {
@@ -514,7 +415,7 @@ export async function getFeedbacks() {
 
 export async function createFeedback(feedback) {
 
-	const data = await apiCall(`feedbacks/`, "POST", true, feedback);
+	const data = await apiCall(`feedbacks/add`, "POST", true, feedback);
 
 	if (data.errorCode !== 0) {
 

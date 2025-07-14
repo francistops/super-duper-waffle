@@ -117,36 +117,33 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 
 #### `UserController`
 
-- **DEBUG** `GET /users` : Liste des utilisateurs.
-- **TOKEN** (**Client et coiffeuse**) `GET /users/:id` : Détail d’un utilisateur spécifique. (Pas besoin pour notre site)
-- **TOKEN** `GET /users/role/:role` : Un client sélectionne toutes les coiffeuses.
-- **TOKEN** (**Client et coiffeuse**) `GET /users/:id/appointments` : Un client voit ses propre rendez-vous et une coiffeuse voit ses propres rendez-vous.
-- **TOKEN** (**Client et coiffeuse**) `GET /users/:id/availability` : Un client voit les disponibilités d'une coiffeuse et une coiffeuse voit ses propres disponibilités.
-- **TOKEN** (**Client et coiffeuse**) `POST /users/:id` : Désactivation d'un utilisateur (mettre id comme email) ou mise à jour d'un utilisateur. ( Pour ne pas perdre l'historique des rendez-vous) Ajouter un field qui vient de auth.js pour le controller
+[X] - **DEBUG** `GET /users` : Liste des utilisateurs.
+[] - **TOKEN** `GET /users/role/:role` : Un client sélectionne toutes les coiffeuses.
+[X] - **TOKEN** (**Client et coiffeuse**) `GET /users/:id/appointments` : Un client voit ses propre rendez-vous et une coiffeuse voit ses propres rendez-vous.
+[X] - **TOKEN** (**Client et coiffeuse**) `GET /users/:id/availability` : Un client voit les disponibilités d'une coiffeuse et une coiffeuse voit ses propres disponibilités.
+[X] - **TOKEN** (**Client et coiffeuse**) `POST /users/:id` : Désactivation d'un utilisateur (mettre id comme email) ou mise à jour d'un utilisateur. ( Pour ne pas perdre l'historique des rendez-vous) Ajouter un field qui vient de auth.js pour le controller
 
 #### `AppointmentController`
 
-- **DEBUG** (**Client et coiffeuse**) `GET /appointments` : Voir les rendez-vous.
-- **TOKEN** (**Client et coiffeuses**) `GET /appointments/:id`(Pas besoin pour notre site)
-- **TOKEN** (**Client**) `POST /appointments` : Créer un rendez-vous.
-- **TOKEN** (**Client et coiffeuse**) `POST /appointments/:id` : Mise à jour d’un rendez-vous.
+[X] - **DEBUG** (**Client et coiffeuse**) `GET /appointments` : Voir les rendez-vous.
+[] - **TOKEN** (**Client**) `POST /appointments` : Créer un rendez-vous.
+[] - **TOKEN** (**Client et coiffeuse**) `PATCH /appointments/:id` : Mise à jour d’un rendez-vous.
 
 #### `AvailabilityController`
 
-- **DEBUG** (**Client**) `GET /availabilities` : Voir toutes les disponibilités
-- **TOKEN** (**Client et coiffeuse**) `POST /availabilities/:id/` : Mise à jour d'une disponibilité.
-- **TOKEN** (**Coiffeuse**) `POST /availabilities` : Création de disponibilités.
+[X] - **DEBUG** (**Client**) `GET /availabilities` : Voir toutes les disponibilités
+[] - **TOKEN** (**Client et coiffeuse**) `PATCH /availabilities/:id/` : Mise à jour d'une disponibilité.
+[] - **TOKEN** (**Coiffeuse**) `POST /availabilities` : Création de disponibilités.
 
 #### `ServiceController`
 
-- **PUBLIC** `GET /services` : Liste des services disponibles.
-- **TOKEN** (**Coiffeuse**) `POST /services` : Ajout d’un service. (Pas besoin pour notre site, bonus si on a le temps)
-- **TOKEN** (**Coiffeuse**) `POST /services/:id` : Mise à jour d’un service ou désactivation d'un service. (Pas besoin pour notre site, bonus si on a le temps)
+[] - **PUBLIC** `GET /services` : Liste des services disponibles.
+[] - **TOKEN** (**Coiffeuse**) `POST /services` : Ajout d’un service. (Pas besoin pour notre site, bonus si on a le temps)
 
 #### `FeedbackController` (Cassandra)
 
-- **PUBLIC** `GET /feedbacks` : Voir tous les avis.
-- **TOKEN** (**Client**) `POST /feedbacks` : Ajouter un avis.
+[] - **PUBLIC** `GET /feedbacks` : Voir tous les avis.
+[] - **TOKEN** (**Client**) `POST /feedbacks` : Ajouter un avis.
 
 ## 7. Frontend : Organisation et Structure
 

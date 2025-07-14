@@ -95,3 +95,96 @@ INSERT INTO "availabilities" ("hairdresser_id", "availability_date", "status") V
 ((SELECT "id" FROM "users" WHERE "email" = 'uh'), '2023-10-13 09:00:00', 'assigned'),
 ((SELECT "id" FROM "users" WHERE "email" = 'ah'), '2023-10-14 13:00:00', 'assigned'),
 ((SELECT "id" FROM "users" WHERE "email" = 'ah'), '2023-10-15 13:00:00', 'assigned');
+
+INSERT INTO "appointments" ("client_id", "hairdresser_id", "service_id", "availability_id") VALUES
+((SELECT id FROM users WHERE email = 'f'),
+ (SELECT id FROM users WHERE email = 'uh'),
+ (SELECT id FROM services WHERE name = 'Coupe homme'),
+ (SELECT id FROM availabilities WHERE availability_date = '2023-10-06 12:00:00')),
+
+((SELECT id FROM users WHERE email = 'u'),
+ (SELECT id FROM users WHERE email = 'uh'),
+ (SELECT id FROM services WHERE name = 'Coupe femme'),
+ (SELECT id FROM availabilities WHERE availability_date = '2023-10-07 12:00:00')),
+
+((SELECT id FROM users WHERE email = 'a'),
+ (SELECT id FROM users WHERE email = 'uh'),
+ (SELECT id FROM services WHERE name = 'Teinture'),
+ (SELECT id FROM availabilities WHERE availability_date = '2023-10-08 12:00:00')),
+
+((SELECT id FROM users WHERE email = 'f'),
+ (SELECT id FROM users WHERE email = 'ah'),
+ (SELECT id FROM services WHERE name = 'Mise en plie'),
+ (SELECT id FROM availabilities WHERE availability_date = '2023-10-09 12:00:00')),
+
+((SELECT id FROM users WHERE email = 'u'),
+ (SELECT id FROM users WHERE email = 'uh'),
+ (SELECT id FROM services WHERE name = 'Balayage'),
+ (SELECT id FROM availabilities WHERE availability_date = '2023-10-10 09:00:00')),
+
+((SELECT id FROM users WHERE email = 'a'),
+ (SELECT id FROM users WHERE email = 'ah'),
+ (SELECT id FROM services WHERE name = 'Soin capillaire'),
+ (SELECT id FROM availabilities WHERE availability_date = '2023-10-11 13:00:00')),
+
+((SELECT id FROM users WHERE email = 'f'),
+ (SELECT id FROM users WHERE email = 'ah'),
+ (SELECT id FROM services WHERE name = 'Coupe femme'),
+ (SELECT id FROM availabilities WHERE availability_date = '2023-10-12 13:00:00')),
+
+((SELECT id FROM users WHERE email = 'u'),
+ (SELECT id FROM users WHERE email = 'uh'),
+ (SELECT id FROM services WHERE name = 'Teinture'),
+ (SELECT id FROM availabilities WHERE availability_date = '2023-10-13 09:00:00')),
+
+
+((SELECT id FROM users WHERE email = 'a'),
+ (SELECT id FROM users WHERE email = 'ah'),
+ (SELECT id FROM services WHERE name = 'Mise en plie'),
+ (SELECT id FROM availabilities WHERE availability_date = '2023-10-14 13:00:00')),
+
+((SELECT id FROM users WHERE email = 'f'),
+ (SELECT id FROM users WHERE email = 'ah'),
+ (SELECT id FROM services WHERE name = 'Soin capillaire'),
+ (SELECT id FROM availabilities WHERE availability_date = '2023-10-15 13:00:00'));
+
+INSERT INTO "feedbacks" ("appointment_id", "client_id", "comment", "rating") VALUES
+((SELECT id FROM appointments WHERE availability_id = (SELECT id FROM availabilities WHERE availability_date = '2023-10-06 12:00:00')),
+ (SELECT id FROM users WHERE email = 'f'),
+ 'Très satisfait du service rapide.', 5),
+
+((SELECT id FROM appointments WHERE availability_id = (SELECT id FROM availabilities WHERE availability_date = '2023-10-07 12:00:00')),
+ (SELECT id FROM users WHERE email = 'u'),
+ 'Coiffeuse professionnelle et sympathique.', 4),
+
+((SELECT id FROM appointments WHERE availability_id = (SELECT id FROM availabilities WHERE availability_date = '2023-10-08 12:00:00')),
+ (SELECT id FROM users WHERE email = 'a'),
+ 'Bon résultat, mais un peu long.', 3),
+
+((SELECT id FROM appointments WHERE availability_id = (SELECT id FROM availabilities WHERE availability_date = '2023-10-09 12:00:00')),
+ (SELECT id FROM users WHERE email = 'f'),
+ 'Résultat impeccable, je recommande.', 5),
+
+((SELECT id FROM appointments WHERE availability_id = (SELECT id FROM availabilities WHERE availability_date = '2023-10-10 09:00:00')),
+ (SELECT id FROM users WHERE email = 'u'),
+ 'Coupe correcte, mais accueil froid.', 3),
+
+((SELECT id FROM appointments WHERE availability_id = (SELECT id FROM availabilities WHERE availability_date = '2023-10-11 13:00:00')),
+ (SELECT id FROM users WHERE email = 'a'),
+ 'Service très agréable et personnalisé.', 5),
+
+((SELECT id FROM appointments WHERE availability_id = (SELECT id FROM availabilities WHERE availability_date = '2023-10-12 13:00:00')),
+ (SELECT id FROM users WHERE email = 'f'),
+ 'Coupe un peu ratée, déçu.', 2),
+
+((SELECT id FROM appointments WHERE availability_id = (SELECT id FROM availabilities WHERE availability_date = '2023-10-13 09:00:00')),
+ (SELECT id FROM users WHERE email = 'u'),
+ 'Très bonne écoute, bon résultat.', 4),
+
+((SELECT id FROM appointments WHERE availability_id = (SELECT id FROM availabilities WHERE availability_date = '2023-10-14 13:00:00')),
+ (SELECT id FROM users WHERE email = 'a'),
+ 'Rapide et efficace, très bien.', 4),
+
+((SELECT id FROM appointments WHERE availability_id = (SELECT id FROM availabilities WHERE availability_date = '2023-10-15 13:00:00')),
+ (SELECT id FROM users WHERE email = 'f'),
+ 'Excellent service et ambiance relaxante.', 5);

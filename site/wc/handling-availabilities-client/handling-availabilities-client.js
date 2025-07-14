@@ -68,10 +68,10 @@ class handlingAvailabilitiesClient extends HTMLElement {
 				}
 		
 				const inserted = await createAppointment({
-					client_id: clientId,
-					hairdresser_id: hairdresserId,
-					service_id: serviceId,
-					availability_id: availabilityId,
+					clientId: clientId,
+					hairdresserId: hairdresserId,
+					serviceId: serviceId,
+					availabilityId: availabilityId,
 				});
 		
 				if (!inserted) {

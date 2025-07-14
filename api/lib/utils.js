@@ -54,3 +54,19 @@ async function buildModelCall(res, req, modelFn, ...reqObjs) {
 
 	res.formatView(result);
 }
+
+export function assertSameUserOrThrow(requestedUserId, tokenUserId) {
+	if (requestedUserId !== tokenUserId) {
+	  const err = new Error("User mismatch: unauthorized");
+	  err.statusCode = 403;
+	  throw err;
+	}
+}
+
+export function assertSameTokenOrThrow(requestedToken, tokenFromDb) {
+	if (requestedToken !== tokenFromDb) {
+	  const err = new Error("Token mismatch: unauthorized");
+	  err.statusCode = 403;
+	  throw err;
+	}
+}

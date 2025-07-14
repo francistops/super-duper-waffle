@@ -7,6 +7,6 @@ import {
 } from "../controllers/feedbackController.js";
 
 router.get("/", getFeedbacks);
-router.post("/", validateToken, addFeedback);
+router.post("/add", validateToken, addFeedback);
 
 export default router;
