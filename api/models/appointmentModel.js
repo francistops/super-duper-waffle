@@ -1,12 +1,5 @@
 import pool from "../db/pool.js";
 
-export async function fetchAppointments() {
-	const selectSql = `SELECT *
-  					FROM "appointments"`;
-	const queryResult = await pool.query(selectSql);
-	return queryResult.rows;
-}
-
 export async function fetchUserIdAppointments(id) {
 	const selectSql = `SELECT *
   					FROM "appointments"

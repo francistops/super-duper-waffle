@@ -1,6 +1,7 @@
 
 import { isTokenValid, isTokenExist } from '../models/tokenModel.js';
 import { catchMsg } from '../lib/utils.js';
+import { fetchUserById } from '../models/userModel.js';
 
 const UNKNOWN_ERROR = {
 	message: "Unknown error",
@@ -38,8 +39,16 @@ export async function validateToken(req, res, next) {
 				.formatView({ message: 'Token mismatch: unauthorized', errorCode: 403 });
 		}
 
+		const user = await fetchUserById(tokenRow.user_id);
+		if (!user) {
+			return res
+				.status(404)
+				.formatView({ message: 'User not found', errorCode: 404 });
+		}
+
 		req.selectedToken = tokenRow;
-		req.user = { id: tokenRow.user_id }; 
+		req.user = user;
+
 		next();
 	} catch (err) {
 		const result = { ...UNKNOWN_ERROR };

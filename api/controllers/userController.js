@@ -17,21 +17,6 @@ const UNKNOWN_ERROR = {
 	errorCode: 9999,
 };
 
-export async function getAllUsers(req, res) {
-	let result = UNKNOWN_ERROR;
-	try {
-		const users = await fetchAllUsers();
-		result = {
-			message: "Success",
-			errorCode: 0,
-			users: users,
-		};
-	} catch (error) {
-		catchMsg(`user getAllUsers`, error, res, result);
-	}
-	res.formatView(result);
-}
-
 export async function getUsersByRole(req, res) {
 	let result = UNKNOWN_ERROR;
 
@@ -83,6 +68,15 @@ export async function getUserIdAppointments(req, res) {
 	try {
 		assertSameUserOrThrow(userIdFromParams, userIdFromToken);
 
+		const isTokenResult = await isTokenExist(userIdFromToken);
+
+		if (!isTokenResult.status) {
+		  return res.status(404).formatView({
+			message: "No active session found",
+			errorCode: 404,
+		  });
+		}
+
 		const appointments = await fetchUserIdAppointments(userIdFromToken);
 		if (!appointments) {
 			return res.status(404).formatView({
@@ -104,7 +98,7 @@ export async function getUserIdAppointments(req, res) {
 			});
 		}
 
-		catchMsg(`appointment getAppointmentsByClientId ${req.body}`, error, res, result);
+		catchMsg(`appointment getUserIdAppointments ${req.body}`, error, res, result);
 		res.formatView(result);
 	}
 }
@@ -126,6 +120,7 @@ export async function getUserIdAvailabilities(req, res) {
 			errorCode: 404,
 		  });
 		}
+
 		const availability = await fetchUserIdAvailabilities(userIdFromToken);
 
 		if (!availability) {
@@ -142,7 +137,7 @@ export async function getUserIdAvailabilities(req, res) {
 		};
 	} catch (error) {
 		catchMsg(
-			`appointment getAppointmentsByClientId ${req.body}`,
+			`appointment getUserIdAvailabilities ${req.body}`,
 			error,
 			res,
 			result
@@ -170,6 +165,14 @@ export async function registerUser(req, res) {
 			};
 		}
 	} catch (error) {
+		if (error.code === '23505') {
+			result = {
+				message: "Email déjà utilisé",
+				errorCode: 2
+			};
+			res.formatView(result);
+			return;
+		}
 		catchMsg(`user registerUser ${req.body}`, error, res, result);
 	}
 	res.formatView(result);

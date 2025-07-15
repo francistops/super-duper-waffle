@@ -1,14 +1,22 @@
 export function makeSuccess(data = {}) {
-    return {
-        message: 'Success',
-        errorCode: 0,
-        ...data
-    };
+	return {
+		message: 'Success',
+		errorCode: 0,
+		...data
+	};
 }
 
 export function makeError(message = 'Unknown Error', errorCode = 9999) {
-    return {
-        message: message,
-        errorCode: errorCode
-    };
+	return {
+		message,
+		errorCode
+	};
+}
+
+export function sendSuccess(res, data = {}) {
+	res.formatView(makeSuccess(data));
+}
+
+export function sendError(res, status, message = 'Unknown Error', errorCode = status) {
+	res.status(status).formatView(makeError(message, errorCode));
 }
