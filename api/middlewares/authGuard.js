@@ -26,6 +26,7 @@ export async function validateToken(req, res, next) {
 			.formatView({ message: 'Invalid or expired token', errorCode: 401 });
 		}
 
+		// this is to check if the token given is actually the user's token?
 		const isTokenResult = await isTokenExist(tokenRow.user_id);
 		if (!isTokenResult.status) {
 			return res
@@ -47,8 +48,11 @@ export async function validateToken(req, res, next) {
 		}
 
 		req.selectedToken = tokenRow;
-		req.user = user;
-
+		req.user = { id: tokenRow.user_id }; 
+		// why is the return remove here?
+		// i'm extra careful in middleware
+		// has it effect a lot of route if it break
+		// or even changed
 		next();
 	} catch (err) {
 		const result = { ...UNKNOWN_ERROR };

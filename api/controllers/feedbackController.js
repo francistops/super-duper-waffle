@@ -22,7 +22,7 @@ export async function getFeedbacks(req, res) {
 				errorCode: 404,
 			});
 		}
-
+		// these have the same match i believe
 		if (feedbacks.length === 0) {
 			return res.status(204).formatView({
 				message: "No feedbacks available",

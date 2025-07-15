@@ -134,7 +134,9 @@ export async function login(user) {
 export async function logout(id) {
 	console.log("in auth.js logout");
 
-	// ça prend id ou non?
+	// ça prend id ou non? 
+	// A: ca prend un token pour la deconnection de memoire mais pt un id pour verifier si le token est bien a lui
+	// je te laisse suivre la route pour verifier
 	const data = await apiCall(`users/logout`, "POST", true, { id });
 
 	if (data.errorCode !== 0) {
