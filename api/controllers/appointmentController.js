@@ -1,5 +1,4 @@
 import {
-	fetchAppointments,
 	insertAppointment,
 	updateAppointment,
 	isAppointmentExist
@@ -11,28 +10,6 @@ const UNKNOWN_ERROR = {
 	message: "Unknown error",
 	errorCode: 9999,
 };
-
-export async function getAppointments(req, res) {
-	let result = UNKNOWN_ERROR;
-	try {
-		const appointments = await fetchAppointments();
-		if (!appointments || appointments.length === 0) {
-			return res.status(404).formatView({
-				message: "No appointments found",
-				errorCode: 404,
-			});
-		}
-		result = {
-			message: "Success",
-			errorCode: 0,
-			appointments: appointments,
-		};
-	} catch (error) {
-		catchMsg(`appointment getAppointments`, error, res, result);
-	}
-	console.log("in getAppointments controller" + result);
-	res.formatView(result);
-}
 
 export async function addAppointment(req, res) {
 	let result = UNKNOWN_ERROR;

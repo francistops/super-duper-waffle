@@ -14,6 +14,7 @@ export async function isTokenValid(token) {
 }
 
 export async function isTokenExist(id) {
+	console.log("isTokenExist called with id:", id);
 	const selectSql = `SELECT "token" 
                 	FROM "tokens"
                 	WHERE "user_id" = $1

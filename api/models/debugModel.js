@@ -18,8 +18,24 @@ export async function fetchUsers() {
 }
 
 export async function fetchTokens() {
-      const { rows } = await pool.query(`SELECT * FROM "tokens"`);
-      return rows;
+	const selectSql = `SELECT * FROM "tokens"`;
+	const queryResult = await pool.query(selectSql);
+	return queryResult.rows;
+}
+
+export async function fetchAvailabilities() {
+	const selectSql = `SELECT * FROM "availabilities"`;
+	const queryResult = await pool.query(selectSql);
+	return queryResult.rows;
+}
+
+export async function fetchAppointments() {
+	const selectSql = `SELECT *
+  					FROM "appointments"`;
+	const queryResult = await pool.query(selectSql);
+	return queryResult.rows;
+}
+
 }
 
 export async function fetchUserById(id) {
