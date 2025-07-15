@@ -7,6 +7,7 @@ export async function isTokenValid(token) {
                 WHERE "token" = $1
                 AND "expires" >= NOW();`;
 	const queryResult = await pool.query(selectSql, [token]);
+// enlever les conditions dans les modèles et retourner .rows si possibilité de plusieurs 
 	if (queryResult.rowCount != 1) {
 		return null;
 	}
