@@ -53,10 +53,13 @@ export async function validateToken(req, res, next) {
 		// i'm extra careful in middleware
 		// has it effect a lot of route if it break
 		// or even changed
+
+// parce que c'est inutile, c'est la fin anyway, ya rien d'autres aprèse try/catch dans ta fonction, ça return déjà 
 		next();
 	} catch (err) {
 		const result = { ...UNKNOWN_ERROR };
 		catchMsg("authGuard validateToken", err, res, result, 500);
 		res.formatView(result);
 	}
+// si y'avait de quoi ici il faudrait vérifier si on return ou non à la fin du try
 }
