@@ -1,6 +1,7 @@
 import pool from "../db/pool.js";
 
-// a nice and short way to format it i like it but the other way is fine too
+// a nice and short way to format it i like it but the other way is fine too 
+// <3 je vais mettre ça partout merci
 export async function fetchUsers() {
       const { rows } = await pool.query(`
             SELECT "users"."email",
