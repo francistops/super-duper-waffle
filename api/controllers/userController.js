@@ -51,6 +51,7 @@ export async function getUsersByRole(req, res) {
 export async function getUserIdAppointments(req, res) {
 	const result = makeError();
 	const userIdFromToken = req.user.id; // this exist?
+// oui c'est validateToken qui renvoie le user complet associé au token validé
 	const userIdFromParams = req.params.id;
 
 	try {
