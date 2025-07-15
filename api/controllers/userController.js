@@ -47,9 +47,11 @@ export async function getUsersByRole(req, res) {
 // i'm talking about returning asap instead of once.
 // also you must pick a way are using result formatview or catchmsg and the way you format your return
 // if you are confuse why, come talk to me
+// je viens de voir ta fonction catchmsg à soir, j'ai commencé à l'intégrer dans mon dernier mergé, ça pi makesucces pi toute la c'est vraiment une bonne idée 
 export async function getUserIdAppointments(req, res) {
 	const result = makeError();
 	const userIdFromToken = req.user.id; // this exist?
+// oui c'est validateToken qui renvoie le user complet associé au token validé
 	const userIdFromParams = req.params.id;
 
 	try {

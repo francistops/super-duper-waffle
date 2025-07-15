@@ -48,20 +48,11 @@ export async function validateToken(req, res, next) {
 		}
 
 		req.selectedToken = tokenRow;
-<<<<<<< HEAD
-		req.user = { id: tokenRow.user_id }; 
-		// why is the return remove here?
-		// i'm extra careful in middleware
-		// has it effect a lot of route if it break
-		// or even changed
-=======
-		req.user = user;
-
->>>>>>> 28127b2 (Sorry j'étais sur le main, check dans readme pour voir ce qui fonctionne, je viens de penser que dans appointment controller il faut que je gère que c'est un token de client qui peut add ou modify un appointment, je ne l'ai pas fais encore)
 		next();
 	} catch (err) {
 		const result = { ...UNKNOWN_ERROR };
 		catchMsg("authGuard validateToken", err, res, result, 500);
 		res.formatView(result);
 	}
+// si y'avait de quoi ici il faudrait vérifier si on return ou non à la fin du try
 }

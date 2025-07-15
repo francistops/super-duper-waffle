@@ -1,6 +1,7 @@
 import pool from "../db/pool.js";
 
-// a nice and short way to format it i like it but the other way is fine too
+// a nice and short way to format it i like it but the other way is fine too 
+// <3 je vais mettre ça partout merci
 export async function fetchUsers() {
       const { rows } = await pool.query(`
             SELECT "users"."email",
@@ -18,9 +19,22 @@ export async function fetchUsers() {
 }
 
 export async function fetchTokens() {
-<<<<<<< HEAD
       const { rows } = await pool.query(`SELECT * FROM "tokens"`);
       return rows;
+}
+
+export async function fetchAvailabilities() {
+	const selectSql = `SELECT * FROM "availabilities"`;
+	const queryResult = await pool.query(selectSql);
+	return queryResult.rows;
+}
+
+export async function fetchAppointments() {
+	const selectSql = `SELECT *
+  					FROM "appointments"`;
+	const queryResult = await pool.query(selectSql);
+	return queryResult.rows;
+}
 }
 
 export async function fetchUserById(id) {
@@ -41,7 +55,6 @@ export async function fetchUserById(id) {
       else if (result.rowCount < 1) throw new Error(`User ${id} not found`);
       return rows[0];
 }
-=======
 	const selectSql = `SELECT * FROM "tokens"`;
 	const queryResult = await pool.query(selectSql);
 	return queryResult.rows;
@@ -59,4 +72,4 @@ export async function fetchAppointments() {
 	const queryResult = await pool.query(selectSql);
 	return queryResult.rows;
 }
->>>>>>> 28127b2 (Sorry j'étais sur le main, check dans readme pour voir ce qui fonctionne, je viens de penser que dans appointment controller il faut que je gère que c'est un token de client qui peut add ou modify un appointment, je ne l'ai pas fais encore)
+}
