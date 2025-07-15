@@ -31,6 +31,7 @@ export async function fetchUserById(id) {
 						WHERE "users"."id" = $1;`;
 	const queryResult = await pool.query(selectSql, [id]);
 	//re-adding the trow let me know if i shouldn't have
+// je pense qu'ici dans les Models il ne doit y avoir que des requêtes, les if doivent tous être dans les contrôleurs, j'avais commencer à checker ça mais tu sais... ADHD
 	if (queryResult.rowCount < 1) throw new Error(`User ${id} not found`);
 	
 	return queryResult.rows[0];
