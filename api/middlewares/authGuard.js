@@ -1,6 +1,7 @@
 
 import { isTokenValid, isTokenExist } from '../models/tokenModel.js';
 import { catchMsg } from '../lib/utils.js';
+import { fetchUserById } from '../models/userModel.js';
 
 const UNKNOWN_ERROR = {
 	message: "Unknown error",
@@ -39,12 +40,24 @@ export async function validateToken(req, res, next) {
 				.formatView({ message: 'Token mismatch: unauthorized', errorCode: 403 });
 		}
 
+		const user = await fetchUserById(tokenRow.user_id);
+		if (!user) {
+			return res
+				.status(404)
+				.formatView({ message: 'User not found', errorCode: 404 });
+		}
+
 		req.selectedToken = tokenRow;
+<<<<<<< HEAD
 		req.user = { id: tokenRow.user_id }; 
 		// why is the return remove here?
 		// i'm extra careful in middleware
 		// has it effect a lot of route if it break
 		// or even changed
+=======
+		req.user = user;
+
+>>>>>>> 28127b2 (Sorry j'étais sur le main, check dans readme pour voir ce qui fonctionne, je viens de penser que dans appointment controller il faut que je gère que c'est un token de client qui peut add ou modify un appointment, je ne l'ai pas fais encore)
 		next();
 	} catch (err) {
 		const result = { ...UNKNOWN_ERROR };

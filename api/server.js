@@ -15,9 +15,9 @@ app.use(json());
 import negotiate from "./middlewares/negotiate.js";
 app.use(negotiate);
 
-import { loggerMiddleware, errorLoggerMiddleware } from './middlewares/logger.js';
+// import { loggerMiddleware, errorLoggerMiddleware } from './middlewares/logger.js';
 
-app.use(loggerMiddleware);
+// app.use(loggerMiddleware);
 
 import userRoute from "./routers/userRoutes.js";
 app.use("/users", userRoute);
@@ -40,7 +40,7 @@ app.use('/debug', debugRoute);
 import logRoute from './routers/logRoutes.js';
 app.use('/logs', logRoute);
 
-app.use(errorLoggerMiddleware);
+// app.use(errorLoggerMiddleware);
 
 
 

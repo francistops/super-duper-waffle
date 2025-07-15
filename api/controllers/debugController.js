@@ -1,6 +1,11 @@
 import { makeError, makeSuccess } from '../utils/resultFactory.js';
 
-import { fetchUsers, fetchTokens, fetchUserById } from "../models/debugModel.js"
+import { 
+	fetchUsers, 
+	fetchTokens, 
+	fetchAvailabilities, 
+	fetchAppointments,
+} from "../models/debugModel.js";
 
 export async function getUsers(req, res) {
 	let result = makeError();
@@ -36,5 +41,39 @@ export async function getUserById(req, res) {
 		res.status(400);
 		result = makeError(`Error retrieving user with id ${id}`, 1003);
 	}
+	res.formatView(result);
+}
+
+export async function getAvailabilities(req, res) {
+	let result = makeError();
+	try {
+		const availabilities = await fetchAvailabilities();
+		result = makeSuccess({ availabilities: availabilities });
+	} catch (error) {
+		res.status(400);
+		result = makeError(`Error retrieving availabilities: ${error}`, 1004);
+	}
+	res.formatView(result);
+}
+
+export async function getAppointments(req, res) {
+	let result = UNKNOWN_ERROR;
+	try {
+		const appointments = await fetchAppointments();
+		if (!appointments || appointments.length === 0) {
+			return res.status(404).formatView({
+				message: "No appointments found",
+				errorCode: 404,
+			});
+		}
+		result = {
+			message: "Success",
+			errorCode: 0,
+			appointments: appointments,
+		};
+	} catch (error) {
+		catchMsg(`appointment getAppointments`, error, res, result);
+	}
+	console.log("in getAppointments controller" + result);
 	res.formatView(result);
 }

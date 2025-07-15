@@ -18,11 +18,14 @@ const UNKNOWN_ERROR = {
 	errorCode: 9999,
 };
 
+<<<<<<< HEAD
 // already in debugCtrl same reason as the one for the model
 // unleast you need it to be display or internal feature
 // it should be in debug i believe
 // export async function getAllUsers(req, res) {
 
+=======
+>>>>>>> 28127b2 (Sorry j'étais sur le main, check dans readme pour voir ce qui fonctionne, je viens de penser que dans appointment controller il faut que je gère que c'est un token de client qui peut add ou modify un appointment, je ne l'ai pas fais encore)
 export async function getUsersByRole(req, res) {
 	let result = makeError();
 	const role = req.body.role;
@@ -55,6 +58,15 @@ export async function getUserIdAppointments(req, res) {
 	try {
 		assertSameUserOrThrow(userIdFromParams, userIdFromToken);
 
+		const isTokenResult = await isTokenExist(userIdFromToken);
+
+		if (!isTokenResult.status) {
+		  return res.status(404).formatView({
+			message: "No active session found",
+			errorCode: 404,
+		  });
+		}
+
 		const appointments = await fetchUserIdAppointments(userIdFromToken);
 		if (!appointments) {
 			return res.status(404).formatView({
@@ -76,7 +88,7 @@ export async function getUserIdAppointments(req, res) {
 			});
 		}
 
-		catchMsg(`appointment getAppointmentsByClientId ${req.body}`, error, res, result);
+		catchMsg(`appointment getUserIdAppointments ${req.body}`, error, res, result);
 		res.formatView(result);
 	}
 }
@@ -98,6 +110,7 @@ export async function getUserIdAvailabilities(req, res) {
 			errorCode: 404,
 		  });
 		}
+
 		const availability = await fetchUserIdAvailabilities(userIdFromToken);
 
 		if (!availability) {
@@ -114,7 +127,7 @@ export async function getUserIdAvailabilities(req, res) {
 		};
 	} catch (error) {
 		catchMsg(
-			`appointment getAppointmentsByClientId ${req.body}`,
+			`appointment getUserIdAvailabilities ${req.body}`,
 			error,
 			res,
 			result
@@ -142,6 +155,14 @@ export async function registerUser(req, res) {
 			};
 		}
 	} catch (error) {
+		if (error.code === '23505') {
+			result = {
+				message: "Email déjà utilisé",
+				errorCode: 2
+			};
+			res.formatView(result);
+			return;
+		}
 		catchMsg(`user registerUser ${req.body}`, error, res, result);
 	}
 	res.formatView(result);

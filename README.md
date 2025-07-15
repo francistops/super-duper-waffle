@@ -126,14 +126,14 @@ Dans le cadre du projet 0, nous proposons de développer **une application web �
 #### `AppointmentController`
 
 [X] - **DEBUG** (**Client et coiffeuse**) `GET /appointments` : Voir les rendez-vous.
-[] - **TOKEN** (**Client**) `POST /appointments` : Créer un rendez-vous.
+[X] - **TOKEN** (**Client**) `POST /appointments` : Créer un rendez-vous.
 [] - **TOKEN** (**Client et coiffeuse**) `PATCH /appointments/:id` : Mise à jour d’un rendez-vous.
 
 #### `AvailabilityController`
 
 [X] - **DEBUG** (**Client**) `GET /availabilities` : Voir toutes les disponibilités
-[] - **TOKEN** (**Client et coiffeuse**) `PATCH /availabilities/:id/` : Mise à jour d'une disponibilité.
-[] - **TOKEN** (**Coiffeuse**) `POST /availabilities` : Création de disponibilités.
+[X] - **TOKEN** (**Client et coiffeuse**) `PATCH /availabilities/:id/` : Mise à jour d'une disponibilité.
+[X] - **TOKEN** (**Coiffeuse**) `POST /availabilities` : Création de disponibilités.
 
 #### `ServiceController`
 
