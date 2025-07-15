@@ -35,7 +35,6 @@ export async function fetchAppointments() {
 	const queryResult = await pool.query(selectSql);
 	return queryResult.rows;
 }
-}
 
 export async function fetchUserById(id) {
       const { rows, rowCount } = await pool.query(`
@@ -54,22 +53,4 @@ export async function fetchUserById(id) {
       if (rowCount > 1) throw new Error(`Too many users for id ${id}`);
       else if (result.rowCount < 1) throw new Error(`User ${id} not found`);
       return rows[0];
-}
-	const selectSql = `SELECT * FROM "tokens"`;
-	const queryResult = await pool.query(selectSql);
-	return queryResult.rows;
-}
-
-export async function fetchAvailabilities() {
-	const selectSql = `SELECT * FROM "availabilities"`;
-	const queryResult = await pool.query(selectSql);
-	return queryResult.rows;
-}
-
-export async function fetchAppointments() {
-	const selectSql = `SELECT *
-  					FROM "appointments"`;
-	const queryResult = await pool.query(selectSql);
-	return queryResult.rows;
-}
 }
