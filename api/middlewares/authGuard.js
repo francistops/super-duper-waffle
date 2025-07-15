@@ -48,13 +48,6 @@ export async function validateToken(req, res, next) {
 		}
 
 		req.selectedToken = tokenRow;
-		req.user = { id: tokenRow.user_id }; 
-		// why is the return remove here?
-		// i'm extra careful in middleware
-		// has it effect a lot of route if it break
-		// or even changed
-
-// parce que c'est inutile, c'est la fin anyway, ya rien d'autres aprèse try/catch dans ta fonction, ça return déjà 
 		next();
 	} catch (err) {
 		const result = { ...UNKNOWN_ERROR };
