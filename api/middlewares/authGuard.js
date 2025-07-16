@@ -1,58 +1,38 @@
-
-import { isTokenValid, isTokenExist } from '../models/tokenModel.js';
-import { catchMsg } from '../lib/utils.js';
-import { fetchUserById } from '../models/userModel.js';
-
-const UNKNOWN_ERROR = {
-	message: "Unknown error",
-	errorCode: 9999,
-};
+import { catchMsg } from "../lib/utils.js";
+import { fetchUserById } from "../models/userModel.js";
+import { isTokenValid } from "../models/tokenModel.js";
+import { makeError } from "../utils/resultFactory.js";
 
 export async function validateToken(req, res, next) {
-	const header = req.headers.authorization || '';
-	const [scheme, token] = header.split(' ');
-	if (scheme !== 'Bearer' || !token) {
-		return res
-			.status(400)
-			.formatView({ message: 'Missing or malformed token', errorCode: 400 });
+	let result = makeError();
+
+	const header = req.headers.authorization || "";
+	const [scheme, token] = header.split(" ");
+
+	if (scheme !== "Bearer" || !token) {
+		result = makeError("Missing or malformed token", 400);
+		return res.status(400).formatView(result);
 	}
 
 	try {
 		const tokenRow = await isTokenValid(token);
 
 		if (!tokenRow) {
-			return res
-			.status(401)
-			.formatView({ message: 'Invalid or expired token', errorCode: 401 });
-		}
-
-		// this is to check if the token given is actually the user's token?
-		const isTokenResult = await isTokenExist(tokenRow.user_id);
-		if (!isTokenResult.status) {
-			return res
-				.status(403)
-				.formatView({ message: 'No active session found', errorCode: 403 });
-		}
-
-		if (isTokenResult.token.token !== token) {
-			return res
-				.status(403)
-				.formatView({ message: 'Token mismatch: unauthorized', errorCode: 403 });
+			result = makeError("Invalid or expired token", 401);
+			return res.status(401).formatView(result);
 		}
 
 		const user = await fetchUserById(tokenRow.user_id);
 		if (!user) {
-			return res
-				.status(404)
-				.formatView({ message: 'User not found', errorCode: 404 });
+			result = makeError("User not found", 404);
+			return res.status(404).formatView(result);
 		}
 
 		req.selectedToken = tokenRow;
+		req.user = user;
 		next();
 	} catch (err) {
-		const result = { ...UNKNOWN_ERROR };
 		catchMsg("authGuard validateToken", err, res, result, 500);
-		res.formatView(result);
+		return res.formatView(result);
 	}
-// si y'avait de quoi ici il faudrait vérifier si on return ou non à la fin du try
 }

@@ -1,10 +1,13 @@
-import { makeError, makeSuccess } from '../utils/resultFactory.js';
+import { makeError, makeSuccess } from "../utils/resultFactory.js";
 
-import { 
-	fetchUsers, 
-	fetchTokens, 
-	fetchAvailabilities, 
+import {
+	fetchUsers,
+	fetchTokens,
+	fetchUserById,
+	fetchAvailabilities,
 	fetchAppointments,
+	fetchFeedbacks,
+	fetchServices,
 } from "../models/debugModel.js";
 
 export async function getUsers(req, res) {
@@ -74,6 +77,36 @@ export async function getAppointments(req, res) {
 	} catch (error) {
 		catchMsg(`appointment getAppointments`, error, res, result);
 	}
-	console.log("in getAppointments controller" + result);
+	res.formatView(result);
+}
+
+export async function getFeedbacks(req, res) {
+	let result = makeError();
+	try {
+		const feedbacks = await fetchFeedbacks();
+		result = makeSuccess({ feedbacks: feedbacks });
+	} catch (error) {
+		res.status(400);
+		result = makeError(`Error retrieving feedbacks: ${error}`, 1001);
+	}
+	res.formatView(result);
+}
+
+export async function getServices(req, res) {
+	let result = makeError();
+	console.error("getServices called");
+	try {
+		console.error("Fetching services...");
+		const services = await fetchServices();
+		console.error("Services fetched successfully:", services);
+
+		if (!services) {
+			result = makeError({ services }, "No services found");
+		} else {
+			result = makeSuccess({ services }, "Services retrieved successfully");
+		}
+	} catch (error) {
+		catchMsg(`service getServices`, error, res, result);
+	}
 	res.formatView(result);
 }

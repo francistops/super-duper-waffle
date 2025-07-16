@@ -1,9 +1,9 @@
 import pool from "../db/pool.js";
 
-// a nice and short way to format it i like it but the other way is fine too 
+// a nice and short way to format it i like it but the other way is fine too
 // <3 je vais mettre ça partout merci
 export async function fetchUsers() {
-      const { rows } = await pool.query(`
+	const { rows } = await pool.query(`
             SELECT "users"."email",
                       "users"."id",
                       "users"."passhash",
@@ -13,14 +13,13 @@ export async function fetchUsers() {
                 FROM "users"
                 LEFT JOIN "tokens" ON "users"."id" = "tokens"."user_id"
                 ORDER BY "users"."email";
-            `
-      );
-      return rows;
+            `);
+	return rows;
 }
 
 export async function fetchTokens() {
-      const { rows } = await pool.query(`SELECT * FROM "tokens"`);
-      return rows;
+	const { rows } = await pool.query(`SELECT * FROM "tokens"`);
+	return rows;
 }
 
 export async function fetchAvailabilities() {
@@ -37,7 +36,8 @@ export async function fetchAppointments() {
 }
 
 export async function fetchUserById(id) {
-      const { rows, rowCount } = await pool.query(`
+	const { rows, rowCount } = await pool.query(
+		`
             SELECT "users"."email",
                       "users"."id",
                       "users"."passhash",
@@ -48,9 +48,23 @@ export async function fetchUserById(id) {
                 LEFT JOIN "tokens" ON "users"."id" = "tokens"."user_id"
                 WHERE "users"."id" = $1;
                 `,
-            [id]
-      );
-      if (rowCount > 1) throw new Error(`Too many users for id ${id}`);
-      else if (result.rowCount < 1) throw new Error(`User ${id} not found`);
-      return rows[0];
+		[id]
+	);
+	if (rowCount > 1) throw new Error(`Too many users for id ${id}`);
+	else if (result.rowCount < 1) throw new Error(`User ${id} not found`);
+	return rows[0];
+}
+
+export async function fetchFeedbacks() {
+	const selectSql = `SELECT *
+  					FROM "feedbacks"`;
+	const queryResult = await pool.query(selectSql);
+	return queryResult.rows;
+}
+
+export async function fetchServices() {
+	const { rows } = await pool.query(`SELECT *
+							FROM services
+							ORDER BY name ASC;`);
+	return rows;
 }

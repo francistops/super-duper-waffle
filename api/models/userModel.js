@@ -9,92 +9,76 @@ function hash(passHash) {
 		.digest("hex");
 }
 
-// removing fetchAllUsers() because it's already in debug and
-// the other one is better has it also show token per user
-// if user has one
-
-// fetchUserById(id) was deem not needed by the frontend
-// also has a similar one in debugModel
-
-// let me know if either are require by the frontend or other
-
-// also wondering why sql and result were rename?
-// no biggie, I will use queryResult "Verb"Sql in the future
-
-
-// leaving it here for now has a route require it	
 export async function fetchUserById(id) {
-	const selectSql = `SELECT "id",
+	const { rows } = await pool.query(
+		`SELECT "id",
                       "email",
                       "role"
 						FROM "users"
-						WHERE "users"."id" = $1;`;
-	const queryResult = await pool.query(selectSql, [id]);
-	//re-adding the trow let me know if i shouldn't have
-// je pense qu'ici dans les Models il ne doit y avoir que des requêtes, les if doivent tous être dans les contrôleurs, j'avais commencer à checker ça mais tu sais... ADHD
-	if (queryResult.rowCount < 1) throw new Error(`User ${id} not found`);
-	
-	return queryResult.rows[0];
+						WHERE "users"."id" = $1;`,
+		[id]
+	);
+	return rows[0];
 }
 
 export async function insertUser(user) {
 	const role = user.role || "client";
-	const selectSql = `INSERT INTO users ("email", "passhash", "role") 
-						VALUES ($1, $2, $3)
-						returning *;`;
-	const param = [
-		user.email, 
-		hash(user.passhash), 
-		role
-	];
-	const queryResult = await pool.query(selectSql, param);
-	//why do we need to return the user
-	// checked and we dont, let me know if we do
-	// change the check but need testing
-	return queryResult.rowCount === 1;
+
+	await pool.query(
+		`INSERT INTO users ("email", "passhash", "role", "first_name", "last_name") 
+		 VALUES ($1, $2, $3, $4, $5)`,
+		[user.email, hash(user.passhash), role, user.first_name, user.last_name]
+	);
+
+	return true;
 }
 
-// good catch, i was bit too open here 
-export async function isUserValid(email, passhash) {
-	const selectSql = `SELECT "email"
-	                   FROM "users"
-	                   WHERE "email" = $1 AND "passhash"= $2;`;
-
-	const queryResult = await pool.query(selectSql, [email, hash(passhash)]);
-	return queryResult.rowCount === 1;
+export async function isUserExist(email, passhash) {
+	const { rows } = await pool.query(
+		`SELECT "id","first_name", "last_name", "email", "role"
+		FROM "users"
+		WHERE "email" = $1 AND "passhash"= $2;`,
+		[email, hash(passhash)]
+	);
+	return rows[0] || null;
 }
 
 export async function fetchIdByEmail(email) {
-	const selectSql = `SELECT "id"
-                      	FROM "users"
-                      	WHERE "email" = $1`;
-	const queryResult = await pool.query(selectSql, [email]);
-	if (queryResult.rowCount === 0) throw new Error(`${email} not found`);
-	return queryResult.rows[0].id;
+	const { rows } = await pool.query(
+		`SELECT "id"
+		FROM "users"
+		WHERE "email" = $1`,
+		[email]
+	);
+	return rows[0].id;
 }
 
 export async function logoutByToken(token) {
-	const updateSql = `UPDATE "tokens" 
+	const { rows } = await pool.query(
+		`UPDATE "tokens" 
 						SET "expires" = NOW() 
 						WHERE "token" = $1
-						RETURNING *;
-				`;
-	const queryResult = await pool.query(updateSql, [token]);
-	return queryResult.rowCount === 1;
+						RETURNING *;`,
+		[token]
+	);
+	return rows.length === 1;
 }
 
 export async function fetchByRole(role) {
-	const selectSql = `SELECT * FROM "users" WHERE "role" = $1`;
-	const queryResult = await pool.query(selectSql, [role]);
-	return queryResult.rows;
+	const { rows } = await pool.query(
+		`SELECT "id", "email" FROM "users" WHERE "role" = $1`,
+		[role]
+	);
+	return rows;
 }
 
 export async function deactivateUserById(id) {
-	const newEmail  = `${id}@deactivated.local`;
-	const updateSql = `	UPDATE "users"
-							SET "email" = $1, "passhash" = $3, "role" = 'deactivated'
-							WHERE "id" = $2
-						`;
-	const queryResult = await pool.query(updateSql, [newEmail, id, hash(id)]);
-	return queryResult.rowCount === 1;
+	const newEmail = `${id}@deactivated.local`;
+	const { rowCount } = await pool.query(
+		`UPDATE "users"
+			SET "email" = $1, "passhash" = $2, "role" = 'deactivated'
+			WHERE "id" = $3`,
+		[newEmail, hash(id), id]
+	);
+	return rowCount === 1;
 }

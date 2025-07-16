@@ -1,8 +1,6 @@
 import { Router } from "express";
 const router = Router();
-import {
-	getServices,
-} from "../controllers/serviceController.js";
+import { getServices } from "../controllers/serviceController.js";
 
 router.get("/", getServices);
 

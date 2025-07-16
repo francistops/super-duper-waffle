@@ -1,132 +1,84 @@
 import {
-	fetchIdByEmail,
-	fetchUserById,
 	fetchByRole,
 	insertUser,
-	isUserValid,
+	isUserExist,
 	deactivateUserById,
 	logoutByToken,
 } from "../models/userModel.js";
 import { fetchUserIdAppointments } from "../models/appointmentModel.js";
 import { fetchUserIdAvailabilities } from "../models/availabilityModel.js";
-import { assignToken, isTokenExist } from "../models/tokenModel.js";
+import { assignToken } from "../models/tokenModel.js";
 import { catchMsg, assertSameUserOrThrow } from "../lib/utils.js";
 import { makeSuccess, makeError } from "../utils/resultFactory.js";
 
-const UNKNOWN_ERROR = {
-	message: "Unknown error",
-	errorCode: 9999,
-};
-
-// already in debugCtrl same reason as the one for the model
-// unleast you need it to be display or internal feature
-// it should be in debug i believe
-// export async function getAllUsers(req, res) {
-
 export async function getUsersByRole(req, res) {
 	let result = makeError();
-	const role = req.body.role;
-	
+	const role = req.params.role;
+
 	try {
 		const validRoles = ["hairdresser", "client"];
-		if (!role || !validRoles.includes(role)) throw new Error(`Invalid or missing role: 
-			must be one of ${validRoles.join(", ")}`);
-		
+		if (!role || !validRoles.includes(role))
+			result = makeError("Invalid role specified", 1);
+
 		const users = await fetchByRole(role);
 
-		if (users) makeSuccess({ users: users }, "Users retrieved successfully")
-		else makeError("Failed to retrieve users", 1)
-
+		if (Array.isArray(users)) {
+			result = makeSuccess({ users }, "Users retrieved successfully");
+		} else {
+			result = makeError("Failed to retrieve users", 1);
+		}
 	} catch (error) {
-		catchMsg(`user getUsersByRole ${req.params}`, error, res, result, 500);
+		return catchMsg(
+			`user getUsersByRole ${req.params}`,
+			error,
+			res,
+			result,
+			500
+		);
 	}
 	res.formatView(result);
 }
 
-// the below is valid but just not how we did things until now see above for example
-// i'm talking about returning asap instead of once.
-// also you must pick a way are using result formatview or catchmsg and the way you format your return
-// if you are confuse why, come talk to me
-// je viens de voir ta fonction catchmsg à soir, j'ai commencé à l'intégrer dans mon dernier mergé, ça pi makesucces pi toute la c'est vraiment une bonne idée 
 export async function getUserIdAppointments(req, res) {
-	const result = makeError();
-	const userIdFromToken = req.user.id; // this exist?
-// oui c'est validateToken qui renvoie le user complet associé au token validé
-	const userIdFromParams = req.params.id;
+	let result = makeError();
 
 	try {
-		assertSameUserOrThrow(userIdFromParams, userIdFromToken);
+		const appointments = await fetchUserIdAppointments(req.params.id);
 
-		const isTokenResult = await isTokenExist(userIdFromToken);
-
-		if (!isTokenResult.status) {
-		  return res.status(404).formatView({
-			message: "No active session found",
-			errorCode: 404,
-		  });
+		if (!appointments || appointments.length === 0) {
+			result = makeError("No appointments found for this user", 1);
+			return res.status(404).formatView(result);
 		}
 
-		const appointments = await fetchUserIdAppointments(userIdFromToken);
-		if (!appointments) {
-			return res.status(404).formatView({
-				message: `No appointments found for user ${userIdFromToken}`,
-				errorCode: 404,
-			});
-		}
-
-		return res.formatView({
-			message: "Success",
-			errorCode: 0,
-			appointment: appointments,
-		});
+		result = makeSuccess(
+			{ appointments },
+			"Appointments retrieved successfully"
+		);
 	} catch (error) {
-		if (error.statusCode === 403) {
-			return res.status(403).formatView({
-				message: error.message,
-				errorCode: 403,
-			});
-		}
-
-		catchMsg(`appointment getUserIdAppointments ${req.body}`, error, res, result);
-		res.formatView(result);
+		result = makeError("Failed to retrieve appointments", 1);
+		return catchMsg(
+			`user getUserIdAppointments ${req.params}`,
+			error,
+			res,
+			result
+		);
 	}
+	res.formatView(result);
 }
 
 export async function getUserIdAvailabilities(req, res) {
-	let result = UNKNOWN_ERROR;
+	let result = makeError();
 
 	try {
-		const userIdFromToken = req.user.id;
-		const userIdFromParams = req.params.id;
-		
-		assertSameUserOrThrow(userIdFromParams, userIdFromToken);
-		
-		const isTokenResult = await isTokenExist(userIdFromToken);
-
-		if (!isTokenResult.status) {
-		  return res.status(404).formatView({
-			message: "No active session found",
-			errorCode: 404,
-		  });
-		}
-
-		const availability = await fetchUserIdAvailabilities(userIdFromToken);
-
-		if (!availability) {
-			return res.status(404).formatView({
-				message: `No availabilities found for user ${userIdFromToken}`,
-				errorCode: 404,
-			});
-		}
-
-		result = {
-			message: "Success",
-			errorCode: 0,
-			availability: availability,
-		};
+		const availability = await fetchUserIdAvailabilities(req.params.id);
+		result = makeSuccess(
+			{ availability },
+			"User's availabilities retrieved successfully"
+		);
 	} catch (error) {
-		catchMsg(
-			`appointment getUserIdAvailabilities ${req.body}`,
+		result = makeError("Failed to retrieve availabilities", 1);
+		return catchMsg(
+			`user getUserIdAvailabilities ${req.params}`,
 			error,
 			res,
 			result
@@ -136,165 +88,105 @@ export async function getUserIdAvailabilities(req, res) {
 }
 
 export async function registerUser(req, res) {
-	let result = UNKNOWN_ERROR;
-	const newUser = req.body;
-	console.log("newUser", newUser);
+	let result = makeError();
 
 	try {
-		const user = await insertUser(newUser);
+		const user = await insertUser(req.body);
+		console.error(`user registerUser ${req.body}`, user);
 		if (user) {
-			result = {
-				message: "Success",
-				errorCode: 0
-			};
+			result = makeSuccess({ user }, "User registered successfully");
 		} else {
-			result = {
-				message: "fail",
-				errorCode: 1,
-			};
+			result = makeError("User registration failed");
 		}
 	} catch (error) {
-		if (error.code === '23505') {
-			result = {
-				message: "Email déjà utilisé",
-				errorCode: 2
-			};
-			res.formatView(result);
-			return;
+		if (error.code === "23505") {
+			result = makeError("Email déjà utilisé", 2);
+		} else {
+			result = makeError("User registration failed", 1);
+			return catchMsg(`user registerUser ${req.body}`, error, res, result);
 		}
-		catchMsg(`user registerUser ${req.body}`, error, res, result);
 	}
 	res.formatView(result);
 }
 
-//todo in auth.js minimize api call
 export async function loginUser(req, res) {
-	let result = UNKNOWN_ERROR;
+	let result = makeError();
 	const { email: email, passhash: passHash } = req.body;
+
 	try {
-		const checkedUser = await isUserValid(email, passHash);
-		console.log("checkedUser", checkedUser);
+		const checkedUser = await isUserExist(email, passHash);
+
 		if (checkedUser) {
-
-			const userId = await fetchIdByEmail(email);
-			const isTokenResult = await isTokenExist(userId);
-
-			if (!isTokenResult.status) {
-				const userToken = await assignToken(userId);
-				const user = await fetchUserById(userId);
-
-				result = {
-					message: "Successfull login",
-					errorCode: 0,
+			const userToken = await assignToken(checkedUser.id);
+			result = makeSuccess(
+				{
 					user: {
-						id: userId,
-						email: user.email,
-						role: user.role,
+						id: checkedUser.id,
+						email: checkedUser.email,
+						role: checkedUser.role,
 					},
 					token: userToken,
-				};
-			} else if (isTokenResult.status) {
-				result = {
-					message: "already logged in",
-					errorCode: 0,
-					token: isTokenResult.token,
-				};
-			}
+				},
+				"User logged in successfully"
+			);
 		} else {
-			result = {
-				message: "Invalid credentials",
+			result = makeError({
+				message: "already logged in",
 				errorCode: 401,
-			};
-			res.status(401);
+			});
 		}
 	} catch (error) {
-		catchMsg(`user loginUser ${req.body.email}`, error, res, result);
+		result = makeError("Login failed", 1);
+		if (error.code === "23505") {
+			result = makeError("Email already used", 2);
+		} else if (error.code === "23502") {
+			result = makeError("Email or password missing", 3);
+		}
+		return catchMsg(`user loginUser ${req.body.email}`, error, res, result);
 	}
-
 	res.formatView(result);
 }
 
 export async function logoutUser(req, res) {
-	let result = UNKNOWN_ERROR;
+	let result = makeError();
 
 	try {
-
-		const userId  = req.body.id;
-
-		if (!userId) {
-			return res.status(400).formatView({
-				message: "User not authenticated",
-				errorCode: 400,
-			});
-		}
-		
-		const isTokenResult = await isTokenExist(userId);
-
-		if (!isTokenResult.status) {
-		  return res.status(404).formatView({
-			message: "No active session found",
-			errorCode: 404,
-		  });
-		}
-
 		const logoutConfirmation = await logoutByToken(req.selectedToken.token);
 
 		if (logoutConfirmation) {
-			result = {
-				message: "Logout successful",
-				errorCode: 0,
-			};
+			result = makeSuccess({}, "User logged out successfully");
 		} else {
-			result = {
-				message: "Logout failed",
-				errorCode: 1,
-			};
+			result = makeError("Logout failed");
 		}
 	} catch (error) {
-		catchMsg(`user logoutUser ${req.selectedToken}`, error, res, result);
+		result = makeError("Logout failed", 1);
+		if (error.code === "23503") {
+			result = makeError("Token not found or already removed", 2);
+		} else if (error.code === "23505") {
+			result = makeError("Token already removed", 3);
+		}
+		return catchMsg(`user logoutUser ${req.user.id}`, error, res, result);
 	}
-
 	res.formatView(result);
 }
 
 export async function deactivateUser(req, res) {
-	let result = UNKNOWN_ERROR;
+	let result = makeError();
 
 	try {
-
-		const userIdFromToken = req.user.id;
-		const userIdFromBody = req.body.id;
-
-		assertSameUserOrThrow(userIdFromBody, userIdFromToken);
-
-		const isTokenResult = await isTokenExist(userIdFromToken);
-		if (!isTokenResult.status) {
-		  return res.status(404).formatView({
-			message: "No active session found",
-			errorCode: 404,
-		  });
-		}
-
-		const deactivationConfirmation = await deactivateUserById(userIdFromBody);
+		const deactivationConfirmation = await deactivateUserById(req.user.id);
 
 		if (deactivationConfirmation) {
 			const removingToken = await logoutByToken(req.selectedToken.token);
 			if (!removingToken) {
-				throw new Error("Failed to remove token during user deactivation.");
+				result = makeError("Failed to remove token during deactivation", 1);
 			}
-			result = {
-				message: `User ${userIdFromBody } deactivated successfully`,
-				errorCode: 0,
-			};
+			result = makeSuccess({}, "User deactivated successfully");
 		} else {
-			result = {
-				message: `Failed to deactivate user ${userIdFromBody}`,
-				errorCode: 1,
-			};
+			result = makeError(`Failed to deactivate user ${userIdFromBody}`, 1);
 		}
 	} catch (error) {
-		catchMsg(`user deactivateUser ${req.user?.id}`, error, res, result);
+		return catchMsg(`user deactivateUser ${req.user?.id}`, error, res, result);
 	}
-
 	res.formatView(result);
 }

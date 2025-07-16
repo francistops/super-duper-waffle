@@ -9,7 +9,6 @@ services:
       - ./site:/usr/share/nginx/html:rw
       - ./certs:/etc/nginx/certs:ro
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/mime.types:/etc/nginx/mime.types:ro
     depends_on:
       - nodejs
     restart: unless-stopped

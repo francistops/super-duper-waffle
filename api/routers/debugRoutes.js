@@ -1,25 +1,22 @@
-import { Router } from 'express';
+import { Router } from "express";
 const router = Router();
 
 import {
-    getUsers,
-    getTokens,
-    getUserById,
+	getUsers,
+	getTokens,
+	getUserById,
 	getAvailabilities,
-	getAppointments
-} from '../controllers/debugController.js';
+	getAppointments,
+	getFeedbacks,
+	getServices,
+} from "../controllers/debugController.js";
 
-router.get('/users', getUsers);
-router.get('/tokens', getTokens);
-router.get("/:id", getUserById);
-router.get('/availabilities', getAvailabilities);
+router.get("/users", getUsers);
+router.get("/tokens", getTokens);
+router.get("/availabilities", getAvailabilities);
 router.get("/appointments", getAppointments);
-
-// nyi
-//router.delete('/user/delete/:id', validateToken, deleteUser)
-
-//router.get('/appointments', GetAppointments);
-
-//router.get('/feedbacks', getFeedbacks);
+router.get("/feedbacks", getFeedbacks);
+router.get("/services", getServices);
+router.get("/:id", getUserById);
 
 export default router;
