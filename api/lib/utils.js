@@ -28,8 +28,10 @@ export async function callModel(
 	dataKey = "rows",
 	...reqObjs
 ) {
+	console.error("callModel called with: ", modelFn, reqObjs);
 	try {
 		const data = await modelFn(...reqObjs);
+		console.error("callModel data: ", data);
 		return sendSuccess(res, { [dataKey]: data });
 	} catch (error) {
 		const result = makeError();
