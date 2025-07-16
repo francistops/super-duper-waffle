@@ -36,7 +36,6 @@ export async function addAvailability(req, res) {
 				"Availability already exists for this date and hairdresser"
 			);
 		}
-
 		await callModel(res, 73, insertAvailability, "availability", {
 			hairdresser_id,
 			availability_date,
@@ -49,6 +48,11 @@ export async function addAvailability(req, res) {
 
 export async function modifyAvailability(req, res) {
 	let result = makeError();
+	console.error(
+		"modifyAvailability called with params: ",
+		req.params,
+		req.body
+	);
 
 	try {
 		const availabilityId = req.params.id;
@@ -66,11 +70,19 @@ export async function modifyAvailability(req, res) {
 			return sendError(res, 400, "Missing id or status", 1);
 		}
 
+		console.error(
+			"modifyAvailability called with: ",
+			availabilityId,
+			availabilityNewStatus
+		);
+		console.error("User role: ", req.user.role);
 		if (req.user.role !== "hairdresser") {
 			return sendError(res, 403, "Only hairdressers can modify availabilities");
 		}
 
 		const availability = await isAvailabilityExist({ availabilityId });
+		console.error("Availability found: ", availability);
+		console.error("Availability status: ", availability.status);
 
 		if (!availability) {
 			return sendError(res, 404, "Availability not found");
