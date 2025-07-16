@@ -10,6 +10,11 @@ export async function hashPassword(password) {
 			.join("");
 	} catch (error) {
 		console.log(`error: ${error}`);
+		return {
+			success: false,
+			errorCode: 500,
+			message: "Erreur lors du hachage du mot de passe",
+		};
 	}
 	return hashHex;
 }
@@ -37,9 +42,7 @@ async function apiCall(resource, method, auth, body = {}) {
 	}
 
 	try {
-		console.log("allo");
 		const response = await fetch(apiUrl, apiReq);
-		console.log("allo2");
 		if (response.ok) {
 			result = await response.json();
 		} else {
@@ -132,8 +135,6 @@ export async function login(user) {
 }
 
 export async function logout(id) {
-	console.log("in auth.js logout");
-
 	// ça prend id ou non?
 	// A: ca prend un token pour la deconnection de memoire mais pt un id pour verifier si le token est bien a lui
 	// je te laisse suivre la route pour verifier
@@ -161,8 +162,6 @@ export async function logout(id) {
 }
 
 export async function deactivateAccount(id) {
-	console.log("in auth.js deactivateAccount");
-
 	const data = await apiCall(`users/deactivate`, "POST", true, { id });
 
 	if (data.errorCode !== 0) {
