@@ -2,7 +2,7 @@ import { globalStyles } from "../global/style.js";
 import {
 	getUsersByRole,
 	getUserIdAvailabilities,
-	getServices,
+	// getServices,
 	modifyAvailability,
 	createAppointment,
 } from "../../script/auth.js";
@@ -31,7 +31,7 @@ class handlingAvailabilitiesClient extends HTMLElement {
 		await this.loadContent();
 
 		this.hairdressers = await getUsersByRole("hairdresser");
-		this.services = await getServices();
+		// this.services = await getServices();
 
 		const selectedHairdresser = this.shadowRoot.getElementById(
 			"selectedHairdresser"
