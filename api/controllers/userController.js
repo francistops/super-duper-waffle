@@ -92,6 +92,7 @@ export async function registerUser(req, res) {
 
 	try {
 		const user = await insertUser(req.body);
+		console.error(`user registerUser ${req.body}`, user);
 		if (user) {
 			result = makeSuccess({ user }, "User registered successfully");
 		} else {

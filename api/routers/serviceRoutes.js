@@ -1,9 +1,7 @@
-// import { Router } from "express";
-// const router = Router();
-// import {
-// 	getServices,
-// } from "../controllers/serviceController.js";
+import { Router } from "express";
+const router = Router();
+import { getServices } from "../controllers/serviceController.js";
 
-// router.get("/", getServices);
+router.get("/", getServices);
 
-// export default router;
+export default router;
