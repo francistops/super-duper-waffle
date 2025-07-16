@@ -1,8 +1,8 @@
 import pool from "../db/pool.js";
 
 export async function fetchServices() {
-	const selectSql = `SELECT * 
-							FROM "services"`;
-	const queryResult = await pool.query(selectSql);
-	return queryResult.rows;
+	const { rows } = await pool.query(`SELECT * 
+							FROM services
+							ORDER BY name ASC;`);
+	return rows;
 }

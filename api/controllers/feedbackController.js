@@ -1,40 +1,22 @@
 import {
 	fetchFeedbacks,
 	insertFeedback,
-	isFeedbackExist
+	isFeedbackExist,
 } from "../models/feedbackModel.js";
-import { isTokenExist } from "../models/tokenModel.js";
-import { catchMsg, assertSameUserOrThrow } from "../lib/utils.js";
-
-const UNKNOWN_ERROR = {
-	message: "Unknown error",
-	errorCode: 9999,
-};
+import { catchMsg } from "../lib/utils.js";
+import { makeError, makeSuccess } from "../utils/resultFactory.js";
 
 export async function getFeedbacks(req, res) {
-	let result = UNKNOWN_ERROR;
+	let result = makeError();
+
 	try {
 		const feedbacks = await fetchFeedbacks();
 
 		if (!feedbacks) {
-			return res.status(404).formatView({
-				message: "No feedbacks found",
-				errorCode: 404,
-			});
+			result = makeError({ feedbacks }, "No feedbacks found");
+		} else {
+			result = makeSuccess({ feedbacks }, "Feedbacks retrieved successfully");
 		}
-		// these have the same match i believe
-		if (feedbacks.length === 0) {
-			return res.status(204).formatView({
-				message: "No feedbacks available",
-				errorCode: 204,
-			});
-		}
-		
-		result = {
-			message: "Success",
-			errorCode: 0,
-			feedbacks: feedbacks,
-		};
 	} catch (error) {
 		catchMsg(`feedback FetchFeedback`, error, res, result);
 	}
@@ -42,33 +24,45 @@ export async function getFeedbacks(req, res) {
 }
 
 export async function addFeedback(req, res) {
-	let result = UNKNOWN_ERROR;
-	
+	let result = makeError();
+
 	try {
 		const { appointmentId, clientId, comment, rating } = req.body;
 
 		if (!appointmentId || !clientId || !comment || !rating) {
-			return res.status(400).formatView({
-				message: "Champs manquants pour le feedback",
-				errorCode: 400,
-			});
+			return makeError(
+				{ appointmentId, clientId, comment, rating },
+				"Champs manquants pour le feedback"
+			);
 		}
 
-		const feedback = await insertFeedback({ appointmentId, clientId, comment, rating });
+		const alreadyExists = await isFeedbackExist(appointmentId, clientId);
+		if (alreadyExists) {
+			return sendError(
+				res,
+				409,
+				"Un feedback existe déjà pour ce rendez-vous."
+			);
+		}
+
+		const feedback = await insertFeedback({
+			appointmentId,
+			clientId,
+			comment,
+			rating,
+		});
 
 		if (!feedback) {
-			return res.status(500).formatView({
-				message: "Erreur lors de l'insertion du feedback",
-				errorCode: 500,
-			});
+			return makeError({ feedback }, "Erreur lors de l'insertion du feedback");
+		} else {
+			result = makeSuccess({ feedback }, "Feedback ajouté avec succès");
 		}
-		result = {
-			message: "Success",
-			errorCode: 0,
-			feedback: feedback,
-		};
+
+		await modifyAppointment(appointmentId, "feedback");
+
+		result = sendSuccess(res, { feedback }, "Feedback ajouté avec succès");
 	} catch (error) {
 		catchMsg(`feedback addFeedback`, error, res, result);
 	}
-	res.formatView(result);
+	return res.formatView(result);
 }

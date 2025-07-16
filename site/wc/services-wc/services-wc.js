@@ -1,9 +1,6 @@
 import { globalStyles } from "../global/style.js";
 import { getServices } from "../../script/auth.js";
 
-// import { login } from "../../script/auth.js";
-// import { hashPassword } from "../../script/auth.js";
-
 class servicesWC extends HTMLElement {
 	constructor() {
 		super();
@@ -27,7 +24,6 @@ class servicesWC extends HTMLElement {
 		await this.loadContent();
 
 		const services = await getServices();
-		// console.log(services, " services")
 		services.services.forEach((a, index) => this.addNextService(a, index + 1));
 	}
 

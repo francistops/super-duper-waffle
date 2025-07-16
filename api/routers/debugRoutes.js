@@ -17,8 +17,4 @@ router.get("/appointments", getAppointments);
 router.get('/feedbacks', getFeedbacks);
 router.get("/:id", getUserById);
 
-//
-// nyi
-//router.delete('/user/delete/:id', validateToken, deleteUser)
-
 export default router;

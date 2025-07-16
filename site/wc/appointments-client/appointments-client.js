@@ -26,23 +26,36 @@ class appointmentsClient extends HTMLElement {
 
 		const user = JSON.parse(localStorage.getItem("user"));
 
-		if (!user || !user.id) {
+		if (!user?.id) {
 			console.error("Aucun utilisateur trouvé dans le localStorage");
 			return;
 		}
 
 		const result = await getUserIdAppointments(user.id);
 
-		result.appointments.forEach((a) => this.addNextAppointment(a));
+		if (!result.success) {
+			console.error(
+				"Erreur lors de la récupération des rendez-vous :",
+				result.message
+			);
+			this.renderEmptyTable("Erreur de chargement des rendez-vous.");
+			return;
+		}
+
+		if (!result.appointments.appointment.length) {
+			this.renderEmptyTable("Aucun rendez-vous à venir.");
+			return;
+		}
+
+		result.appointments.appointment.forEach((a) => this.addNextAppointment(a));
 	}
 
 	addNextAppointment(appointment) {
-		const appointmentTable =
-			this.shadowRoot.querySelector(".appointment tbody");
+		const tbody = this.shadowRoot.querySelector(".appointment tbody");
 		const row = document.createElement("tr");
 
 		row.innerHTML = `
-			<td class="action-cell"></td> <!-- cellule vide au départ -->
+			<td class="action-cell"></td>
 			<td>${formatDate(appointment.date)}</td>
 			<td>${appointment.hairdresser_id}</td>
 			<td>${appointment.service_id}</td>
@@ -66,13 +79,20 @@ class appointmentsClient extends HTMLElement {
 		} else {
 			firstCell.textContent = "-";
 		}
-		appointmentTable.appendChild(row);
+
+		tbody.appendChild(row);
+	}
+
+	renderEmptyTable(message) {
+		const tbody = this.shadowRoot.querySelector(".appointment tbody");
+		tbody.innerHTML = `
+			<tr><td colspan="4" style="text-align:center;">${message}</td></tr>
+		`;
 	}
 
 	updateTable(appointments) {
-		const appointmentTable =
-			this.shadowRoot.querySelector(".appointment tbody");
-		appointmentTable.innerHTML = "";
+		const tbody = this.shadowRoot.querySelector(".appointment tbody");
+		tbody.innerHTML = "";
 		appointments.forEach((a) => this.addNextAppointment(a));
 	}
 }

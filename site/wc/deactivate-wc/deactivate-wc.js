@@ -10,8 +10,8 @@ class deactivateWC extends HTMLElement {
 	}
 
 	async loadContent() {
-		const html = await fetch("/wc/deactivate-wc/deactivate-wc.html").then((res) =>
-			res.text()
+		const html = await fetch("/wc/deactivate-wc/deactivate-wc.html").then(
+			(res) => res.text()
 		);
 		const template = document.createElement("template");
 		template.innerHTML = html;
@@ -27,16 +27,21 @@ class deactivateWC extends HTMLElement {
 			return;
 		}
 
-		const firstDeactivateBtn = this.shadowRoot.getElementById("firstDeactivateButton");
-		const confirmationSection = this.shadowRoot.getElementById("confirmationSection");
-		
+		const firstDeactivateBtn = this.shadowRoot.getElementById(
+			"firstDeactivateButton"
+		);
+		const confirmationSection = this.shadowRoot.getElementById(
+			"confirmationSection"
+		);
+
 		firstDeactivateBtn.addEventListener("click", () => {
 			firstDeactivateBtn.style.display = "none";
 			confirmationSection.style.display = "block";
 		});
-		
 
-		const finalDeactivateBtn = this.shadowRoot.getElementById("finalDeactivateButton");
+		const finalDeactivateBtn = this.shadowRoot.getElementById(
+			"finalDeactivateButton"
+		);
 		finalDeactivateBtn.addEventListener("click", (e) => {
 			this.dispatchEvent(
 				new CustomEvent("deactivate-account", {
@@ -45,7 +50,6 @@ class deactivateWC extends HTMLElement {
 					detail: { userId: user.id },
 				})
 			);
-			console.log("Final deactivate button clicked");
 		});
 
 		const cancelButton = this.shadowRoot.getElementById("cancelButton");
@@ -58,6 +62,6 @@ class deactivateWC extends HTMLElement {
 				})
 			);
 		});
-	}	
+	}
 }
 customElements.define("deactivate-wc", deactivateWC);

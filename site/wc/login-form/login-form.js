@@ -42,7 +42,6 @@ class loginForm extends HTMLElement {
 			delete user.password;
 
 			const result = await login(user);
-			console.log("in login-form user : ", user);
 			if (!result.success) {
 				alert("Connexion échouée");
 				return;

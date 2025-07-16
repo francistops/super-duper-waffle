@@ -20,6 +20,8 @@ CREATE TABLE "services" (
 
 CREATE TABLE "users" (
     "id" uuid DEFAULT gen_random_uuid(),
+	"first_name" VARCHAR(255) NOT NULL,
+	"last_name" VARCHAR(255) NOT NULL,
     "email" VARCHAR(255) NOT NULL,
     "passhash" CHAR(64) NOT NULL,
     "role" VARCHAR(20) DEFAULT 'client' CHECK ("role" IN ('client', 'hairdresser', 'deactivated')) NOT NULL,
@@ -60,16 +62,17 @@ CREATE TABLE "feedbacks" (
 	"rating" INTEGER CHECK ("rating" BETWEEN 1 AND 5) NOT NULL,
 	"feedback_date" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY ("id")
-);
+); 
 
 CREATE UNIQUE INDEX uidx_users_email ON "users"("email");
 
-INSERT INTO "users" ("email", "passhash", "role") VALUES
-('f', 'f', 'client'),
-('u', 'u', 'client'),
-('uh', ENCODE(SHA256('monGrainDeCumminuh'), 'hex'), 'hairdresser'),
-('a', 'a', 'client'),
-('ah', ENCODE(SHA256('monGrainDeCumminah'), 'hex'), 'hairdresser');
+INSERT INTO "users" ("first_name", "last_name", "email", "passhash", "role") VALUES 
+('Alice', 'Johnson', 'alice.johnson@salonlocal.com', ENCODE(SHA256('monGrainDeCumminuh'), 'hex'), 'hairdresser'),
+('Charlie', 'Davis', 'charlie.davis@salonlocal.com', ENCODE(SHA256('monGrainDeCumminah'), 'hex'), 'hairdresser'),
+('John', 'Doe', 'john.doe@example.com', '252f10c83610ebca1a059c0bae8255eba2f95be4d1d7bcfa89d7248a82d9f111', 'client'),
+('Jane', 'Smith', 'jane.smith@example.com', '0bfe935e70c321c7ca3afc75ce0d0ca2f98b5422e008bb31c00c6d7f1f1c0ad6', 'client'),
+('Bob', 'Brown', 'bob.brown@example.com', '3d2607ccfab337bf141821e6af1f256e444fdf32a8cd8ab93bfc5626d08a2d69', 'client');
+
 
 INSERT INTO "services" ("name", "duration", "price") VALUES
 ('Coupe homme', 60, 25.00),

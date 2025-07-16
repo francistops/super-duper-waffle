@@ -1,4 +1,10 @@
-import { deactivateAccount, createAppointment, getUserIdAppointments, getUserIdAvailabilities, logout } from "../../script/auth.js";
+import {
+	deactivateAccount,
+	createAppointment,
+	getUserIdAppointments,
+	getUserIdAvailabilities,
+	logout,
+} from "../../script/auth.js";
 
 const wcDiv = document.getElementById("wcWrapper");
 
@@ -43,17 +49,14 @@ function mainEventListeners() {
 
 	loginBtn.addEventListener("click", (e) => {
 		displayLoginForm();
-		console.log("Login button clicked");
 	});
 
 	registerBtn.addEventListener("click", (e) => {
 		displayRegisterForm();
-		console.log("Register button clicked");
 	});
 
 	profilBtn.addEventListener("click", (e) => {
 		displayProfil();
-		console.log("Profil button clicked");
 	});
 
 	logoutBtn.addEventListener("click", (e) => {
@@ -72,7 +75,6 @@ function cancel_button(element) {
 }
 
 async function displayMain() {
-	console.log("in display main");
 	displayMultipleComponents(["services-wc", "feedbacks-wc"], {}, true);
 
 	const user = JSON.parse(localStorage.getItem("user"));
@@ -90,8 +92,6 @@ function displayLoginForm() {
 		{
 			"login-form": {
 				"user-logged-in": (e) => {
-					console.log("User logged successfully", e.detail);
-
 					const { id, email, role, token } = e.detail;
 
 					localStorage.setItem(
@@ -119,27 +119,7 @@ function displayRegisterForm() {
 		{
 			"register-form": {
 				registered: (e) => {
-					console.log("User registered successfully");
 					displayLoginForm();
-				},
-			},
-		},
-		true
-	);
-}
-
-function displaySettings() {
-	displayMultipleComponents(
-		["setting-wc"],
-		{
-			"setting-wc": {
-				"updated-user": (e) => {
-					console.log("User updated successfully");
-					displayMain();
-				},
-				"updated-password": (e) => {
-					console.log("Password updated successfully");
-					displayMain();
 				},
 			},
 		},
@@ -164,9 +144,7 @@ function displayProfil() {
 	};
 
 	if (isClient) {
-		components.push(
-			"appointments-client", "handling-availabilities-client"
-		);
+		components.push("appointments-client", "handling-availabilities-client");
 	} else if (isHairdresser) {
 		components.push(
 			"appointments-hairdresser",

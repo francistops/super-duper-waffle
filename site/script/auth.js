@@ -19,7 +19,6 @@ async function apiCall(resource, method, auth, body = {}) {
 	const BASE_URL = "https://api.ft.ca/";
 	const apiUrl = `${BASE_URL}${resource}`;
 
-	// console.log(BASE_URL, resource);
 	const headers = {
 		"Content-type": "application/json",
 		Accept: "application/json",
@@ -38,8 +37,9 @@ async function apiCall(resource, method, auth, body = {}) {
 	}
 
 	try {
+		console.log("allo");
 		const response = await fetch(apiUrl, apiReq);
-		console.log("in apiCall response ", response);
+		console.log("allo2");
 		if (response.ok) {
 			result = await response.json();
 		} else {
@@ -134,7 +134,7 @@ export async function login(user) {
 export async function logout(id) {
 	console.log("in auth.js logout");
 
-	// ça prend id ou non? 
+	// ça prend id ou non?
 	// A: ca prend un token pour la deconnection de memoire mais pt un id pour verifier si le token est bien a lui
 	// je te laisse suivre la route pour verifier
 	const data = await apiCall(`users/logout`, "POST", true, { id });
@@ -186,6 +186,7 @@ export async function deactivateAccount(id) {
 	};
 }
 
+// Pour être restful il faut passer id ou rôle dans les params comme ça quand on fait GET
 export async function getUsersByRole(role) {
 	const data = await apiCall(`users/role/${role}`, "GET", true);
 
@@ -200,17 +201,18 @@ export async function getUsersByRole(role) {
 		return {
 			success: false,
 			errorCode: data.errorCode,
-			message: data.message ?? "Erreur lors de la récupération des utilisateurs par rôle",
+			message:
+				data.message ??
+				"Erreur lors de la récupération des utilisateurs par rôle",
 		};
 	}
 	return {
 		success: true,
-		users: data.users
+		users: data.users,
 	};
 }
 
 export async function getUserIdAppointments(id) {
-
 	const data = await apiCall(`users/${id}/appointments`, "GET", true);
 
 	if (data.errorCode !== 0) {
@@ -224,18 +226,17 @@ export async function getUserIdAppointments(id) {
 		return {
 			success: false,
 			errorCode: data.errorCode,
-			message: data.message ?? "Erreur lors de la récupération des rendez-vous"
+			message: data.message ?? "Erreur lors de la récupération des rendez-vous",
 		};
 	}
 
 	return {
 		success: true,
-		appointments: data.appointments
+		appointments: data.appointments,
 	};
 }
 
 export async function getUserIdAvailabilities(id) {
-
 	const data = await apiCall(`users/${id}/availabilities`, "GET", true);
 
 	if (data.errorCode !== 0) {
@@ -249,20 +250,20 @@ export async function getUserIdAvailabilities(id) {
 		return {
 			success: false,
 			errorCode: data.errorCode,
-			message: data.message ?? "Erreur lors de la récupération des disponibilités"
+			message:
+				data.message ?? "Erreur lors de la récupération des disponibilités",
 		};
 	}
 
 	return {
 		success: true,
-		availabilities: data.availabilities
+		availabilities: data.availabilities,
 	};
 }
 
 // ------ APPOINTMENTS ------
 
 export async function createAppointment(appointment) {
-
 	const data = await apiCall(`appointments/add`, "POST", true, appointment);
 
 	if (data.errorCode !== 0) {
@@ -276,7 +277,7 @@ export async function createAppointment(appointment) {
 		return {
 			success: false,
 			errorCode: data.errorCode,
-			message: data.message ?? "Erreur lors de la création du rendez-vous"
+			message: data.message ?? "Erreur lors de la création du rendez-vous",
 		};
 	}
 
@@ -286,7 +287,6 @@ export async function createAppointment(appointment) {
 }
 
 export async function modifyAppointment(id, status) {
-
 	const data = await apiCall(`appointments/${id}`, "PATCH", true, { status });
 
 	if (data.errorCode !== 0) {
@@ -300,7 +300,7 @@ export async function modifyAppointment(id, status) {
 		return {
 			success: false,
 			errorCode: data.errorCode,
-			message: data.message
+			message: data.message,
 		};
 	}
 
@@ -312,7 +312,6 @@ export async function modifyAppointment(id, status) {
 // ------ AVAILABILITIES ------
 
 export async function createAvailability(availability) {
-
 	const data = await apiCall("availabilities/add", "POST", true, availability);
 
 	if (data.errorCode !== 0) {
@@ -327,7 +326,7 @@ export async function createAvailability(availability) {
 		return {
 			success: false,
 			errorCode: data.errorCode,
-			message: data.message ?? "Erreur lors de la création de la disponibilité"
+			message: data.message ?? "Erreur lors de la création de la disponibilité",
 		};
 	}
 	return {
@@ -335,12 +334,10 @@ export async function createAvailability(availability) {
 	};
 }
 
-export async function modifyAvailability({id, status}) {
-
+export async function modifyAvailability({ id, status }) {
 	const data = await apiCall(`availabilities/${id}`, "PATCH", true, { status });
 
 	if (data.errorCode !== 0) {
-
 		console.error(
 			"unhandle error in auth.js updateAvailability",
 			"data.errorCode: ",
@@ -351,7 +348,8 @@ export async function modifyAvailability({id, status}) {
 		return {
 			success: false,
 			errorCode: data.errorCode,
-			message: data.message ?? "Erreur lors de la mise à jour de la disponibilité"
+			message:
+				data.message ?? "Erreur lors de la mise à jour de la disponibilité",
 		};
 	}
 	return {
@@ -362,11 +360,9 @@ export async function modifyAvailability({id, status}) {
 // ------ SERVICES ------
 
 export async function getServices() {
-
 	const data = await apiCall(`services/`, "GET", false);
 
 	if (data.errorCode !== 0) {
-
 		console.error(
 			"unhandle error in auth.js getServices",
 			"data.errorCode: ",
@@ -378,20 +374,19 @@ export async function getServices() {
 		return {
 			success: false,
 			errorCode: data.errorCode,
-			message: data.message ?? "Erreur lors de la récupération des services"
+			message: data.message ?? "Erreur lors de la récupération des services",
 		};
 	}
 
 	return {
 		success: true,
-		services: data.services
+		services: data.services,
 	};
 }
 
 // ------ FEEDBACK ------
 
 export async function getFeedbacks() {
-
 	const data = await apiCall(`feedbacks/`, "GET", false);
 	if (data.errorCode !== 0) {
 		console.error(
@@ -405,22 +400,20 @@ export async function getFeedbacks() {
 		return {
 			success: false,
 			errorCode: data.errorCode,
-			message: data.message ?? "Erreur lors de la récupération des feedbacks"
+			message: data.message ?? "Erreur lors de la récupération des feedbacks",
 		};
 	}
 
 	return {
 		success: true,
-		feedbacks: data.feedbacks
+		feedbacks: data.feedbacks,
 	};
 }
 
 export async function createFeedback(feedback) {
-
 	const data = await apiCall(`feedbacks/add`, "POST", true, feedback);
 
 	if (data.errorCode !== 0) {
-
 		console.error(
 			"unhandle error in auth.js createFeedback",
 			"data.errorCode: ",
@@ -432,7 +425,7 @@ export async function createFeedback(feedback) {
 		return {
 			success: false,
 			errorCode: data.errorCode,
-			message: data.message ?? "Erreur lors de la création du feedback"
+			message: data.message ?? "Erreur lors de la création du feedback",
 		};
 	}
 
@@ -441,25 +434,25 @@ export async function createFeedback(feedback) {
 	};
 }
 
-
 // ---- staging logging test ----
 // Frontend logger function (client-side)
 const logFrontendError = async (message, stackTrace) => {
+	console.log("Logging error to server:", message, stackTrace);
 	try {
-		await fetch('/logs', {
-			method: 'POST',
+		await fetch("/logs", {
+			method: "POST",
 			headers: {
-				'Content-Type': 'application/json',
+				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				level: 'ERROR',
+				level: "ERROR",
 				message: message,
 				stackTrace: stackTrace,
 				userAgent: navigator.userAgent,
 			}),
 		});
 	} catch (err) {
-		console.error('Error sending log to server:', err);
+		console.error("Error sending log to server:", err);
 	}
 };
 
@@ -470,9 +463,9 @@ window.onerror = function (message, source, lineno, colno, error) {
 };
 
 export async function getLogs() {
-	const data = await apiCall('logs', 'GET');
+	const data = await apiCall("logs", "GET");
 	if (data.errorCode == 0) {
-		return data.logs
+		return data.logs;
 	}
 	return null;
 }

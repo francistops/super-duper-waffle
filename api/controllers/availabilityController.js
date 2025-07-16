@@ -1,80 +1,104 @@
 import {
 	insertAvailability,
 	updateAvailability,
-	isAvailabilityExist
+	isAvailabilityExist,
 } from "../models/availabilityModel.js";
-import { catchMsg, callModel, assertSameUserOrThrow, assertSameTokenOrThrow } from "../lib/utils.js";
-import { isTokenExist } from "../models/tokenModel.js";
-import { sendError } from "../utils/resultFactory.js";
+import { catchMsg, callModel } from "../lib/utils.js";
+import { makeError, sendError } from "../utils/resultFactory.js";
 
 export async function addAvailability(req, res) {
-	const { hairdresser_id, availability_date } = req.body;
+	let result = makeError();
 
-	if (!hairdresser_id || !availability_date) {
-		return sendError(res, 400, "Missing hairdresser_id or availability_date", 1);
+	try {
+		if (req.user.role !== "hairdresser") {
+			return sendError(res, 403, "Only hairdressers can add availabilities");
+		}
+
+		const { hairdresser_id, availability_date } = req.body;
+
+		if (!hairdresser_id || !availability_date) {
+			return sendError(
+				res,
+				400,
+				"Missing hairdresser_id or availability_date",
+				1
+			);
+		}
+
+		const alreadyExists = await isAvailabilityExist({
+			hairdresser_id,
+			availability_date,
+		});
+		if (alreadyExists) {
+			return sendError(
+				res,
+				409,
+				"Availability already exists for this date and hairdresser"
+			);
+		}
+
+		await callModel(res, 73, insertAvailability, "availability", {
+			hairdresser_id,
+			availability_date,
+		});
+	} catch (error) {
+		catchMsg(`availability addAvailability ${req.body}`, error, res, result);
 	}
-
-	const userIdFromToken = req.user.id;
-	assertSameUserOrThrow(hairdresser_id, userIdFromToken);
-
-	const isTokenResult = await isTokenExist(userIdFromToken);
-	if (!isTokenResult.status) {
-		return sendError(res, 404, "No active session found");
-	}
-
-	const tokenFromRequest = req.selectedToken.token;
-	const tokenFromDb = isTokenResult.token.token;
-	assertSameTokenOrThrow(tokenFromRequest, tokenFromDb);
-
-	const alreadyExists = await isAvailabilityExist({ hairdresser_id, availability_date });
-	if (alreadyExists) {
-		return sendError(res, 409, "Availability already exists for this date and hairdresser");
-	}
-
-	await callModel(
-		res,
-		73,
-		insertAvailability,
-		"availability",
-		{ hairdresser_id, availability_date }
-	);
+	res.formatView(result);
 }
 
 export async function modifyAvailability(req, res) {
-	const availabilityId = req.params.id;
-	const availabilityNewStatus = req.body.status;
-	console.log("User:", req.user);
+	let result = makeError();
 
-	console.log("modifyAvailability called with id:", availabilityId, "and status:", availabilityNewStatus);
+	try {
+		const availabilityId = req.params.id;
+		const availabilityNewStatus = req.body.status;
 
-	if (!availabilityId || !availabilityNewStatus) {
-		return sendError(res, 400, "Missing id or status", 1);
+		if (
+			availabilityNewStatus !== "accepted" &&
+			availabilityNewStatus !== "assigned" &&
+			availabilityNewStatus !== "cancelled"
+		) {
+			return sendError(res, 400, "Invalid status", 1);
+		}
+
+		if (!availabilityId || !availabilityNewStatus) {
+			return sendError(res, 400, "Missing id or status", 1);
+		}
+
+		if (req.user.role !== "hairdresser") {
+			return sendError(res, 403, "Only hairdressers can modify availabilities");
+		}
+
+		const availability = await isAvailabilityExist({ availabilityId });
+
+		if (!availability) {
+			return sendError(res, 404, "Availability not found");
+		}
+
+		if (availability.status !== "pending") {
+			return sendError(
+				res,
+				409,
+				"This availability cannot be updated as it is not pending"
+			);
+		}
+
+		if (availability.hairdresser_id !== req.user.id) {
+			return sendError(res, 403, "Not authorized to modify this availability");
+		}
+
+		await callModel(res, 74, updateAvailability, "availability", {
+			id: availabilityId,
+			status: availabilityNewStatus,
+		});
+	} catch (error) {
+		catchMsg(
+			`availability modifyAvailability ${req.params}`,
+			error,
+			res,
+			result
+		);
 	}
-
-	const userRole = req.user.role;
-	console.log("User role:", userRole);
-
-	if (userRole !== "client") {
-		return sendError(res, 403, "Only clients can modify availabilities");
-	}
-
-	const availability = await isAvailabilityExist({ availabilityId });
-
-	console.log("Availability found:", availability);
-
-	if (!availability) {
-		return sendError(res, 404, "Availability not found");
-	}
-
-	if (availability.status !== "pending") {
-		return sendError(res, 409, "This availability cannot be updated as it is not pending");
-	}
-
-	await callModel(
-		res,
-		74,
-		updateAvailability,
-		"availability",
-		{ id: availabilityId, status: availabilityNewStatus }
-	);
+	res.formatView(result);
 }

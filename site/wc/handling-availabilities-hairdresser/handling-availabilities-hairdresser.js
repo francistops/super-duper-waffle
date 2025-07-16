@@ -1,5 +1,6 @@
 import { globalStyles } from "../global/style.js";
-import { getDateFromToday, createAvailability, modifyAvailability } from "../../script/auth.js";
+import { createAvailability, modifyAvailability } from "../../script/auth.js";
+import { getDateFromToday, formatDate } from "../../script/app.js";
 
 // Si j'ai le temps, ajouter changer le statut d'une disponibilité
 // de "pending" à "cancelled" et inversement

@@ -22,8 +22,10 @@ class profilWC extends HTMLElement {
 	async connectedCallback() {
 		await this.loadContent();
 
-		const deactivateAccountBtn = this.shadowRoot.getElementById("deactivateAccountButton");
-		
+		const deactivateAccountBtn = this.shadowRoot.getElementById(
+			"deactivateAccountButton"
+		);
+
 		deactivateAccountBtn.addEventListener("click", (e) => {
 			this.dispatchEvent(
 				new CustomEvent("deactivate-account", {
@@ -31,7 +33,6 @@ class profilWC extends HTMLElement {
 					composed: true,
 				})
 			);
-			console.log("Deactivate account button clicked");
 		});
 	}
 }

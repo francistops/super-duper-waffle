@@ -1,38 +1,44 @@
 import pool from "../db/pool.js";
 
-export async function insertAvailability({ hairdresser_id, availability_date }) {
-	
-	const insertSql = `INSERT INTO "availabilities" ("hairdresser_id", "availability_date") 
+export async function insertAvailability({
+	hairdresser_id,
+	availability_date,
+}) {
+	const { rows } = await pool.query(
+		`INSERT INTO "availabilities" ("hairdresser_id", "availability_date") 
                       VALUES ($1, $2)
-                      returning *;`;
-	const param = [
-		hairdresser_id,
-		availability_date
-	];
-
-	const queryResult = await pool.query(insertSql, param);
-	return queryResult.rows[0];
+                      returning *;`,
+		[hairdresser_id, availability_date]
+	);
+	return rows[0];
 }
 
-export async function updateAvailability({id, status}) {
-	const updateSql = `UPDATE "availabilities"
+export async function updateAvailability({ id, status }) {
+	const { rows } = await pool.query(
+		`UPDATE "availabilities"
 						SET "status" = $1
 						WHERE "id" = $2
-						RETURNING *`;
-
-	const queryResult = await pool.query(updateSql, [status, id]);
-	return queryResult.rows[0];
+						RETURNING *`,
+		[status, id]
+	);
+	return rows[0];
 }
 
 export async function fetchUserIdAvailabilities(id) {
-	const selectSql = `SELECT *
+	const { rows } = await pool.query(
+		`SELECT *
 						FROM "availabilities"
-						WHERE "hairdresser_id" = $1`;
-	const queryResult = await pool.query(selectSql, [id]);
+						WHERE "hairdresser_id" = $1`,
+		[id]
+	);
 	return queryResult.rows;
 }
 
-export async function isAvailabilityExist({ availabilityId, hairdresser_id, availability_date }) {
+export async function isAvailabilityExist({
+	availabilityId,
+	hairdresser_id,
+	availability_date,
+}) {
 	let query = `SELECT * FROM "availabilities" WHERE `;
 	const params = [];
 	const conditions = [];
@@ -51,7 +57,9 @@ export async function isAvailabilityExist({ availabilityId, hairdresser_id, avai
 	}
 
 	if (conditions.length === 0) {
-		throw new Error("At least one condition must be provided (availabilityId or hairdresser_id + availability_date)");
+		throw new Error(
+			"At least one condition must be provided (availabilityId or hairdresser_id + availability_date)"
+		);
 	}
 
 	query += conditions.join(" AND ") + " LIMIT 1";

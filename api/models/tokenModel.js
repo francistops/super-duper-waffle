@@ -1,39 +1,32 @@
 import pool from "../db/pool.js";
 
 export async function isTokenValid(token) {
-
-	const selectSql = `SELECT "expires", "token", "user_id"
+	const { rows } = await pool.query(
+		`SELECT "expires", "token", "user_id"
                 FROM "tokens"
                 WHERE "token" = $1
-                AND "expires" >= NOW();`;
-	const queryResult = await pool.query(selectSql, [token]);
-// enlever les conditions dans les modèles et retourner .rows si possibilité de plusieurs 
-	if (queryResult.rowCount != 1) {
-		return null;
-	}
-	return queryResult.rows[0];
+                AND "expires" >= NOW();`,
+		[token]
+	);
+	return rows[0];
 }
 
-export async function isTokenExist(id) {
-	console.log("isTokenExist called with id:", id);
-	const selectSql = `SELECT "token" 
-                	FROM "tokens"
-                	WHERE "user_id" = $1
-                	AND "expires" > NOW();`;
-	const queryResult = await pool.query(selectSql, [id]);
-	if (queryResult.rowCount > 0) {
-		return {
-			status: true,
-			token: queryResult.rows[0],
-		};
-	}
-	return { status: false };
+export async function getActiveTokenByUserId(userId) {
+	const { rows } = await pool.query(
+		`SELECT "id"
+				FROM "tokens"
+				WHERE "user_id" = $1 AND "expires" > NOW()`,
+		[userId]
+	);
+	return rows[0] || null;
 }
 
 export async function assignToken(userid) {
-	const selectSql = `INSERT INTO "tokens" ("user_id", "token", "expires")
+	const { rows } = await pool.query(
+		`INSERT INTO "tokens" ("user_id", "token", "expires")
                 	VALUES ($1, gen_random_uuid(), NOW() + INTERVAL '30 days')
-                	RETURNING *;`;
-	const queryResult = await pool.query(selectSql, [userid]);
-	return queryResult.rows[0].token;
+                	RETURNING *;`,
+		[userid]
+	);
+	return rows[0]?.token;
 }
