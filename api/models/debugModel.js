@@ -54,3 +54,10 @@ export async function fetchUserById(id) {
       else if (result.rowCount < 1) throw new Error(`User ${id} not found`);
       return rows[0];
 }
+
+export async function fetchFeedbacks() {
+	const selectSql = `SELECT *
+  					FROM "feedbacks"`;
+	const queryResult = await pool.query(selectSql);
+	return queryResult.rows;
+}

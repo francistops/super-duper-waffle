@@ -3,11 +3,14 @@ import { makeError, makeSuccess } from '../utils/resultFactory.js';
 import { 
 	fetchUsers, 
 	fetchTokens, 
+	fetchUserById,
 	fetchAvailabilities, 
 	fetchAppointments,
+	fetchFeedbacks
 } from "../models/debugModel.js";
 
 export async function getUsers(req, res) {
+	console.log("in getUsers controller");
 	let result = makeError();
 	try {
 		const users = await fetchUsers();
@@ -16,7 +19,7 @@ export async function getUsers(req, res) {
 		res.status(400);
 		result = makeError(`Error retrieving users: ${error}`, 1001);
 	}
-	res.formatView(result);
+	res.formatView(result); 
 }
 
 export async function getTokens(req, res) {
@@ -75,5 +78,17 @@ export async function getAppointments(req, res) {
 		catchMsg(`appointment getAppointments`, error, res, result);
 	}
 	console.log("in getAppointments controller" + result);
+	res.formatView(result);
+}
+
+export async function getFeedbacks(req, res) {
+	let result = makeError();
+	try {
+		const feedbacks = await fetchFeedbacks();
+		result = makeSuccess({ feedbacks: feedbacks });
+	} catch (error) {
+		res.status(400);
+		result = makeError(`Error retrieving feedbacks: ${error}`, 1001);
+	}
 	res.formatView(result);
 }

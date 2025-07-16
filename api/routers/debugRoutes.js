@@ -6,20 +6,19 @@ import {
     getTokens,
     getUserById,
 	getAvailabilities,
-	getAppointments
+	getAppointments,
+	getFeedbacks
 } from '../controllers/debugController.js';
 
 router.get('/users', getUsers);
 router.get('/tokens', getTokens);
-router.get("/:id", getUserById);
 router.get('/availabilities', getAvailabilities);
 router.get("/appointments", getAppointments);
+router.get('/feedbacks', getFeedbacks);
+router.get("/:id", getUserById);
 
+//
 // nyi
 //router.delete('/user/delete/:id', validateToken, deleteUser)
-
-//router.get('/appointments', GetAppointments);
-
-//router.get('/feedbacks', getFeedbacks);
 
 export default router;

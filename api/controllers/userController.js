@@ -50,8 +50,7 @@ export async function getUsersByRole(req, res) {
 // je viens de voir ta fonction catchmsg à soir, j'ai commencé à l'intégrer dans mon dernier mergé, ça pi makesucces pi toute la c'est vraiment une bonne idée 
 export async function getUserIdAppointments(req, res) {
 	const result = makeError();
-	const userIdFromToken = req.user.id; // this exist?
-// oui c'est validateToken qui renvoie le user complet associé au token validé
+	const userIdFromToken = req.user.id;
 	const userIdFromParams = req.params.id;
 
 	try {
@@ -77,7 +76,7 @@ export async function getUserIdAppointments(req, res) {
 		return res.formatView({
 			message: "Success",
 			errorCode: 0,
-			appointment: appointments,
+			appointment: appointments.id,
 		});
 	} catch (error) {
 		if (error.statusCode === 403) {
