@@ -26,12 +26,23 @@ export async function updateAvailability({ id, status }) {
 
 export async function fetchUserIdAvailabilities(id) {
 	const { rows } = await pool.query(
-		`SELECT *
-						FROM "availabilities"
-						WHERE "hairdresser_id" = $1`,
+		`SELECT
+			availabilities.id AS availability_id,
+			availabilities.status,
+			availabilities.availability_date,
+			availabilities.hairdresser_id,
+			appointments.service_id,
+			services.name AS service_name
+		FROM availabilities
+		JOIN appointments ON appointments.availability_id = availabilities.id
+		JOIN users AS hairdresser ON appointments.hairdresser_id = hairdresser.id
+		JOIN services ON appointments.service_id = services.id
+		WHERE appointments.client_id = $1
+		ORDER BY availabilities.availability_date ASC;
+		`,
 		[id]
 	);
-	return queryResult.rows;
+	return rows;
 }
 
 export async function isAvailabilityExist({

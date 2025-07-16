@@ -94,11 +94,8 @@ export async function getFeedbacks(req, res) {
 
 export async function getServices(req, res) {
 	let result = makeError();
-	console.error("getServices called");
 	try {
-		console.error("Fetching services...");
 		const services = await fetchServices();
-		console.error("Services fetched successfully:", services);
 
 		if (!services) {
 			result = makeError({ services }, "No services found");
