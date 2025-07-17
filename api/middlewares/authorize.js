@@ -9,7 +9,9 @@ export function authorizeBy(getTargetUserId) {
 		try {
 			const targetUserId = await getTargetUserId(req);
 			const tokenUserId = req.user.id;
-
+			console.error(
+				`authorizeBy: targetUserId=${targetUserId}, tokenUserId=${tokenUserId}`
+			);
 			assertSameUserOrThrow(targetUserId, tokenUserId);
 			next();
 		} catch (err) {
