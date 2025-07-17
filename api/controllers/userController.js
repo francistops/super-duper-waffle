@@ -9,113 +9,82 @@ import { fetchUserIdAppointments } from "../models/appointmentModel.js";
 import { fetchUserIdAvailabilities } from "../models/availabilityModel.js";
 import { assignToken } from "../models/tokenModel.js";
 import { catchMsg, assertSameUserOrThrow } from "../lib/utils.js";
-import { makeSuccess, makeError } from "../utils/resultFactory.js";
+import { sendError, sendSuccess } from "../utils/resultFactory.js";
 
 export async function getUsersByRole(req, res) {
-	let result = makeError();
 	const role = req.params.role;
 
 	try {
 		const validRoles = ["hairdresser", "client"];
 		if (!role || !validRoles.includes(role))
-			result = makeError("Invalid role specified", 1);
+			return sendError(res, 400, "Invalid role specified");
 
 		const users = await fetchByRole(role);
 
 		if (Array.isArray(users)) {
-			result = makeSuccess({ users }, "Users retrieved successfully");
+			return sendSuccess(res, { users }, "Users retrieved successfully");
 		} else {
-			result = makeError("Failed to retrieve users", 1);
+			return sendError(res, 500, "Failed to retrieve users");
 		}
 	} catch (error) {
-		return catchMsg(
-			`user getUsersByRole ${req.params}`,
-			error,
-			res,
-			result,
-			500
-		);
+		return catchMsg(`user getUsersByRole`, error, res);
 	}
-	res.formatView(result);
 }
 
 export async function getUserIdAppointments(req, res) {
-	let result = makeError();
-
 	try {
 		const appointments = await fetchUserIdAppointments(req.params.id);
 
 		if (!appointments || appointments.length === 0) {
-			result = makeError("No appointments found for this user", 1);
-			return res.status(404).formatView(result);
+			return sendError(res, 404, "No appointments found for this user");
 		}
 
-		result = makeSuccess(
+		return sendSuccess(
+			res,
 			{ appointments },
 			"Appointments retrieved successfully"
 		);
 	} catch (error) {
-		result = makeError("Failed to retrieve appointments", 1);
-		return catchMsg(
-			`user getUserIdAppointments ${req.params}`,
-			error,
-			res,
-			result
-		);
+		return catchMsg(`user getUserIdAppointments`, error, res);
 	}
-	res.formatView(result);
 }
 
 export async function getUserIdAvailabilities(req, res) {
-	let result = makeError();
-
 	try {
 		const availability = await fetchUserIdAvailabilities(req.params.id);
 
 		if (!availability || availability.length === 0) {
-			result = makeError("No availabilities found for this user", 1);
-			return res.status(404).formatView(result);
+			return sendError(res, 404, "No availabilities found for this user");
 		}
 
-		result = makeSuccess(
+		return sendSuccess(
+			res,
 			{ availability },
 			"User's availabilities retrieved successfully"
 		);
 	} catch (error) {
-		result = makeError("Failed to retrieve availabilities", 1);
-		return catchMsg(
-			`user getUserIdAvailabilities ${req.params}`,
-			error,
-			res,
-			result
-		);
+		return catchMsg(`user getUserIdAvailabilities`, error, res);
 	}
-	res.formatView(result);
 }
 
 export async function registerUser(req, res) {
-	let result = makeError();
-
 	try {
 		const user = await insertUser(req.body);
 		if (user) {
-			result = makeSuccess({ user }, "User registered successfully");
+			return sendSuccess(res, { user }, "User registered successfully");
 		} else {
-			result = makeError("User registration failed");
+			return sendError(res, 500, "User registration failed");
 		}
 	} catch (error) {
 		if (error.code === "23505") {
-			result = makeError("Email déjà utilisé", 2);
+			return sendError(res, 400, "Email déjà utilisé");
 		} else {
-			result = makeError("User registration failed", 1);
-			return catchMsg(`user registerUser ${req.body}`, error, res, result);
+			return catchMsg(`user registerUser`, error, res);
 		}
 	}
-	res.formatView(result);
 }
 
 export async function loginUser(req, res) {
-	let result = makeError();
 	const { email: email, passhash: passHash } = req.body;
 
 	try {
@@ -123,7 +92,8 @@ export async function loginUser(req, res) {
 
 		if (checkedUser) {
 			const userToken = await assignToken(checkedUser.id);
-			result = makeSuccess(
+			return sendSuccess(
+				res,
 				{
 					user: {
 						id: checkedUser.id,
@@ -135,63 +105,49 @@ export async function loginUser(req, res) {
 				"User logged in successfully"
 			);
 		} else {
-			result = makeError({
-				message: "already logged in",
-				errorCode: 401,
-			});
+			return sendError(res, 401, "already logged in");
 		}
 	} catch (error) {
-		result = makeError("Login failed", 1);
-		if (error.code === "23505") {
-			result = makeError("Email already used", 2);
-		} else if (error.code === "23502") {
-			result = makeError("Email or password missing", 3);
-		}
-		return catchMsg(`user loginUser ${req.body.email}`, error, res, result);
+		return catchMsg(`user loginUser`, error, res);
 	}
-	res.formatView(result);
 }
 
 export async function logoutUser(req, res) {
-	let result = makeError();
-
 	try {
 		const logoutConfirmation = await logoutByToken(req.selectedToken.token);
 
 		if (logoutConfirmation) {
-			result = makeSuccess({}, "User logged out successfully");
+			return sendSuccess(res, {}, "User logged out successfully");
 		} else {
-			result = makeError("Logout failed");
+			return sendError(res, 500, "Logout failed");
 		}
 	} catch (error) {
-		result = makeError("Logout failed", 1);
-		if (error.code === "23503") {
-			result = makeError("Token not found or already removed", 2);
-		} else if (error.code === "23505") {
-			result = makeError("Token already removed", 3);
-		}
-		return catchMsg(`user logoutUser ${req.user.id}`, error, res, result);
+		return catchMsg(`user logoutUser`, error, res);
 	}
-	res.formatView(result);
 }
 
 export async function deactivateUser(req, res) {
-	let result = makeError();
-
 	try {
 		const deactivationConfirmation = await deactivateUserById(req.user.id);
 
 		if (deactivationConfirmation) {
 			const removingToken = await logoutByToken(req.selectedToken.token);
 			if (!removingToken) {
-				result = makeError("Failed to remove token during deactivation", 1);
+				return sendError(
+					res,
+					500,
+					"Failed to remove token during deactivation"
+				);
 			}
-			result = makeSuccess({}, "User deactivated successfully");
+			return sendSuccess(res, {}, "User deactivated successfully");
 		} else {
-			result = makeError(`Failed to deactivate user ${userIdFromBody}`, 1);
+			return sendError(
+				res,
+				500,
+				`Failed to deactivate user with id ${req.user.id}`
+			);
 		}
 	} catch (error) {
-		return catchMsg(`user deactivateUser ${req.user?.id}`, error, res, result);
+		return catchMsg(`user deactivateUser`, error, res);
 	}
-	res.formatView(result);
 }

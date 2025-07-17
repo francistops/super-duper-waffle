@@ -45,7 +45,7 @@ export async function fetchUserIdAvailabilities(id) {
 	return rows;
 }
 
-export async function isAvailabilityExist({
+export async function isAvailabilityExistById({
 	availabilityId,
 	hairdresser_id,
 	availability_date,

@@ -12,10 +12,10 @@ function hash(passHash) {
 export async function fetchUserById(id) {
 	const { rows } = await pool.query(
 		`SELECT "id",
-                      "email",
-                      "role"
-						FROM "users"
-						WHERE "users"."id" = $1;`,
+                "email",
+                "role"
+				FROM "users"
+				WHERE "users"."id" = $1;`,
 		[id]
 	);
 	return rows[0];

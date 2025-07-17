@@ -1,31 +1,25 @@
 import {
 	insertAvailability,
 	updateAvailability,
-	isAvailabilityExist,
+	isAvailabilityExistById,
 } from "../models/availabilityModel.js";
 import { catchMsg, callModel } from "../lib/utils.js";
-import { makeError, sendError } from "../utils/resultFactory.js";
+import { sendError, sendSuccess } from "../utils/resultFactory.js";
 
 export async function addAvailability(req, res) {
-	let result = makeError();
-
 	try {
 		if (req.user.role !== "hairdresser") {
 			return sendError(res, 403, "Only hairdressers can add availabilities");
 		}
 
-		const { hairdresser_id, availability_date } = req.body;
+		const { availability_date } = req.body;
+		const hairdresser_id = req.user.id;
 
-		if (!hairdresser_id || !availability_date) {
-			return sendError(
-				res,
-				400,
-				"Missing hairdresser_id or availability_date",
-				1
-			);
+		if (!availability_date) {
+			return sendError(res, 400, "Missing availability_date");
 		}
 
-		const alreadyExists = await isAvailabilityExist({
+		const alreadyExists = await isAvailabilityExistById({
 			hairdresser_id,
 			availability_date,
 		});
@@ -41,15 +35,18 @@ export async function addAvailability(req, res) {
 			hairdresser_id,
 			availability_date,
 		});
+
+		return sendSuccess(
+			res,
+			{ hairdresser_id, availability_date },
+			"Availability added successfully"
+		);
 	} catch (error) {
-		catchMsg(`availability addAvailability ${req.body}`, error, res, result);
+		return catchMsg(`availability addAvailability`, error, res);
 	}
-	res.formatView(result);
 }
 
 export async function modifyAvailability(req, res) {
-	let result = makeError();
-
 	try {
 		const availabilityId = req.params.id;
 		const availabilityNewStatus = req.body.status;
@@ -59,18 +56,18 @@ export async function modifyAvailability(req, res) {
 			availabilityNewStatus !== "assigned" &&
 			availabilityNewStatus !== "cancelled"
 		) {
-			return sendError(res, 400, "Invalid status", 1);
+			return sendError(res, 400, "Invalid status");
 		}
 
 		if (!availabilityId || !availabilityNewStatus) {
-			return sendError(res, 400, "Missing id or status", 1);
+			return sendError(res, 400, "Missing id or status");
 		}
 
 		if (req.user.role !== "hairdresser") {
 			return sendError(res, 403, "Only hairdressers can modify availabilities");
 		}
 
-		const availability = await isAvailabilityExist({ availabilityId });
+		const availability = await isAvailabilityExistById({ availabilityId });
 
 		if (!availability) {
 			return sendError(res, 404, "Availability not found");
@@ -92,13 +89,12 @@ export async function modifyAvailability(req, res) {
 			id: availabilityId,
 			status: availabilityNewStatus,
 		});
-	} catch (error) {
-		catchMsg(
-			`availability modifyAvailability ${req.params}`,
-			error,
+		return sendSuccess(
 			res,
-			result
+			{ availabilityId, status: availabilityNewStatus },
+			"Availability updated successfully"
 		);
+	} catch (error) {
+		return catchMsg(`availability modifyAvailability`, error, res);
 	}
-	res.formatView(result);
 }

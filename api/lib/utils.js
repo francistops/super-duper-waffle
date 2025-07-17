@@ -1,20 +1,14 @@
-import { sendSuccess, makeError } from "../utils/resultFactory.js";
+import { sendSuccess, sendError } from "../utils/resultFactory.js";
 
-export function catchMsg(
-	name,
-	errorObj = error,
-	res = res,
-	result = result,
-	errorHttp = 500
-) {
-	// server error
-	console.error(`Error at ${name}: ${errorObj.message}`);
+export function catchMsg(name, errorObj, res, errorHttp = 500) {
+	console.error(`Error at ${name}: ${errorObj?.message || errorObj}`);
 
-	// client visible error
-	result.message = `Error at ${name} ${errorObj}`;
-	result.errorCode = errorHttp;
-	res.status(errorHttp);
-	res.formatView(result);
+	return sendError(
+		res,
+		errorHttp,
+		`Error at ${name}: ${errorObj?.message || errorObj}`,
+		errorHttp
+	);
 }
 
 export function cl(fileName, fname, ...value) {
@@ -32,8 +26,7 @@ export async function callModel(
 		const data = await modelFn(...reqObjs);
 		return sendSuccess(res, { [dataKey]: data });
 	} catch (error) {
-		const result = makeError();
-		catchMsg("callModel", error, res, result, dbErrorCode);
+		return catchMsg("callModel", error, res, dbErrorCode);
 	}
 }
 
