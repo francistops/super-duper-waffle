@@ -1,7 +1,7 @@
 <p>please remain calm while reading the log</p>
 <button id="getLogs">get logs</button>
 <table>
-	<thead>
+	<thead class="invisible">
 		<tr>
 			<th>Timestamp</th>
 			<th>Level</th>
@@ -16,3 +16,10 @@
 	</thead>
 	<tbody id="bodyData"></tbody>
 </table>
+
+<p>the logging feature that would be put in an admin panel or to show a user which ip has been use to connect to his
+	account.
+	however, it was put below as proof of work. the "get logs" button fetch the log from cassandra, then limit and sort
+	them.
+	clicking "get logs" again fetch the latest one. see the middleware <em>logger.js</em> for the code.
+</p>

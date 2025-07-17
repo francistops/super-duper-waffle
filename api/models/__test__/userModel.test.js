@@ -1,4 +1,4 @@
-import { fetchNextAppointments } from "../appointmentModel.js";
+import { insertUser } from "../userModel.js";
 import { pool } from '../../db/pool.js';
 
 Jest.mock('../../db/pool.js', () => ({
@@ -8,13 +8,13 @@ Jest.mock('../../db/pool.js', () => ({
 }))
 
 beforeEach(() => {
-        jest.clearAllmoxks();
+        jest.clearAllmocks();
 });
 
-test('test when no id are provided fetchNextpost', async () => {
+test('inserting a user in the db', async () => {
     pool.query.mockResolvedValue({ rows: [] });
 
-    await fetchNextPosts([], 1);
+    await insertUser([], 1);
 
     const [sql, params] = pool.query.mock.calls[0];
 

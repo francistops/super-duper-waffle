@@ -31,8 +31,8 @@ app.use("/availabilities", availabilityRoute);
 import appointmentRoute from "./routers/appointmentRoutes.js";
 app.use("/appointments", appointmentRoute);
 
-// import serviceRoute from "./routers/serviceRoutes.js";
-// app.use("/services", serviceRoute);
+import serviceRoute from "./routers/serviceRoutes.js";
+app.use("/services", serviceRoute);
 
 import feedbackRoute from "./routers/feedbackRoutes.js";
 app.use("/feedbacks", feedbackRoute);

@@ -6,8 +6,7 @@ import {
 	fetchUserById,
 	fetchAvailabilities,
 	fetchAppointments,
-	fetchFeedbacks,
-	fetchServices,
+	fetchFeedbacks
 } from "../models/debugModel.js";
 
 export async function getUsers(req, res) {
@@ -88,25 +87,6 @@ export async function getFeedbacks(req, res) {
 	} catch (error) {
 		res.status(400);
 		result = makeError(`Error retrieving feedbacks: ${error}`, 1001);
-	}
-	res.formatView(result);
-}
-
-export async function getServices(req, res) {
-	let result = makeError();
-	console.error("getServices called");
-	try {
-		console.error("Fetching services...");
-		const services = await fetchServices();
-		console.error("Services fetched successfully:", services);
-
-		if (!services) {
-			result = makeError({ services }, "No services found");
-		} else {
-			result = makeSuccess({ services }, "Services retrieved successfully");
-		}
-	} catch (error) {
-		catchMsg(`service getServices`, error, res, result);
 	}
 	res.formatView(result);
 }

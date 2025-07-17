@@ -12,14 +12,10 @@ import {
 	deactivateUser,
 } from "../controllers/userController.js";
 
-//router.get("/", getAllUsers); use the debug route
-
-//todo change for obj instead of a param for security
-//todo catch error when id is not valid
 router.get(
 	"/role/:role",
-	validateToken,
-	authorizeBy((req) => req.user.id),
+	// validateToken,
+	// authorizeBy((req) => req.user.id),
 	getUsersByRole
 );
 router.get(

@@ -80,7 +80,7 @@ const errorLoggerMiddleware = async (err, req, res, next) => {
 
     // Log the error details to Cassandra
     await logRequest(method, originalUrl, 500, 'Internal Server Error', userAgent, err.message, err.stack);
-    res.status(500).json({ message: 'Something went wrong!' });
+    res.status(500).json({ message: `Something went wrong! ${method}, ${originalUrl}, ${userAgent}, ${err.message}, ${err.stack}` });
 };
 
 export { loggerMiddleware, errorLoggerMiddleware };
