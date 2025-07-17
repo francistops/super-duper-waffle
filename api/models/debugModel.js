@@ -1,7 +1,5 @@
 import pool from "../db/pool.js";
 
-// a nice and short way to format it i like it but the other way is fine too
-// <3 je vais mettre ça partout merci
 export async function fetchUsers() {
 	const { rows } = await pool.query(`
             SELECT "users"."email",
@@ -23,16 +21,13 @@ export async function fetchTokens() {
 }
 
 export async function fetchAvailabilities() {
-	const selectSql = `SELECT * FROM "availabilities"`;
-	const queryResult = await pool.query(selectSql);
-	return queryResult.rows;
+	const { rows } = await pool.query(`SELECT * FROM "availabilities"`);
+	return rows;
 }
 
 export async function fetchAppointments() {
-	const selectSql = `SELECT *
-  					FROM "appointments"`;
-	const queryResult = await pool.query(selectSql);
-	return queryResult.rows;
+	const { rows } = await pool.query(`SELECT * FROM "appointments"`);
+	return rows;
 }
 
 export async function fetchUserById(id) {
@@ -53,18 +48,4 @@ export async function fetchUserById(id) {
 	if (rowCount > 1) throw new Error(`Too many users for id ${id}`);
 	else if (result.rowCount < 1) throw new Error(`User ${id} not found`);
 	return rows[0];
-}
-
-export async function fetchFeedbacks() {
-	const selectSql = `SELECT *
-  					FROM "feedbacks"`;
-	const queryResult = await pool.query(selectSql);
-	return queryResult.rows;
-}
-
-export async function fetchServices() {
-	const { rows } = await pool.query(`SELECT *
-							FROM services
-							ORDER BY name ASC;`);
-	return rows;
 }

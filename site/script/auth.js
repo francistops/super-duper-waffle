@@ -358,30 +358,30 @@ export async function modifyAvailability({ id, status }) {
 
 // ------ SERVICES ------
 
-// export async function getServices() {
-// 	const data = await apiCall(`services/`, "GET", false);
+export async function getServices() {
+	const data = await apiCall(`services/`, "GET", false);
 
-// 	if (data.errorCode !== 0) {
-// 		console.error(
-// 			"unhandle error in auth.js getServices",
-// 			"data.errorCode: ",
-// 			data.errorCode,
-// 			" data : ",
-// 			data
-// 		);
+	if (data.errorCode !== 0) {
+		console.error(
+			"unhandle error in auth.js getServices",
+			"data.errorCode: ",
+			data.errorCode,
+			" data : ",
+			data
+		);
 
-// 		return {
-// 			success: false,
-// 			errorCode: data.errorCode,
-// 			message: data.message ?? "Erreur lors de la récupération des services",
-// 		};
-// 	}
+		return {
+			success: false,
+			errorCode: data.errorCode,
+			message: data.message ?? "Erreur lors de la récupération des services",
+		};
+	}
 
-// 	return {
-// 		success: true,
-// 		services: data.services,
-// 	};
-// }
+	return {
+		success: true,
+		services: data.services,
+	};
+}
 
 // ------ FEEDBACK ------
 

@@ -1,7 +1,7 @@
 import { Router } from "express";
 const router = Router();
-import { validateToken } from "../middlewares/authGuard.js";
-import { authorizeBy } from "../middlewares/authorize.js";
+// import { validateToken } from "../middlewares/authGuard.js";
+// import { authorizeBy } from "../middlewares/authorize.js";
 import {
 	getFeedbacks,
 	addFeedback,
@@ -10,8 +10,8 @@ import {
 router.get("/", getFeedbacks);
 router.post(
 	"/add",
-	validateToken,
-	authorizeBy((req) => req.user.id),
+	// validateToken,
+	// authorizeBy((req) => req.user.id),
 	addFeedback
 );
 
