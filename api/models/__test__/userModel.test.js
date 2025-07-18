@@ -1,3 +1,6 @@
+// to test
+// cd api; npm test;
+
 import { insertUser, isUserExist, fetchByRole, hash } from "../userModel.js";
 import pool from '../../db/pool.js';
 
@@ -12,10 +15,6 @@ jest.mock('../../db/pool.js', () => ({
 beforeEach(() => {
     jest.clearAllMocks();
 });
-
-
-
-
 
 
 describe('insertUser', () => {
@@ -35,14 +34,14 @@ describe('insertUser', () => {
         );
         expect(result).toBe(true);
     });
-    // idk why this one isnt working >>> i fucking whitespace really caliss
+    // idk why this one isnt working >>> a fucking whitespace really caliss
     it('should insert a user with a specified role', async () => {
         const user = {
             email: 'hd',
             passhash: 'hair',
             role: 'hairdresser',
         };
-        
+
         pool.query.mockResolvedValue({});
         const result = await insertUser(user);
 

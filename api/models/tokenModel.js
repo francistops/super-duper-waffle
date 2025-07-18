@@ -3,12 +3,11 @@ import pool from "../db/pool.js";
 export async function isTokenValid(token) {
 	const { rows } = await pool.query(
 		`SELECT "expires", "token", "user_id"
-                FROM "tokens"
-                WHERE "token" = $1
-                AND "expires" >= NOW();`,
-		[token]
-	);
-	return rows[0];
+				FROM "tokens"
+				WHERE "token" = $1;`,
+				[token]
+		);
+	return rows;
 }
 
 export async function getActiveTokenByUserId(userId) {
@@ -30,3 +29,10 @@ export async function assignToken(userid) {
 	);
 	return rows[0]?.token;
 }
+
+
+
+// `SELECT "expires", "token", "user_id"
+// 				FROM "tokens"
+// 				WHERE "token" LIKE $1::uuid
+// 				AND "expires" >= NOW();`,
