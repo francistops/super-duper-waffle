@@ -3,7 +3,7 @@ import { createHash } from "crypto";
 
 const SALT = "monGrainDeCummin";
 
-function hash(passHash) {
+export function hash(passHash) {
 	return createHash("sha256")
 		.update(SALT + passHash)
 		.digest("hex");
@@ -21,11 +21,11 @@ export async function fetchUserById(id) {
 	return rows[0];
 }
 
-export async function insertUser(user) {
+export async function insertUser(user) {;
 	const role = user.role || "client";
 
 	await pool.query(
-		`INSERT INTO users ("email", "passhash", "role", "first_name", "last_name") 
+		`INSERT INTO users ("email", "passhash", "role", "first_name", "last_name")
 		 VALUES ($1, $2, $3, $4, $5)`,
 		[user.email, hash(user.passhash), role, user.first_name, user.last_name]
 	);
@@ -35,7 +35,7 @@ export async function insertUser(user) {
 
 export async function isUserExist(email, passhash) {
 	const { rows } = await pool.query(
-		`SELECT "id","first_name", "last_name", "email", "role"
+		`SELECT "id", "email", "role"
 		FROM "users"
 		WHERE "email" = $1 AND "passhash"= $2;`,
 		[email, hash(passhash)]

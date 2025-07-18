@@ -7,8 +7,17 @@ class DisplayLogElement extends HTMLElement {
 		this.shadowRoot.innerHTML = `
             <style>
                 * {
-                font-size: 0.7rem;
+                	font-size: 0.7rem;
                 }
+
+				#getLogs {
+					border: 2px solid red;
+				}
+				
+				.invisible {
+					display: none;
+				}
+
                 table, thead, tbody, tr, th, td {
                     border: 1px solid salmon;
                 }
@@ -28,10 +37,14 @@ class DisplayLogElement extends HTMLElement {
 	async connectedCallback() {
 		await this.loadContent();
 		const btn = this.shadowRoot.getElementById("getLogs");
-		if (!btn) {
+		if (btn) {
 			btn.addEventListener("click", async (e) => {
 				this.shadowRoot.querySelector("tbody").innerHTML = "";
+				this.shadowRoot.querySelector("thead").classList.remove('invisible');
 				const logs = await getLogs();
+				
+				btn.innerHTML = 'refresh logs'
+
 
 				for (let i = 0; i < logs.length; i++) {
 					this.addData(logs[i]);
@@ -54,7 +67,7 @@ class DisplayLogElement extends HTMLElement {
 			log.message,
 			log.user_agent,
 			log.error_message,
-			log.stack_trace,
+			log.stack_trace
 		].forEach((field) => {
 			trTag.appendChild(document.createElement("td")).innerHTML = field;
 		});

@@ -58,7 +58,7 @@ export async function getAvailabilities(req, res) {
 }
 
 export async function getAppointments(req, res) {
-	let result = UNKNOWN_ERROR;
+	let result = makeError();
 	try {
 		const appointments = await fetchAppointments();
 		if (!appointments || appointments.length === 0) {

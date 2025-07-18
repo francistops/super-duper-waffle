@@ -14,8 +14,8 @@ import {
 
 router.get(
 	"/role/:role",
-	validateToken,
-	authorizeBy((req) => req.user.id),
+	// validateToken,
+	// authorizeBy((req) => req.user.id),
 	getUsersByRole
 );
 router.get(
