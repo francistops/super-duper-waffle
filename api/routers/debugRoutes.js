@@ -4,10 +4,10 @@ const router = Router();
 import {
 	getUsers,
 	getTokens,
-	getUserById,
 	getAvailabilities,
 	getAppointments,
-	getFeedbacks
+	getFeedbacks,
+	getUserById,
 } from "../controllers/debugController.js";
 
 import { authorizeBy } from '../middlewares/authorize.js'

@@ -71,6 +71,12 @@ export async function getUserIdAvailabilities(req, res) {
 
 	try {
 		const availability = await fetchUserIdAvailabilities(req.params.id);
+
+		if (!availability || availability.length === 0) {
+			result = makeError("No availabilities found for this user", 1);
+			return res.status(404).formatView(result);
+		}
+
 		result = makeSuccess(
 			{ availability },
 			"User's availabilities retrieved successfully"
@@ -92,7 +98,6 @@ export async function registerUser(req, res) {
 
 	try {
 		const user = await insertUser(req.body);
-		console.error(`user registerUser ${req.body}`, user);
 		if (user) {
 			result = makeSuccess({ user }, "User registered successfully");
 		} else {
