@@ -6,7 +6,6 @@ import {
 	fetchUserById,
 	fetchAvailabilities,
 	fetchAppointments,
-	fetchFeedbacks
 } from "../models/debugModel.js";
 
 export async function getUsers(req, res) {
@@ -75,18 +74,6 @@ export async function getAppointments(req, res) {
 		};
 	} catch (error) {
 		catchMsg(`appointment getAppointments`, error, res, result);
-	}
-	res.formatView(result);
-}
-
-export async function getFeedbacks(req, res) {
-	let result = makeError();
-	try {
-		const feedbacks = await fetchFeedbacks();
-		result = makeSuccess({ feedbacks: feedbacks });
-	} catch (error) {
-		res.status(400);
-		result = makeError(`Error retrieving feedbacks: ${error}`, 1001);
 	}
 	res.formatView(result);
 }

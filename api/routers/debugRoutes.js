@@ -6,7 +6,6 @@ import {
 	getTokens,
 	getAvailabilities,
 	getAppointments,
-	getFeedbacks,
 	getUserById,
 } from "../controllers/debugController.js";
 
@@ -17,7 +16,6 @@ router.get("/users", getUsers);
 router.get("/tokens", getTokens);
 router.get("/availabilities", getAvailabilities);
 router.get("/appointments", getAppointments);
-router.get("/feedbacks", getFeedbacks);
 router.get("/:id", getUserById);
 
 export default router;
