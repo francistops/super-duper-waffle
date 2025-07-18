@@ -19,13 +19,13 @@ export async function getUsersByRole(req, res) {
 		const validRoles = ["hairdresser", "client"];
 		if (!role || !validRoles.includes(role))
 			result = makeError("Invalid role specified", 1);
+		else { 
+			const users = await fetchByRole(role);
 
-		const users = await fetchByRole(role);
-
-		if (Array.isArray(users)) {
+		// if (Array.isArray(users)) {
 			result = makeSuccess({ users }, "Users retrieved successfully");
-		} else {
-			result = makeError("Failed to retrieve users", 1);
+		// } else {
+		// 	result = makeError("Failed to retrieve users", 1);
 		}
 	} catch (error) {
 		return catchMsg(
