@@ -117,11 +117,16 @@ export async function registerUser(req, res) {
 export async function loginUser(req, res) {
 	let result = makeError();
 	const { email: email, passhash: passHash } = req.body;
-
+	
 	try {
 		const checkedUser = await isUserExist(email, passHash);
-
+		console.log("checkedUser", checkedUser);
+		
 		if (checkedUser) {
+			console.log(checkedUser);
+			//const userId = await fetchIdByEmail(email);
+			//const isTokenResult = await isTokenExist(checkedUser.userId);
+
 			const userToken = await assignToken(checkedUser.id);
 			result = makeSuccess(
 				{
@@ -151,6 +156,40 @@ export async function loginUser(req, res) {
 	}
 	res.formatView(result);
 }
+// 			if (!isTokenResult.status) {
+// 				const userToken = await assignToken(userId);
+// 				const user = await fetchUserById(userId);
+
+// 				result = {
+// 					message: "Successfull login",
+// 					errorCode: 0,
+// 					user: {
+// 						id: userId,
+// 						email: user.email,
+// 						role: user.role,
+// 					},
+// 					token: userToken,
+// 				};
+// 			} else if (isTokenResult.status) {
+// 				result = {
+// 					message: "already logged in",
+// 					errorCode: 0,
+// 					token: isTokenResult.token,
+// 				};
+// 			}
+// 		} else {
+// 			result = {
+// 				message: "Invalid credentials",
+// 				errorCode: 401,
+// 			};
+// 			res.status(401);
+// 		}
+// 	} catch (error) {
+// 		catchMsg(`user loginUser ${req.body.email}`, error, res, result);
+// 	}
+
+// 	res.formatView(result);
+// }
 
 export async function logoutUser(req, res) {
 	let result = makeError();

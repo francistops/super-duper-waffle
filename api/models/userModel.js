@@ -11,14 +11,13 @@ export function hash(passHash) {
 
 export async function fetchUserById(id) {
 	const { rows } = await pool.query(
-		`SELECT "id",
-                      "email",
-                      "role"
-						FROM "users"
-						WHERE "users"."id" = $1;`,
+		`SELECT "id", "email", "role"
+			FROM "users"
+			WHERE "users"."id" = $1;`,
 		[id]
 	);
-	return rows[0];
+	console.log('fetchUserbyid rows', rows);
+	return rows;
 }
 
 export async function insertUser(user) {;

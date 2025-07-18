@@ -16,13 +16,12 @@ export async function validateToken(req, res, next) {
 
 	try {
 		const tokenRow = await isTokenValid(token);
-		console.log('authgare tokenrow return', tokenRow);
 
 		if (!tokenRow) {
 			result = makeError("Invalid or expired token", 401);
 			return res.status(401).formatView(result);
 		}
-
+		
 		const user = await fetchUserById(tokenRow.user_id);
 		console.log(user);
 		if (!user) {
